@@ -1,0 +1,3709 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ផ្នែកសេវាជំងឺមាត់ធ្មេញ · Dental Service Record</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EAF6F3; --surface:#FFFFFF; --surface-2:#F3FBF9;
+    --border:#D9EDE8; --border-soft:#E8F4F1;
+    --ink:#0B3B36; --ink-soft:#4C6864; --ink-dim:#8AA6A2;
+    --primary:#0E9384; --primary-dark:#0B7267; --primary-soft:#D8F3EE; --primary-softer:#EDFAF7;
+    --amber:#E8A33D; --amber-soft:#FBEBD2; --amber-dark:#8A5C16;
+    --coral:#E4574C; --coral-soft:#FBE1DE; --coral-dark:#A43227;
+    --shadow:0 12px 30px -16px rgba(11,59,54,0.18);
+    --shadow-sm:0 4px 14px -8px rgba(11,59,54,0.16);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1000px 460px at 8% -8%, rgba(14,147,132,0.08), transparent 55%),
+      radial-gradient(800px 400px at 105% 0%, rgba(232,163,61,0.07), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter','Noto Sans Khmer',sans-serif;
+    min-height:100vh;
+    padding-bottom:70px;
+    transition: all 0.3s ease;
+  }
+  .kh{font-family:'Noto Sans Khmer','Inter',sans-serif;}
+  h1,h2,h3,.display{font-family:'Sora','Noto Sans Khmer',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  button{font-family:inherit;}
+  .hidden{display:none !important;}
+
+  /* topbar */
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border-soft);padding:14px 22px;position:sticky;top:0;z-index:40;box-shadow:0 2px 16px -10px rgba(11,59,54,0.12);}
+  .topbar-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:11px;}
+  .brand-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(155deg, var(--primary), var(--primary-dark));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--shadow-sm);}
+  .brand-mark svg{width:24px;height:24px;}
+  .brand-text h1{margin:0;font-size:18px;color:#fff;font-weight:700;letter-spacing:-0.01em;background:linear-gradient(155deg, var(--primary), var(--primary-dark));padding:5px 12px;border-radius:8px;display:inline-block;box-shadow:var(--shadow-sm);}
+  .brand-text .sub{font-size:11.5px;color:var(--ink-dim);margin-top:1px;font-weight:500;}
+  .topbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  
+  .topbar-btn-uniform {
+    font-family: 'Inter', 'Noto Sans Khmer', sans-serif;
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all .15s ease;
+    height: 34px;
+    white-space: nowrap;
+  }
+
+  .icon-btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 8px;
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+
+  .sync-badge{
+    border: 1.5px solid var(--primary);
+    color: var(--primary-dark);
+    background: var(--primary-softer);
+  }
+  .sync-badge:hover{background:var(--primary-soft);}
+
+  .btn{border:none;cursor:pointer;font-weight:600;font-size:13.5px;padding:9px 15px;border-radius:9px;display:inline-flex;align-items:center;gap:7px;transition:all .13s ease;}
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 6px 16px -6px rgba(14,147,132,0.5);}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-outline{background:var(--surface);color:var(--ink);border:1.5px solid var(--border);}
+  .btn-outline:hover{border-color:var(--primary);background:var(--primary-softer);}
+  .btn-ghost{background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--border-soft);}
+  .btn-ghost:hover{color:var(--ink);}
+  .btn-danger{background:var(--coral-soft);color:var(--coral-dark);border:1px solid #f5b5af;}
+  .btn-danger:hover{background:#f7cdc8;}
+  .btn-sm{padding:6px 12px;font-size:12px;border-radius:7px;}
+  .btn-block{width:100%;justify-content:center;}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:22px 22px 0;transition: all 0.3s ease;}
+
+  /* demographics stats */
+  .stats2{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-bottom:14px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
+  .stat-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--primary);}
+  .stat-card.debt::before{background:var(--coral);}
+  .stat-card.amber::before{background:var(--amber);}
+  .stat-card.highlight{background:linear-gradient(145deg, #ffffff, var(--primary-softer));border-color:var(--primary-soft);}
+  .stat-card.highlight::before{background:var(--primary-dark);width:5px;}
+  .stat-label{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim);font-weight:700;}
+  .stat-value{font-family:'IBM Plex Mono',monospace;font-size:18px;font-weight:700;margin-top:5px;color:var(--primary-dark);}
+  .stat-card.debt .stat-value{color:var(--coral-dark);}
+  .stat-card.amber .stat-value{color:var(--amber-dark);}
+  .stat-khmer{font-size:10px;color:var(--ink-dim);margin-top:2px;}
+
+  /* Card Type Breakdown Section */
+  .card-type-stats-panel{
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-type-stats-head{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .card-type-stats-head h4{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--primary-dark);
+    font-weight: 700;
+  }
+  .card-type-stats-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+  .type-stat-card{
+    background: var(--surface-2);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .type-stat-card:hover{
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .type-stat-card.type-red{ background: #FEEBEA; border-color: #F8B4AF; color: #9A241A; }
+  .type-stat-card.type-red .type-stat-name{ color: #9A241A; }
+  .type-stat-card.type-red .type-stat-count{ color: #A43227; }
+
+  .type-stat-card.type-blue{ background: #EAF3FD; border-color: #B9D6F7; color: #0B4B91; }
+  .type-stat-card.type-blue .type-stat-name{ color: #0B4B91; }
+  .type-stat-card.type-blue .type-stat-count{ color: #0C56A4; }
+
+  .type-stat-card.type-yellow{ background: #FEF9E7; border-color: #FDE68A; color: #85530E; }
+  .type-stat-card.type-yellow .type-stat-name{ color: #85530E; }
+  .type-stat-card.type-yellow .type-stat-count{ color: #8A5C16; }
+
+  .type-stat-card.type-default{ background: var(--surface-2); border-color: var(--border); color: var(--ink); }
+
+  .type-stat-card.active{
+    box-shadow: 0 0 0 2.5px var(--primary-dark) !important;
+    transform: translateY(-2px);
+    font-weight: 800;
+  }
+  .type-stat-name{
+    font-size: 10.5px;
+    font-weight: 700;
+    display: block;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+  .type-stat-count{ font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 800; }
+  .type-stat-percent{ font-size: 9.5px; opacity: 0.85; font-weight: 600; margin-top: 1px; }
+
+  /* Treatment Stats Grid */
+  .treatment-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  /* appointments */
+  .appt-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+  .appt-panel{background:var(--surface);border:1px solid var(--border-soft);border-radius:16px;padding:18px 18px 14px;box-shadow:var(--shadow);}
+  .appt-panel-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:6px;}
+  .appt-panel-head h3{margin:0;font-size:14px;color:var(--ink);font-weight:700;}
+  .appt-panel-head .count-pill{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--primary-dark);background:var(--primary-soft);padding:3px 9px;border-radius:999px;}
+  .appt-row{display:flex;align-items:center;gap:12px;padding:9px 6px;border-radius:9px;cursor:pointer;border-bottom:1px solid var(--border-soft);}
+  .appt-row:last-child{border-bottom:none;}
+  .appt-row:hover{background:var(--surface-2);}
+  .appt-time{text-align:center;min-width:85px;flex-shrink:0;}
+  .appt-time .mono{font-size:11.5px;font-weight:700;color:var(--primary-dark);}
+  .appt-day{font-size:9px;color:var(--ink-dim);margin-top:1px;}
+  .appt-main{flex:1;min-width:0;}
+  .appt-name{font-size:13px;font-weight:600;color:var(--ink);}
+  .appt-meta{font-size:11.5px;color:var(--ink-dim);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  
+  .appt-plan-badge{
+    max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 7px;
+    background: var(--amber-soft); color: var(--amber-dark);
+    border: 1px solid rgba(232,163,61,0.4); text-align: right; flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .appt-row {
+      flex-direction: column;
+      align-items: flex-start;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      padding: 14px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      gap: 10px;
+    }
+    .appt-time {
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 8px;
+      text-align: left;
+    }
+    .appt-day { margin-top: 0; font-size: 10.5px; }
+    .appt-main { width: 100%; }
+    .appt-plan-badge { width: 100%; text-align: center; max-width: none; justify-content: center; padding: 6px; }
+  }
+
+  /* Search Input */
+  .search-input-topbar{
+    flex:none;width:280px;min-width:160px;padding:8px 14px;font-size:13px;
+    background:#ffffff; border:2px solid var(--coral); border-radius:10px;
+    box-shadow:0 0 0 3px rgba(228,87,76,0.12), inset 0 1px 3px rgba(0,0,0,0.04);
+    font-weight:500; transition:all .2s ease; height: 34px;
+  }
+  .search-input-topbar:focus{ outline:none; border-color:var(--coral-dark); box-shadow:0 0 0 4px rgba(228,87,76,0.22); background:#fff; }
+  @media (max-width:640px){ .search-input-topbar{width:100%;order:10;} }
+
+  .section-title{display:flex;align-items:center;justify-content:space-between;margin:16px 0 10px;}
+  .section-title h2{font-size:15px;margin:0;color:var(--ink);font-weight:700;}
+  .record-list{display:flex;flex-direction:column;gap:9px;margin-bottom:20px;}
+  
+  /* Patient Record Card Styles */
+  .record-card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .record-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+    background: var(--surface-2);
+  }
+
+  .record-card.has-active-appt {
+    border: 1.8px solid var(--amber) !important;
+    background: linear-gradient(90deg, rgba(232,163,61,0.08) 0%, var(--surface) 40%) !important;
+    box-shadow: 0 4px 14px -6px rgba(232,163,61,0.35) !important;
+  }
+  .record-card.has-active-appt .appt-time .mono,
+  .record-card.has-active-appt .appt-day {
+    color: var(--amber-dark) !important;
+  }
+  
+  .record-card.has-missing-appt {
+    border: 1.8px solid var(--coral) !important;
+    background: rgba(228,87,76,0.08) !important;
+    box-shadow: 0 4px 14px -6px rgba(228,87,76,0.35) !important;
+  }
+  .record-card.has-missing-appt:hover {
+    background: rgba(228,87,76,0.12) !important;
+  }
+  .record-card.has-missing-appt .appt-time .mono,
+  .record-card.has-missing-appt .appt-day,
+  .record-card.has-missing-appt .appt-name {
+    color: var(--coral-dark) !important;
+  }
+
+  .empty-state{text-align:center;padding:44px 20px;color:var(--ink-dim);background:var(--surface);border:1.5px dashed var(--border);border-radius:14px;}
+
+  /* Modals */
+  .overlay{
+    position:fixed; inset:0; background:rgba(11,42,39,0.4); backdrop-filter:blur(3px); z-index:60;
+    display:flex; align-items:flex-start; justify-content:center; padding:30px 16px; overflow-y:auto;
+    overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  }
+  
+  #toothHistoryModalOverlay { z-index: 75 !important; background: rgba(11,42,39,0.55) !important; }
+  #doDetailOverlay          { z-index: 80 !important; background: rgba(11,42,39,0.6) !important; }
+  #formOverlay              { z-index: 85 !important; }
+  #xrayModalOverlay         { z-index: 95 !important; }
+  #xrayGalleryOverlay       { z-index: 96 !important; }
+  #reportOverlay            { z-index: 98 !important; }
+  #printOverlay             { z-index: 110 !important; }
+
+  /* Disease List Table Styles */
+  .dl-table { width: max-content; min-width: 100%; border-collapse: collapse; font-size: 11px; }
+  .dl-table th { background: var(--surface-2); padding: 8px; border: 1px solid var(--border-soft); text-align: center; white-space: nowrap; font-weight: 700; color: var(--ink-dim); }
+  .dl-table td { padding: 6px 8px; border: 1px solid var(--border-soft); text-align: center; color: var(--ink); white-space: nowrap; }
+  .dl-table td.text-left { text-align: left; }
+
+  /* Disease List mini summary badges */
+  .dl-summary-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
+  .dl-summary-badge .val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 800;
+    font-size: 13px;
+  }
+
+  /* X-Ray Gallery Layout */
+  .xray-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 14px;
+    margin-top: 10px;
+  }
+  .xray-item {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--surface-2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px -4px rgba(0,0,0,0.1);
+  }
+  .xray-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 14px -6px rgba(14,147,132,0.4);
+  }
+  .xray-item img {
+    width: 100%;
+    height: 130px;
+    object-fit: cover;
+    background: #e0e0e0;
+  }
+  .xray-item .xray-info {
+    padding: 8px;
+    text-align: center;
+    background: #fff;
+    border-top: 1px solid var(--border-soft);
+  }
+  .xray-item .xray-date {
+    font-size: 10.5px;
+    color: var(--ink-dim);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+  }
+
+  .modal{background:var(--bg);border:1px solid var(--border);border-radius:18px;max-width:760px;width:100%;box-shadow:0 30px 70px -20px rgba(11,59,54,0.4);overflow:hidden;margin-bottom:40px;}
+  .modal.narrow{max-width:480px;}
+  .modal-head{background:var(--surface);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);}
+  .modal-head h2{margin:0;font-size:15px;color:var(--ink);}
+  .modal-head .x{cursor:pointer;background:var(--surface-2);border:1px solid var(--border-soft);color:var(--ink);width:28px;height:28px;border-radius:8px;font-size:14px;}
+  
+  .modal-body{
+    padding: 20px; 
+    max-height: 84vh; 
+    overflow-y: auto; 
+    min-height: 0; 
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  .modal-actions {
+    display: flex; gap: 10px; justify-content: flex-end; align-items: center; margin-top: 20px; flex-wrap: wrap;
+    position: sticky; bottom: -20px; 
+    background: var(--bg); 
+    padding: 14px 20px; 
+    margin: 20px -20px -20px -20px; 
+    border-top: 1px solid var(--border-soft); 
+    z-index: 10;
+  }
+  .modal-actions .left-action{margin-right:auto;}
+
+  /* EMR Styles */
+  #patientOverlay .modal { max-width: 1100px; }
+  .emr-top-split { display: grid; grid-template-columns: 320px 1fr; gap: 16px; margin-bottom: 16px; align-items: stretch; }
+  @media (max-width: 992px) { .emr-top-split { grid-template-columns: 1fr; } }
+  .emr-header-panel { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 18px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; justify-content: space-between; margin: 0; height: 100%; }
+  .emr-avatar { width: 64px; height: 64px; background: var(--primary-soft); color: var(--primary-dark); font-size: 32px; display: flex; align-items: center; justify-content: center; border-radius: 16px; }
+  .emr-pat-name { margin: 0; font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -0.01em; line-height: 1.2; }
+  .emr-actions-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 16px; border-top: 1px dashed var(--border-soft); padding-top: 16px; }
+  .emr-actions-bar .btn { padding: 8px; font-size: 11.5px; width: 100%; justify-content: center; }
+  .emr-actions-bar .btn-full { grid-column: 1 / -1; }
+  .emr-chart-section { background: #fff; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; margin: 0; height: 100%; overflow: hidden; }
+  .emr-section-head { background: var(--surface-2); padding: 12px 16px; font-size: 13px; font-weight: 800; color: var(--primary-dark); border-bottom: 1px solid var(--border); letter-spacing: 0.02em; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+  
+  .odontogram-panel { background: transparent; width: 100%; margin: 0; overflow-x: auto; text-align: center; }
+  .arch-row { display: flex; justify-content: center; gap: 3px; min-width: max-content; }
+  .arch-row.upper-perm { align-items: flex-end; margin-bottom: 5px; }
+  .arch-row.upper-prim { align-items: flex-start; padding-bottom: 16px; border-bottom: 1.5px dashed var(--border-soft); margin-bottom: 16px;}
+  .arch-row.lower-prim { align-items: flex-end; margin-bottom: 5px; }
+  .arch-row.lower-perm { align-items: flex-start; }
+  .quad-gap { width: 18px; flex-shrink: 0; position: relative; }
+  .quad-gap::after { content:''; position:absolute; left:50%; top:-5px; bottom:-5px; width:1.5px; background:var(--border); border-radius: 2px; }
+
+  .tooth-cell {
+    width: 26px; height: 38px; border-radius: 6px; border: 1px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: center;
+    font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-dim); font-weight: 700; transition: all .15s ease; cursor: pointer; user-select: none;
+  }
+  .tooth-cell.primary-tooth { height: 26px; font-size: 10px; background: var(--amber-soft); border-color: rgba(232,163,61,0.3); color: var(--amber-dark); }
+  .tooth-cell.invisible { visibility: hidden; pointer-events: none; border: none; background: transparent; }
+  .tooth-cell:hover:not(.invisible) { border-color: var(--primary); transform: scale(1.15); z-index: 2; box-shadow: var(--shadow-sm); }
+  .tooth-cell.treated { background: var(--primary) !important; border-color: var(--primary-dark) !important; color: #fff !important; font-weight: 800 !important; box-shadow: 0 4px 10px -3px rgba(14,147,132,0.4); transform: translateY(-2px); }
+  .tooth-cell.treated:hover:not(.invisible) { transform: scale(1.15) translateY(-2px); background: var(--primary-dark) !important; }
+  .arch-label { font-size: 10.5px; text-align: center; color: var(--ink-dim); letter-spacing: .05em; text-transform: uppercase; margin: 10px 0; font-weight: 800; }
+
+  .emr-notes-section { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
+  .emr-table-wrap { overflow-x: auto; }
+  .emr-table { width: 100%; border-collapse: collapse; text-align: left; }
+  .emr-table th { background: #fff; padding: 12px 14px; font-size: 10.5px; text-transform: uppercase; font-weight: 800; color: var(--ink-dim); letter-spacing: 0.03em; border-bottom: 2px solid var(--border); white-space: nowrap; }
+  .emr-table td { padding: 14px; border-bottom: 1px solid var(--border-soft); vertical-align: top; line-height: 1.5; }
+  .emr-tr { cursor: pointer; transition: background 0.15s; }
+  .emr-tr:hover { background: var(--primary-softer); }
+  
+  .emr-status { display: inline-flex; align-items: center; justify-content: center; padding: 4px 8px; border-radius: 6px; font-size: 10.5px; font-weight: 700; white-space: nowrap; }
+  .emr-status.done { background: #E0F2E9; color: #198754; border: 1px solid #19875440; }
+  .emr-status.doing { background: #E1EFFF; color: #0B5ED7; border: 1px solid #0B5ED740; }
+  .emr-status.missing { background: #F8D7DA; color: #721C24; border: 1px solid #721C2440; }
+
+  .status-pills { display: flex; gap: 4px; background: var(--surface-2); padding: 4px; border-radius: 8px; border: 1px solid var(--border); width: fit-content; }
+  .s-pill { font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 6px; cursor: pointer; color: var(--ink-dim); transition: all 0.15s ease; }
+  .s-pill:hover { background: var(--border-soft); color: var(--ink); }
+  .s-pill.active-done { background: #E0F2E9; color: #198754; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .s-pill.active-doing { background: #E1EFFF; color: #0B5ED7; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+  .s-pill.active-missing { background: #F8D7DA; color: #DC3545; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+
+  /* Form Layout */
+  .form-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+  .field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim);margin-bottom:5px;}
+  .field input,.field select,.field textarea{width:100%;background:var(--surface);border:1.5px solid var(--border);color:var(--ink);border-radius:9px;padding:9px 11px;font-size:13.5px;font-family:inherit;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--primary);}
+  .field textarea{min-height:75px;resize:vertical;}
+
+  .row-name-sex-age{ display: grid; grid-template-columns: 2.2fr 1fr 1fr; gap: 10px; }
+  @media(max-width:640px){ .row-name-sex-age{ grid-template-columns: 1fr; } }
+
+  .row-phone-visit-type{ display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  @media(max-width:768px){ .row-phone-visit-type{ grid-template-columns: 1fr; } }
+
+  .row-three-cols { display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; gap: 10px; }
+  @media(max-width:768px){ .row-three-cols { grid-template-columns: 1fr; } }
+
+  .row-treatment-proc-time { display: grid; grid-template-columns: 1.2fr 1.2fr 1fr; gap: 10px; }
+  @media(max-width:768px){ .row-treatment-proc-time { grid-template-columns: 1fr; } }
+
+  .appointment-box-wrapper{ background: var(--amber-soft); border: 1.5px dashed var(--amber); border-radius: 12px; padding: 14px; transition: all .2s ease; }
+  .status-checkbox-group { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .status-check-label { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13.5px; font-weight: 700; user-select: none; }
+  .status-check-label input { width: 17px; height: 17px; cursor: pointer; accent-color: var(--primary-dark); }
+  .status-check-label.appt-lbl input { accent-color: var(--amber-dark); }
+  .status-check-label.missing-lbl input { accent-color: var(--coral-dark); }
+  
+  .appointment-fields-grid{ display: grid; grid-template-columns: 1fr 1.5fr; gap: 12px; margin-top: 12px; border-top: 1px dashed rgba(232,163,61,0.5); padding-top: 12px; }
+  @media(max-width:640px){ .appointment-fields-grid{ grid-template-columns: 1fr; } }
+
+  .med-table-wrapper{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+  .med-table-header{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .med-table{ width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  .med-table th{ background: var(--surface-2); color: var(--ink-dim); font-size: 10px; text-transform: uppercase; letter-spacing: .03em; padding: 7px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+  .med-table td{ padding: 6px 8px; border-bottom: 1px solid var(--border-soft); vertical-align: middle; }
+  .med-table tr:last-child td{ border-bottom: none; }
+  .med-input{ width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 5px 7px; font-size: 12px; font-family: inherit; color: var(--ink); }
+  .med-input:focus{ outline:none; border-color:var(--primary); }
+  .med-time-checks{ display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: var(--ink-soft); white-space: nowrap; }
+  .med-time-checks label{ display: inline-flex; align-items: center; gap: 3px; cursor: pointer; font-weight: 500; margin: 0; text-transform: none; }
+  .quick-med-pills{ display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .q-pill{ font-size: 10.5px; padding: 3px 8px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); cursor: pointer; color: var(--ink-soft); }
+  .q-pill:hover{ background: var(--primary-soft); color: var(--primary-dark); }
+  
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;margin-bottom:16px;}
+  .detail-item .k{font-size:10.5px;text-transform:uppercase;color:var(--ink-dim);letter-spacing:.05em;font-weight:700;}
+  .detail-item .v{font-size:13.5px;color:var(--ink);margin-top:2px;}
+
+  /* print sheets */
+  .print-sheet{background:#fff;color:#1A2E2B;font-family:'Inter',sans-serif;padding:8mm 2mm;}
+  .ps-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:2.5px solid var(--primary);padding-bottom:14px;margin-bottom:20px;}
+  .ps-clinic{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--primary-dark);}
+  .ps-sub{font-size:11.5px;color:#6B827F;margin-top:4px;}
+  .ps-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary-dark);background:var(--primary-soft);padding:5px 13px;border-radius:999px;}
+  .ps-head-right{text-align:right;}
+  .ps-printed{font-size:10.5px;color:#8AA6A2;margin-top:6px;}
+  .ps-info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 22px;margin:6px 0 18px;}
+  .ps-info-item .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:#8AA6A2;font-weight:700;}
+  .ps-info-item .v{font-size:13.5px;color:#1A2E2B;margin-top:3px;font-weight:600;}
+  .ps-section-title{font-size:13px;font-weight:700;color:var(--primary-dark);margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid #E1EEEC;}
+  .ps-foot{text-align:center;font-size:11px;color:#8AA6A2;margin-top:20px;}
+  .ps-visit-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:4px;}
+  .ps-visit-table th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:#8AA6A2;padding:6px 8px;border-bottom:1.5px solid #1A2E2B;}
+  .ps-visit-table td{padding:6px 8px;border-bottom:1px solid #E9F1F0;color:#33504C;}
+  .ps-visit-table td.mono, .ps-visit-table th.mono{font-family:'IBM Plex Mono',monospace;}
+
+  @media print {
+      body.printing-panel { background: #fff !important; padding: 0 !important; margin: 0 !important; }
+      body.printing-panel > *:not(#reportOverlay) { display: none !important; }
+      body.printing-panel #reportOverlay { position: static; display: block !important; padding: 0; background: none; }
+      body.printing-panel #reportOverlay .modal { max-width: 100%; border: none; box-shadow: none; margin: 0; }
+      body.printing-panel #reportOverlay .modal-head, 
+      body.printing-panel #reportOverlay .modal-actions { display: none !important; }
+      body.printing-panel #reportOverlay .modal-body { padding: 0; overflow: visible; }
+      body.printing-panel #reportOverlay .modal-body > *:not(.print-isolate) { display: none !important; }
+      
+      body.printing-panel .print-isolate {
+          border: none !important; 
+          box-shadow: none !important; 
+          margin: 0 !important; 
+          padding: 0 !important;
+          print-color-adjust: exact;
+          -webkit-print-color-adjust: exact;
+      }
+      body.printing-panel .print-isolate button { display: none !important; }
+  }
+
+  @media print {
+      body.printing-disease-list { background: #fff !important; padding: 0 !important; margin: 0 !important; }
+      body.printing-disease-list > *:not(#diseaseListOverlay) { display: none !important; }
+      body.printing-disease-list #diseaseListOverlay { position: static; display: block !important; padding: 0; background: none; }
+      body.printing-disease-list #diseaseListOverlay .modal { max-width: 100%; height: auto; border: none; box-shadow: none; margin: 0; }
+      body.printing-disease-list #diseaseListOverlay .modal-head { display: none !important; }
+      body.printing-disease-list #diseaseListOverlay .modal-body { padding: 0; overflow: visible; }
+      body.printing-disease-list #diseaseListOverlay button { display: none !important; }
+      
+      body.printing-disease-list .dl-table { font-size: 9px; width: 100%; min-width: auto; }
+      body.printing-disease-list .dl-table th, 
+      body.printing-disease-list .dl-table td { padding: 4px; border: 1px solid #000; white-space: normal; word-break: break-all; }
+
+      body.printing-full-report { background: #fff !important; padding: 0 !important; margin: 0 !important; }
+      body.printing-full-report > *:not(#reportOverlay) { display: none !important; }
+      body.printing-full-report #printOverlay { display: none !important; }
+      body.printing-full-report #reportOverlay { position: static; display: block !important; padding: 0; background: none; overflow: visible; }
+      body.printing-full-report #reportOverlay .modal { max-width: 100%; border: none; box-shadow: none; margin: 0; overflow: visible; }
+      body.printing-full-report #reportOverlay .modal-head { display: none !important; }
+      body.printing-full-report #reportOverlay .modal-body { padding: 0; overflow: visible; max-height: none; }
+      body.printing-full-report #reportTopActions { display: none !important; }
+      body.printing-full-report .card-type-stats-head button,
+      body.printing-full-report #clearTypeFilterBtn { display: none !important; }
+      body.printing-full-report .card-type-stats-panel { break-inside: avoid; page-break-inside: avoid; }
+  }
+
+  @media print{
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report){background:none;}
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) .topbar, 
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) .wrap,
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #detailOverlay, 
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #formOverlay, 
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #settingsOverlay, 
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #patientOverlay, 
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #toothHistoryModalOverlay{ display:none !important; }
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #printOverlay{ position:static !important; inset:auto; background:none !important; backdrop-filter:none !important; padding:0 !important; display:block !important; }
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #printOverlay .modal{ box-shadow:none !important; border:none !important; max-width:100% !important; border-radius:0 !important; background:none !important; margin:0 !important; }
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #printOverlay .modal-head, 
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #printOverlay .modal-actions{ display:none !important; }
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) #printOverlay .modal-body{ padding:0 !important; max-height:none !important; overflow:visible !important; }
+    body:not(.printing-panel):not(.printing-disease-list):not(.printing-full-report) .print-sheet{padding:0;width:100%;}
+  }
+
+  body.mobile-mode .wrap{ max-width: 480px; padding: 12px 12px 0; }
+  body.mobile-mode .stats2{ grid-template-columns: repeat(2, 1fr); }
+  body.mobile-mode .card-type-stats-grid{ grid-template-columns: repeat(2, 1fr); }
+  body.mobile-mode .appt-grid{ grid-template-columns: 1fr; }
+  body.mobile-mode .form-grid{ grid-template-columns: 1fr; }
+  body.mobile-mode .detail-grid{ grid-template-columns: 1fr; }
+
+  @media (max-width:992px){
+    .stats2{grid-template-columns:repeat(4,1fr);}
+    .treatment-stats-grid{grid-template-columns:repeat(3,1fr);}
+  }
+  
+  .patient-card-badge { max-width: 200px; text-align: right; white-space: normal; line-height: 1.4; }
+  
+  @media (max-width: 768px) {
+    .emr-table thead { display: none; }
+    .emr-table, .emr-table tbody, .emr-table tr, .emr-table td { display: block; width: 100%; }
+    .emr-tr { margin-bottom: 12px; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow-sm); padding-top: 4px; }
+    .emr-table td { padding: 10px 14px; border-bottom: 1px dashed var(--border-soft); text-align: left !important; }
+    .emr-table td:last-child { border-bottom: none; }
+    .emr-table td::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; color: var(--ink-dim); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.03em; }
+  }
+  
+  @media (max-width:640px){
+    .stats2{grid-template-columns:repeat(2,1fr);}
+    .treatment-stats-grid{grid-template-columns:repeat(2,1fr);}
+    .appt-grid{grid-template-columns:1fr;}
+    .form-grid{grid-template-columns:1fr;}
+    .detail-grid{grid-template-columns:1fr;}
+    .ps-info-grid{grid-template-columns:1fr 1fr;}
+    .patient-card-badge { max-width: 100% !important; text-align: left !important; }
+    .patient-card-badge > div { text-align: left !important; }
+
+    #formOverlay { padding: 0 !important; display: block; }
+    #formOverlay .modal { 
+      position: absolute; 
+      inset: 0; 
+      height: 100%; max-height: 100%; 
+      width: 100%; max-width: 100%; 
+      border-radius: 0; margin: 0; 
+      display: flex; flex-direction: column; border: none; 
+    }
+    #formOverlay .modal-head { flex: 0 0 auto; }
+    #formOverlay .modal-body { flex: 1 1 auto; max-height: none; min-height: 0; }
+    
+    .modal-actions {
+      padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
+    }
+  }
+</style>
+<style id="dynamicPageStyle">@page{ size: A4 portrait; margin: 15mm; }</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark" style="background: linear-gradient(155deg, #3B82F6, #0B5ED7); box-shadow: var(--shadow-sm);">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C9.6 2 8.4 3.1 6.9 3.1C5.2 3.1 3.8 4.6 3.8 7C3.8 9.6 4.6 11.2 5.1 13.8C5.6 16.4 6.2 21.3 7.9 21.3C9.4 21.3 9.3 17.6 9.8 15.4C10.1 14.1 10.7 13.2 12 13.2C13.3 13.2 13.9 14.1 14.2 15.4C14.7 17.6 14.6 21.3 16.1 21.3C17.8 21.3 18.4 16.4 18.9 13.8C19.4 11.2 20.2 9.6 20.2 7C20.2 4.6 18.8 3.1 17.1 3.1C15.6 3.1 14.4 2 12 2Z" fill="#ffffff"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1 class="kh" style="background: none; padding: 0; color: var(--ink);">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</h1>
+        <div class="sub">Dental Service Record</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button class="topbar-btn-uniform kh" id="fabAdd" style="background-color: var(--primary-dark); color: #fff; border: none; box-shadow: var(--shadow-sm);">＋ កត់ត្រាថ្មី</button>
+      <input type="text" class="search-input search-input-topbar kh" id="searchInput" placeholder="🔍 ស្វែងរក ឈ្មោះ, លេខធ្មេញ...">
+      <button class="topbar-btn-uniform btn-ghost kh" id="reportBtn" title="របាយការណ៍" style="border: 1.5px solid #0B5ED7; color: #0B5ED7;">📊 Report</button>
+      <span class="topbar-btn-uniform sync-badge" id="syncBadge" title="ចុចដើម្បីទាញទិន្នន័យពី Sheet មក App">🔄 Sync</span>
+      <button class="topbar-btn-uniform btn-outline" id="settingsBtn" title="ការកំណត់គ្លីនិក">⚙</button>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="appt-grid">
+    <div class="appt-panel">
+      <div class="appt-panel-head">
+        <h3 class="kh">ការណាត់ជួប · Appointments</h3>
+        <span class="count-pill" id="apptTodayCount">0</span>
+      </div>
+      <div id="apptTodayBody"></div>
+    </div>
+    <div class="appt-panel">
+      <div class="appt-panel-head">
+        <h3 class="kh">ការព្យាបាល · Procedures</h3>
+        <span class="count-pill" id="procTodayCount">0</span>
+      </div>
+      <div id="procTodayBody"></div>
+    </div>
+  </div>
+
+  <div class="section-title">
+    <h2 class="kh" id="listTitle">កំណត់ត្រាអ្នកជំងឺ · Patient records</h2>
+    <span class="mono" id="listCount" style="font-size:12px;color:var(--ink-dim)"></span>
+  </div>
+  <div class="record-list" id="recordList"></div>
+</div>
+
+<!-- Detail modal -->
+<div class="overlay hidden" id="detailOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2 id="detailName">—</h2><button class="x" id="closeDetail">✕</button></div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<!-- Quick DO / treatment detail popup -->
+<div class="overlay hidden" id="doDetailOverlay">
+  <div class="modal narrow">
+    <div class="modal-head"><h2 class="kh" id="doDetailName">—</h2><button class="x" id="closeDoDetail">✕</button></div>
+    <div class="modal-body" id="doDetailBody"></div>
+  </div>
+</div>
+
+<!-- Full patient dental record modal -->
+<div class="overlay hidden" id="patientOverlay">
+  <div class="modal" style="background-color: var(--bg);">
+    <div class="modal-head">
+      <h2 class="kh">Full Dental Record</h2>
+      <button class="x" id="closePatient">✕</button>
+    </div>
+    <div class="modal-body" id="patientBody"></div>
+  </div>
+</div>
+
+<!-- Tooth specific History modal -->
+<div class="overlay hidden" id="toothHistoryModalOverlay">
+  <div class="modal" style="max-width: 1000px;">
+    <div class="modal-head"><h2 class="kh" id="toothHistoryModalTitle">ប្រវត្តិធ្មេញ</h2><button class="x" id="closeToothHistoryModal">✕</button></div>
+    <div class="modal-body" id="toothHistoryModalBody"></div>
+  </div>
+</div>
+
+<!-- Add/Edit record form -->
+<div class="overlay hidden" id="formOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2 class="kh" id="formTitle">កំណត់ត្រាជំងឺមាត់ធ្មេញថ្មី · New Record</h2><button class="x" id="closeForm">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        
+        <!-- Row 1: Name, Sex, Age -->
+        <div class="row-name-sex-age" id="group_name_sex_age">
+          <div class="field">
+            <label>ឈ្មោះអ្នកជំងឺ · Patient name</label>
+            <input type="text" id="f_name" class="kh" placeholder="ឈ្មោះអ្នកជំងឺ">
+          </div>
+          <div class="field">
+            <label>ភេទ · Sex</label>
+            <select id="f_sex">
+              <option value="F">ស្រី / F</option>
+              <option value="M">ប្រុស / M</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>អាយុ · Age</label>
+            <input type="number" id="f_age" min="0" max="120" placeholder="23">
+          </div>
+        </div>
+
+        <!-- Row 2: Phone, Visit Date-Time, Registration Card -->
+        <div class="row-phone-visit-type" id="group_phone_visit_type">
+          <div class="field">
+            <label>លេខទូរស័ព្ទ · Phone</label>
+            <input type="text" id="f_phone" placeholder="097xxxxxxx">
+          </div>
+          <div class="field">
+            <label>កាលបរិច្ឆេទចូល · Visit Date-Time</label>
+            <input type="datetime-local" id="f_visitDateTime" class="mono">
+          </div>
+          <div class="field">
+            <label>Registration Card (Type)</label>
+            <select id="f_type" class="kh">
+              <option value="បង់ពេញថ្លៃ">បង់ពេញថ្លៃ</option>
+              <option value="លើកលែង">លើកលែង</option>
+              <option value="មូលនិធិសមធម៌ (ក្រីក្រ)">មូលនិធិសមធម៌ (ក្រីក្រ)</option>
+              <option value="មូលនិធិសមធម៌ (ហានិភ័យ)">មូលនិធិសមធម៌ (ហានិភ័យ)</option>
+              <option value="មូលនិធិសមធម៌ (ក្រៅប្រព័ន្ធ)">មូលនិធិសមធម៌ (ក្រៅប្រព័ន្ធ)</option>
+              <option value="ប.ស.ស (កម្មករ)">ប.ស.ស (កម្មករ)</option>
+              <option value="ប.ស.ស (សាធារណៈឬក្នុងបន្ទុក)">ប.ស.ស (សាធារណៈឬក្នុងបន្ទុក)</option>
+              <option value="ប.ស.ស (ស្វ័យនិយោជន៍)">ប.ស.ស (ស្វ័យនិយោជន៍)</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- Row 3: Teeth, Diagnosis (Indication), Diagnosis (ICD10) នៅជួរជាមួយគ្នា -->
+        <div class="row-three-cols">
+          <div class="field">
+            <label>លេខធ្មេញ · Teeth (FDI)</label>
+            <input type="text" id="f_teeth" class="mono" placeholder="ឧ. 16, 24, 54, 61">
+          </div>
+
+          <div class="field">
+            <label>Diagnosis (Indication)</label>
+            <select id="f_diagnosis" class="kh">
+              <option value="ឈឺធ្មេញ">ឈឺធ្មេញ</option>
+              <option value="ធ្មេញរង្គើរ">ធ្មេញរង្គើរ</option>
+              <option value="ឈាមអញ្ចាញធ្មេញ">ឈាមអញ្ចាញធ្មេញ</option>
+              <option value="ហើមអញ្ចាញ">ហើមអញ្ចាញ</option>
+              <option value="ខ្ទុះអញ្ចាញ">ខ្ទុះអញ្ចាញ</option>
+              <option value="custom">ផ្សេងទៀត / Custom…</option>
+            </select>
+            <input type="text" id="f_diagnosis_custom" placeholder="សរសេរផ្សេង / type custom" style="margin-top:6px;display:none;">
+          </div>
+
+          <div class="field">
+            <label>Diagnosis (ICD10)</label>
+            <select id="f_idc10" class="kh">
+              <option value="K00-ធ្មេញដុះឬលូតលាស់ខុសប្រក្រតី">K00 - ធ្មេញដុះឬលូតលាស់ខុសប្រក្រតី</option>
+              <option value="K01-ធ្មេញដុះកប់">K01 - ធ្មេញដុះកប់</option>
+              <option value="K02-ធ្មេញដង្កូវស៊ី">K02 - ធ្មេញដង្កូវស៊ី</option>
+              <option value="K03-ជំងឺធ្មេញលើ (Enamel,Dentin,Cementum)">K03 - ជំងឺធ្មេញលើ (Enamel, Dentin, Cementum)</option>
+              <option value="K04-ជំងឺលើបណ្តូលធ្មេញ (Pulp)">K04 - ជំងឺលើបណ្តូលធ្មេញ (Pulp)</option>
+              <option value="K05-ជំងឺលើអញ្ចាញធ្មេញ">K05 - ជំងឺលើអញ្ចាញធ្មេញ</option>
+              <option value="K06-ជំងឺលើឆ្អឹងអញ្ចាញធ្មេញ (Edentulous alveolar ridge)">K06 - ជំងឺលើឆ្អឹងអញ្ចាញធ្មេញ (Edentulous alveolar ridge)</option>
+              <option value="K08-ជំងឺលើតួធ្មេញ">K08 - ជំងឺលើតួធ្មេញ</option>
+              <option value="K09-ជំងឺស៊ីសមាត់ធ្មេញ">K09 - ជំងឺស៊ីសមាត់ធ្មេញ</option>
+              <option value="K11-ជំងឺក្រពេញទឹកមាត់">K11 - ជំងឺក្រពេញទឹកមាត់</option>
+              <option value="K12-ជំងឺរលាកឬដំបៅភ្នាស់មាត់">K12 - ជំងឺរលាកឬដំបៅភ្នាស់មាត់</option>
+              <option value="K13-ជំងឺលើបបូរមាត់ (Lip,Oral Mucosa)">K13 - ជំងឺលើបបូរមាត់ (Lip, Oral Mucosa)</option>
+              <option value="K14-ជំងឺលើអណ្តាត">K14 - ជំងឺលើអណ្តាត</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 4: Treatment, Procedures, Procedure Time នៅជួរជាមួយគ្នា -->
+        <div class="row-treatment-proc-time">
+          <div class="field">
+            <label>Treatment</label>
+            <select id="f_treatment" class="kh">
+              <option value="វះកាត់ ចង់ថ្គាម">វះកាត់ ចង់ថ្គាម</option>
+              <option value="វះកាត់ វះបួស">វះកាត់ វះបួស</option>
+              <option value="វះកាត់ ផ្សេងៗ">វះកាត់ ផ្សេងៗ</option>
+              <option value="ដកធ្មេញ ព្រៃ">ដកធ្មេញ ព្រៃ</option>
+              <option value="ដកធ្មេញ ស្រុក">ដកធ្មេញ ស្រុក</option>
+              <option value="ប៉ះធ្មេញ GIC">ប៉ះធ្មេញ GIC</option>
+              <option value="ប៉ះធ្មេញ Amalgam">ប៉ះធ្មេញ Amalgam</option>
+              <option value="ប៉ះធ្មេញ Composite">ប៉ះធ្មេញ Composite</option>
+              <option value="ប៉ះធ្មេញ ផ្សេងៗ">ប៉ះធ្មេញ ផ្សេងៗ</option>
+              <option value="ថតធ្មេញ X-ray">ថតធ្មេញ X-ray</option>
+              <option value="ព្យាបាលធ្មេញ (RCT)">ព្យាបាលធ្មេញ (RCT)</option>
+              <option value="សំអាតកំបោរ Scaling">សំអាតកំបោរ Scaling</option>
+              <option value="បិតការពារ Sealant">បិតការពារ Sealant</option>
+              <option value="ភ្លុយអរ Varnish or Gel">ភ្លុយអរ Varnish or Gel</option>
+              <option value="ដាក់ធ្មេញ ជាប់">ដាក់ធ្មេញ ជាប់</option>
+              <option value="ដាក់ធ្មេញ ដោះ">ដាក់ធ្មេញ ដោះ</option>
+              <option value="ពិគ្រោះជំងឺ">ពិគ្រោះជំងឺ</option>
+              <option value="custom">ផ្សេងទៀត / Custom…</option>
+            </select>
+            <input type="text" id="f_treatment_custom" placeholder="សរសេរផ្សេង / type custom" style="margin-top:6px;display:none;">
+          </div>
+          <div class="field">
+            <label>នីតិវិធី · Procedures</label>
+            <select id="f_procedure_select" class="kh">
+              <option value="Opening">Opening</option>
+              <option value="Dressing Calcium">Dressing Calcium</option>
+              <option value="Obturation">Obturation</option>
+              <option value="Scaling upper/lower">Scaling upper/lower</option>
+              <option value="Irrigation with NaOCl">Irrigation with NaOCl</option>
+              <option value="Working length measurement">Working length measurement</option>
+              <option value="Tooth Extraction">Tooth Extraction</option>
+              <option value="Suture">Suture</option>
+              <option value="Composite Restoration">Composite Restoration</option>
+              <option value="GIC Filling">GIC Filling</option>
+              <option value="Crown preparation">Crown preparation</option>
+              <option value="Impression taking">Impression taking</option>
+              <option value="Crown cementation">Crown cementation</option>
+              <option value="custom">ផ្សេងទៀត / Custom…</option>
+            </select>
+            <textarea id="f_doing" class="kh" placeholder="សរសេរនីតិវិធីលម្អិត / custom procedure..." style="margin-top:6px;display:none;"></textarea>
+          </div>
+          <div class="field">
+            <label>ម៉ោងនីតិវិធី · Procedure Time</label>
+            <input type="datetime-local" id="f_doingDateTime" class="mono">
+          </div>
+        </div>
+
+        <!-- Row 5: ស្ថានភាព Status & ការណាត់ជួប -->
+        <div class="appointment-box-wrapper">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--amber-dark); margin-bottom:10px;">
+            ស្ថានភាពព្យាបាល និងការណាត់ជួប · Status & Appointment
+          </div>
+          <div class="status-checkbox-group">
+            <label class="status-check-label" style="color:var(--primary-dark);">
+              <input type="checkbox" id="chk_done" onchange="selectStatusCheckbox('Done')">
+              <span>✅ រួចរាល់ (Done)</span>
+            </label>
+            <label class="status-check-label appt-lbl" style="color:var(--amber-dark);">
+              <input type="checkbox" id="chk_appt" onchange="selectStatusCheckbox('Appt')">
+              <span>🗓️ មានណាត់ (Appt)</span>
+            </label>
+            <label class="status-check-label missing-lbl" style="color:var(--coral-dark);">
+              <input type="checkbox" id="chk_missing" onchange="selectStatusCheckbox('Missing')">
+              <span>⏳ រង់ចាំ/អវត្តមាន (Missing)</span>
+            </label>
+          </div>
+          
+          <div id="appointmentFields" class="appointment-fields-grid" style="display:none;">
+            <div class="field" style="margin:0;">
+              <label>ថ្ងៃខែឆ្នាំ និងម៉ោងណាត់ · Appointment Date-Time</label>
+              <input type="datetime-local" id="f_apptDateTime" class="mono">
+            </div>
+            <div class="field" style="margin:0;">
+              <label>គម្រោងព្យាបាលលើកក្រោយ · Plan DO</label>
+              <input type="text" id="f_planDo" class="kh" placeholder="ឧ. Obturation, Luting crown, Remove suture...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 6: តារាងចេញថ្នាំ -->
+        <div class="med-table-wrapper">
+          <div class="med-table-header">
+            <label style="margin:0;">💊 តារាងចេញថ្នាំ · Medication Prescription</label>
+            <button type="button" class="btn btn-outline btn-sm" id="addMedRowBtn" style="padding:4px 10px;font-size:11.5px;">＋ បន្ថែមថ្នាំ / Add</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="med-table" id="medPrescriptionTable">
+              <thead>
+                <tr>
+                  <th style="width:130px;">ថ្ងៃចេញថ្នាំ (Date)</th>
+                  <th>ឈ្មោះថ្នាំ (Medicine)</th>
+                  <th style="width:190px;">ពេលលេប (Dosage Time)</th>
+                  <th style="width:90px;">ចំនួន (Qty)</th>
+                  <th style="width:36px;text-align:center;">លុប</th>
+                </tr>
+              </thead>
+              <tbody id="medTableBody"></tbody>
+            </table>
+          </div>
+          <div class="quick-med-pills">
+            <span style="font-size:11px;color:var(--ink-dim);align-self:center;">ថ្នាំប្រើញឹកញាប់៖</span>
+            <span class="q-pill" onclick="quickAddMed('Amoxicillin 500mg', '10')">Amoxicillin (500mg)</span>
+            <span class="q-pill" onclick="quickAddMed('Ibuprofen 400mg', '10')">Ibuprofen (400mg)</span>
+            <span class="q-pill" onclick="quickAddMed('Paracetamol 500mg', '10')">Paracetamol (500mg)</span>
+            <span class="q-pill" onclick="quickAddMed('Metronidazole 500mg', '10')">Metronidazole (500mg)</span>
+            <span class="q-pill" onclick="quickAddMed('Omeprazole 20mg', '10')">Omeprazole (20mg)</span>
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-actions">
+        <div class="left-action">
+          <button type="button" class="btn btn-danger hidden" id="deleteFormBtn" onclick="deleteSingleRecord()">🗑 លុប Delete</button>
+          <button type="button" class="btn btn-outline kh" id="xrayBtn" onclick="openXrayModal()">📷 X-Ray</button>
+        </div>
+        <button type="button" class="btn btn-outline" id="cancelForm">បោះបង់ Cancel</button>
+        <button type="button" class="btn btn-primary" id="saveForm">រក្សាទុក Save record</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- X-Ray upload modal -->
+<div class="overlay hidden" id="xrayModalOverlay">
+  <div class="modal narrow">
+    <div class="modal-head"><h2 class="kh">📷 ថតកាំរស្មី · Add X-Ray</h2><button class="x" id="closeXrayModal">✕</button></div>
+    <div class="modal-body">
+      <div id="xrayPreviewArea" style="border:2px dashed var(--border);border-radius:14px;min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--surface-2);cursor:pointer;overflow:hidden;padding:14px;text-align:center;" onclick="document.getElementById('xrayFileInput').click()">
+        <div id="xrayPlaceholder" class="kh" style="color:var(--ink-dim);font-size:13px;">
+          <div style="font-size:32px;margin-bottom:6px;">🦷📷</div>
+          មិនទាន់មានរូបភាពទេ<br>ចុចទីនេះដើម្បីជ្រើសរើសរូបពី Computer / កាមេរ៉ា
+        </div>
+        <img id="xrayPreviewImg" class="hidden" style="max-width:100%;max-height:320px;border-radius:10px;object-fit:contain;">
+      </div>
+      <input type="file" id="xrayFileInput" accept="image/*" capture="environment" class="hidden">
+      <div id="xrayFileName" class="mono" style="font-size:11px;color:var(--ink-dim);margin-top:8px;text-align:center;"></div>
+      <div id="xrayStatus" class="kh" style="font-size:12.5px;text-align:center;margin-top:10px;min-height:16px;color:var(--primary-dark);font-weight:600;"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline" id="xrayCancelBtn" style="flex:1;justify-content:center;">បោះបង់ Cancel</button>
+        <button type="button" class="btn btn-primary" id="xrayAddBtn" style="flex:1;justify-content:center;" disabled>⬆ Add · បង្ហោះទៅ Drive</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- X-Ray Gallery modal -->
+<div class="overlay hidden" id="xrayGalleryOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 class="kh" id="xrayGalleryTitle">📷 រូបភាព X-Ray អ្នកជំងឺ</h2>
+      <button class="x" id="closeXrayGallery">✕</button>
+    </div>
+    <div class="modal-body" id="xrayGalleryBody">
+    </div>
+  </div>
+</div>
+
+<!-- Print modal -->
+<div class="overlay hidden" id="printOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2 class="kh" id="printOverlayTitle">កំណត់ត្រា · Print Record</h2><button class="x" id="closePrint">✕</button></div>
+    <div class="modal-body">
+      <div id="printArea"></div>
+      <div class="modal-actions">
+        <button class="btn btn-primary hidden kh" id="exportAllExcelBtn" style="flex:1;justify-content:center;background-color:#0E9384;border-color:#0E9384;">📊 Data Excel</button>
+        <button class="btn btn-outline" id="closePrintBtn" style="flex:1;justify-content:center;">បិទ Close</button>
+        <button class="btn btn-primary" id="printBtn" style="flex:1;justify-content:center;">🖨 Print / Save PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="overlay hidden" id="settingsOverlay">
+  <div class="modal narrow">
+    <div class="modal-head"><h2 class="kh">ព័ត៌មានគ្លីនិក · Clinic Info</h2><button class="x" id="closeSettings">✕</button></div>
+    <div class="modal-body">
+      <div class="field" style="margin-bottom:10px;"><div class="k" style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">ឈ្មោះគ្លីនិក</div><input type="text" id="s_clinicName"></div>
+      <div class="field" style="margin-bottom:10px;"><div class="k" style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">អាសយដ្ឋាន</div><input type="text" id="s_address"></div>
+      <div class="field" style="margin-bottom:16px;"><div class="k" style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">ទូរស័ព្ទ</div><input type="text" id="s_phone"></div>
+      <hr style="border:none;border-top:1px solid var(--border-soft);margin:4px 0 16px;">
+      <div class="field" style="margin-bottom:8px;">
+        <div class="k" style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">🔄 Google Sheet Sync URL (Apps Script)</div>
+        <input type="text" id="s_webappurl">
+      </div>
+      <button class="btn btn-primary btn-block" id="saveSettingsBtn">រក្សាទុក Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Report Page Modal -->
+<div class="overlay hidden" id="reportOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 class="kh">របាយការណ៍ · Report</h2>
+      <button class="x" id="closeReport">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="reportTopActions" style="text-align: right; margin-bottom: 15px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-primary btn-sm kh" onclick="openDiseaseListModal()" style="background-color: var(--amber-dark); border-color: var(--amber-dark);">📋 បញ្ជីជំងឺ (DHIS2)</button>
+        <button class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="ទិន្នន័យជំងឺ" style="background-color: var(--coral); border-color: var(--coral);">📄 ទិន្នន័យជំងឺ</button>
+        <button class="btn btn-outline btn-sm kh" id="printFullReportBtn" title="Print Report" onclick="printFullReport()">🖨️ Print</button>
+      </div>
+      
+      <!-- 1. Today Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">របាយការណ៍ថ្ងៃនេះ · Today's Report</h4>
+          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+        </div>
+        <div id="todayStatsRow"></div>
+      </div>
+
+      <!-- 2. This Month Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">របាយការណ៍ប្រចាំខែនេះ · This Month's Report</h4>
+          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+        </div>
+        <div id="thisMonthStatsRow"></div>
+      </div>
+
+      <!-- 3. Demographics Stats (ស្ថិតិអ្នកជំងឺសរុប) -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">ស្ថិតិអ្នកជំងឺសរុប · Overall Demographics</h4>
+          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+        </div>
+        <div class="stats2" id="demoStatsRow" style="margin-bottom:0;"></div>
+      </div>
+
+      <!-- 4. Registration Card Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">Registration Card</h4>
+          <div>
+            <span id="clearTypeFilterBtn" class="mono kh" style="font-size:11px;color:var(--primary);cursor:pointer;font-weight:700;display:none;margin-right:10px;" onclick="filterByType('all')">✕ មើលទាំងអស់ (View All)</span>
+            <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+          </div>
+        </div>
+        <div class="card-type-stats-grid" id="cardTypeStatsRow"></div>
+      </div>
+
+      <!-- 5. Treatment Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">ស្ថិតិការព្យាបាលសរុប · Total Treatment Statistics</h4>
+          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+        </div>
+        <div class="treatment-stats-grid" id="treatmentStatsRow"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Disease List Modal (បញ្ជីជំងឺ) -->
+<div class="overlay hidden" id="diseaseListOverlay" style="z-index: 105;">
+  <div class="modal" style="max-width: 95vw; height: 90vh; display: flex; flex-direction: column;">
+    <div class="modal-head">
+      <h2 class="kh">បញ្ជីជំងឺ (DHIS2)</h2>
+      <button class="x" id="closeDiseaseList">✕</button>
+    </div>
+    <div class="modal-body" style="flex: 1; overflow: auto; padding: 16px;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; position: sticky; left: 0;">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ខែ · Month</label>
+          <select id="dlFilterMonth" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
+            <option value="">ទាំងអស់ · All</option>
+            <option value="1">01</option><option value="2">02</option><option value="3">03</option>
+            <option value="4">04</option><option value="5">05</option><option value="6">06</option>
+            <option value="7">07</option><option value="8">08</option><option value="9">09</option>
+            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          </select>
+          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ឆ្នាំ · Year</label>
+          <select id="dlFilterYear" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
+            <option value="">ទាំងអស់ · All</option>
+          </select>
+          <button class="btn btn-primary btn-sm kh" onclick="applyDiseaseListFilter()">🔍 ត្រង · Filter</button>
+          
+          <!-- Summary badges ជាប់នឹង Button Filter -->
+          <div id="dlSummaryBadges" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-left: 6px;">
+            <span class="dl-summary-badge kh" style="color:var(--primary-dark); border-color:var(--primary-soft); background:var(--primary-softer);">
+              សរុប: <span class="val" id="dlSumTotal">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--primary-dark);">
+              ប្រុស: <span class="val" id="dlSumMale">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--coral-dark);">
+              ស្រី: <span class="val" id="dlSumFemale">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--amber-dark);">
+              ក្មេង (≤15): <span class="val" id="dlSumKids">0</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListPDF()" style="background-color: var(--coral); border-color: var(--coral);">📄 Export PDF</button>
+          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListExcel()">📊 Export Excel</button>
+        </div>
+      </div>
+      <div id="diseaseListTableContainer" style="overflow-x: auto; border: 1px solid var(--border); border-radius: 8px;">
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const UPPER = ["18","17","16","15","14","13","12","11","21","22","23","24","25","26","27","28"];
+const PRIMARY_UPPER_PADDED = ["","","","55","54","53","52","51","61","62","63","64","65","","",""];
+const PRIMARY_LOWER_PADDED = ["","","","85","84","83","82","81","71","72","73","74","75","","",""];
+const LOWER = ["48","47","46","45","44","43","42","41","31","32","33","34","35","36","37","38"];
+
+const CARD_TYPES = [
+  "បង់ពេញថ្លៃ",
+  "លើកលែង",
+  "មូលនិធិសមធម៌ (ក្រីក្រ)",
+  "មូលនិធិសមធម៌ (ហានិភ័យ)",
+  "មូលនិធិសមធម៌ (ក្រៅប្រព័ន្ធ)",
+  "ប.ស.ស (កម្មករ)",
+  "ប.ស.ស (សាធារណៈឬក្នុងបន្ទុក)",
+  "ប.ស.ស (ស្វ័យនិយោជន៍)"
+];
+
+const KNOWN_PROCEDURES = [
+  "Opening", "Dressing Calcium", "Obturation", "Scaling upper/lower",
+  "Irrigation with NaOCl", "Working length measurement", "Tooth Extraction",
+  "Suture", "Composite Restoration", "GIC Filling", "Crown preparation",
+  "Impression taking", "Crown cementation"
+];
+
+const LOCAL_STORAGE_RECORDS_KEY = 'kep_dental_records_cache_v4';
+const PENDING_SYNC_QUEUE_KEY = 'kep_dental_pending_push_queue_v3';
+
+let allRecords = [];
+let clinicInfo = {name:'Kep Hospital-Dental Service', address:'Kep, Cambodia', phone:''};
+
+const DEFAULT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyvKjJ2kOEWhcfR6Ppb1s6-hKl2azvFqiyUe6WRhrhGdtziHq6TKHJiDmTX96pi3HPL/exec';
+let webAppUrl = DEFAULT_WEB_APP_URL;
+
+localStorage.setItem('kep_dental_webapp_url', DEFAULT_WEB_APP_URL);
+
+let filterCardType = 'all';
+let searchTerm = '';
+let editingIndex = null;
+let editingOriginalTimestamp = null;
+let editingOriginalRecord = null;
+let editingRecordId = null;
+let activePatientContext = null;
+let isMobileView = false;
+let currentFormStatus = 'Appt';
+
+function selectStatusCheckbox(status) {
+  currentFormStatus = status;
+  document.getElementById('chk_done').checked = (status === 'Done');
+  document.getElementById('chk_appt').checked = (status === 'Appt');
+  document.getElementById('chk_missing').checked = (status === 'Missing');
+
+  const apptFields = document.getElementById('appointmentFields');
+  if (status === 'Appt') {
+    apptFields.style.display = 'grid';
+    if (!document.getElementById('f_apptDateTime').value) {
+      document.getElementById('f_apptDateTime').value = getLocalNowDateTime();
+    }
+  } else {
+    apptFields.style.display = 'none';
+  }
+}
+
+window.addEventListener('popstate', function(e) {
+    const hash = window.location.hash;
+    document.querySelectorAll('.overlay').forEach(el => el.classList.add('hidden'));
+
+    if (hash === '#form') document.getElementById('formOverlay').classList.remove('hidden');
+    else if (hash === '#patient') document.getElementById('patientOverlay').classList.remove('hidden');
+    else if (hash === '#detail') document.getElementById('detailOverlay').classList.remove('hidden');
+    else if (hash === '#report') document.getElementById('reportOverlay').classList.remove('hidden');
+    else if (hash === '#settings') document.getElementById('settingsOverlay').classList.remove('hidden');
+    else if (hash === '#toothHistory') document.getElementById('toothHistoryModalOverlay').classList.remove('hidden');
+    else if (hash === '#xrayGallery') document.getElementById('xrayGalleryOverlay').classList.remove('hidden');
+    else if (hash === '#xrayUpload') document.getElementById('xrayModalOverlay').classList.remove('hidden');
+    else if (hash === '#diseaseList') document.getElementById('diseaseListOverlay').classList.remove('hidden');
+});
+
+const DELETED_STORE_KEY = 'kep_dental_deletedIdentifiers_v3';
+let deletedIdentifiers = new Set();
+
+function loadDeletedIdentifiers(){
+  try{
+    const raw = localStorage.getItem(DELETED_STORE_KEY);
+    if(raw){
+      const arr = JSON.parse(raw);
+      if(Array.isArray(arr)) deletedIdentifiers = new Set(arr);
+    }
+  }catch(e){}
+}
+
+function saveDeletedIdentifiers(){
+  try{
+    localStorage.setItem(DELETED_STORE_KEY, JSON.stringify(Array.from(deletedIdentifiers)));
+  }catch(e){}
+}
+loadDeletedIdentifiers();
+
+function saveLocalRecords(){
+  try{
+    localStorage.setItem(LOCAL_STORAGE_RECORDS_KEY, JSON.stringify(allRecords));
+  }catch(e){}
+}
+
+function loadLocalRecords(){
+  try{
+    const raw = localStorage.getItem(LOCAL_STORAGE_RECORDS_KEY);
+    if(raw){
+      const arr = JSON.parse(raw);
+      if(Array.isArray(arr) && arr.length > 0){
+        allRecords = arr;
+        renderAll();
+      }
+    }
+  }catch(e){}
+}
+
+function cleanStr(s){
+  return String(s || '').replace(/[\u00A0\u1680​\u180e\u2000-\u200a\u2028\u2029\u202f\u205f\u3000]/g, ' ').trim();
+}
+
+function formatPhoneDisplay(p){
+  let s = cleanStr(p).replace(/^'+/, '').replace(/[\s\-\.]/g, '');
+  if(!s) return '';
+  s = s.replace(/^0+/, '');
+  return s !== '' ? '0' + s : '';
+}
+
+function genCode(){
+  return 'ID' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+function getCardTypeBadgeClass(typeStr){
+  const s = cleanStr(typeStr);
+  if(s.includes('លើកលែង')) return 'type-red';
+  if(s.includes('មូលនិធិ')) return 'type-blue';
+  if(s.includes('ប.ស.ស') || s.includes('បសស')) return 'type-yellow';
+  return 'type-default';
+}
+
+function showConfirm(message, onConfirm){
+  const ov = document.createElement('div');
+  ov.className = 'overlay';
+  ov.style.zIndex = '999';
+  ov.innerHTML = `<div class="modal narrow" style="max-width:380px;">
+      <div class="modal-body" style="padding:24px 22px;text-align:center;">
+        <div class="kh" style="font-size:13.5px;color:var(--ink);margin-bottom:18px;line-height:1.6;white-space:pre-line;">${message}</div>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button class="btn btn-outline" id="confirmCancelBtn">បោះបង់ Cancel</button>
+          <button class="btn btn-danger" id="confirmOkBtn">លុប Delete</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector('#confirmCancelBtn').addEventListener('click', ()=> document.body.removeChild(ov));
+  ov.querySelector('#confirmOkBtn').addEventListener('click', ()=>{ document.body.removeChild(ov); onConfirm(); });
+}
+
+function getLocalTodayYMD(){
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getLocalNowDateTime(){
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function format12Hour(hour24, minute){
+  let hr = Number(hour24);
+  const mn = String(minute || 0).padStart(2, '0');
+  const ampm = hr >= 12 ? 'PM' : 'AM';
+  hr = hr % 12;
+  if(hr === 0) hr = 12;
+  return `${String(hr).padStart(2, '0')}:${mn} ${ampm}`;
+}
+
+function parseAnyDate(str){
+  if(!str) return null;
+  const s = cleanStr(str);
+  if(!s) return null;
+
+  let m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})(?:[T\s](\d{1,2}):(\d{1,2}))?(?:\s*(AM|PM))?/i);
+  if(m){
+    let hr = m[4] !== undefined ? Number(m[4]) : 0;
+    const min = m[5] !== undefined ? Number(m[5]) : 0;
+    if(m[6]){
+      const a = m[6].toUpperCase();
+      if(a === 'PM' && hr < 12) hr += 12;
+      if(a === 'AM' && hr === 12) hr = 0;
+    }
+    return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]), hr, min, 0);
+  }
+
+  m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})(?:[T\s](\d{1,2}):(\d{1,2}))?(?:\s*(AM|PM))?/i);
+  if(m){
+    let day = Number(m[1]), month = Number(m[2]), year = Number(m[3]);
+    let hr = m[4] !== undefined ? Number(m[4]) : 0;
+    const min = m[5] !== undefined ? Number(m[5]) : 0;
+    if(m[6]){
+      const a = m[6].toUpperCase();
+      if(a === 'PM' && hr < 12) hr += 12;
+      if(a === 'AM' && hr === 12) hr = 0;
+    }
+    return new Date(year, month - 1, day, hr, min, 0);
+  }
+
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function formatDateDisplay(str){
+  if(!str) return '—';
+  const s = cleanStr(str);
+
+  let m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})[T\s](\d{1,2}):(\d{1,2})\s*(AM|PM)/i);
+  if(m){
+    const yr = m[1];
+    const mo = String(m[2]).padStart(2, '0');
+    const da = String(m[3]).padStart(2, '0');
+    let hr = Number(m[4]);
+    const mn = String(m[5]).padStart(2, '0');
+    const ampm = m[6].toUpperCase();
+    if(hr === 0) hr = 12;
+    return `${yr}/${mo}/${da} ${String(hr).padStart(2, '0')}:${mn} ${ampm}`;
+  }
+
+  m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})(?:[T\s](\d{1,2}):(\d{1,2}))?/);
+  if(m){
+    const yr = m[1];
+    const mo = String(m[2]).padStart(2, '0');
+    const da = String(m[3]).padStart(2, '0');
+    if(m[4] !== undefined){
+      return `${yr}/${mo}/${da} ${format12Hour(m[4], m[5])}`;
+    }
+    return `${yr}/${mo}/${da}`;
+  }
+
+  m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})(?:[T\s](\d{1,2}):(\d{1,2}))?/);
+  if(m){
+    const yr = m[3];
+    const mo = String(m[2]).padStart(2, '0');
+    const da = String(m[1]).padStart(2, '0');
+    if(m[4] !== undefined){
+      return `${yr}/${mo}/${da} ${format12Hour(m[4], m[5])}`;
+    }
+    return `${yr}/${mo}/${da}`;
+  }
+
+  return s;
+}
+
+function dateToYMDTime(str){
+  if(!str) return '';
+  const s = cleanStr(str);
+  let m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})[T\s](\d{1,2}):(\d{1,2})(?:\s*(AM|PM))?/i);
+  if(m){
+    let hr = Number(m[4]);
+    const mn = String(m[5]).padStart(2, '0');
+    if(m[6]){
+      const a = m[6].toUpperCase();
+      if(a === 'PM' && hr < 12) hr += 12;
+      if(a === 'AM' && hr === 12) hr = 0;
+    }
+    return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}T${String(hr).padStart(2,'0')}:${mn}`;
+  }
+  m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+  if(m){
+    return `${m[1]}-${String(m[2]).padStart(2,'0')}-${String(m[3]).padStart(2,'0')}T08:00`;
+  }
+  const d = parseAnyDate(str);
+  if(!d) return '';
+  const y = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hr = String(d.getHours()).padStart(2, '0');
+  const min = String(d.getMinutes()).padStart(2, '0');
+  return `${y}-${month}-${day}T${hr}:${min}`;
+}
+
+function patientKey(r){ 
+  return cleanStr(r.name).toLowerCase();
+}
+
+const procSelect = document.getElementById('f_procedure_select');
+const procDoing = document.getElementById('f_doing');
+procSelect.addEventListener('change', (e) => {
+  if(e.target.value === 'custom'){
+    procDoing.style.display = 'block';
+    procDoing.focus();
+  } else {
+    procDoing.style.display = 'none';
+    procDoing.value = e.target.value;
+  }
+});
+
+function addMedicationRow(data = {}){
+  const tbody = document.getElementById('medTableBody');
+  const tr = document.createElement('tr');
+  const defaultDate = data.date || getLocalTodayYMD();
+  const name = data.name || '';
+  const m = data.m !== undefined ? data.m : true;
+  const n = data.n !== undefined ? data.n : true;
+  const e = data.e !== undefined ? data.e : true;
+  const qty = data.qty || '10';
+
+  tr.innerHTML = `
+    <td><input type="date" class="med-input med-row-date" value="${defaultDate}"></td>
+    <td><input type="text" class="med-input med-row-name kh" placeholder="ឈ្មោះថ្នាំ (ឧ. Amoxicillin)" value="${name}"></td>
+    <td>
+      <div class="med-time-checks">
+        <label><input type="checkbox" class="med-row-m" ${m ? 'checked':''}> ព្រឹក</label>
+        <label><input type="checkbox" class="med-row-n" ${n ? 'checked':''}> ថ្ងៃ</label>
+        <label><input type="checkbox" class="med-row-e" ${e ? 'checked':''}> ល្ងាច</label>
+      </div>
+    </td>
+    <td><input type="text" class="med-input med-row-qty" placeholder="10" value="${qty}"></td>
+    <td style="text-align:center;"><button type="button" class="btn btn-danger btn-sm" style="padding:3px 7px;font-size:11px;" onclick="this.closest('tr').remove()">✕</button></td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function quickAddMed(name, defaultQty){
+  addMedicationRow({name, qty: defaultQty, m:true, n:true, e:true});
+}
+
+function getPrescriptionData(){
+  const rows = document.querySelectorAll('#medTableBody tr');
+  const items = [];
+  rows.forEach(tr => {
+    const date = tr.querySelector('.med-row-date').value;
+    const name = tr.querySelector('.med-row-name').value.trim();
+    const m = tr.querySelector('.med-row-m').checked;
+    const n = tr.querySelector('.med-row-n').checked;
+    const e = tr.querySelector('.med-row-e').checked;
+    const qty = tr.querySelector('.med-row-qty').value.trim();
+    if(name){
+      items.push({date, name, m, n, e, qty});
+    }
+  });
+  return items;
+}
+
+function stringifyPrescription(items){
+  if(!items || items.length === 0) return '';
+  return items.map(it => {
+    const times = [];
+    if(it.m) times.push('ព្រឹក');
+    if(it.n) times.push('ថ្ងៃ');
+    if(it.e) times.push('ល្ងាច');
+    const timeStr = times.length ? `[${times.join('+')}]` : '';
+    const qtyStr = it.qty ? `(${it.qty})` : '';
+    const dateStr = it.date ? it.date.replace(/-/g, '/') + ': ' : '';
+    return `${dateStr}${it.name} ${timeStr} ${qtyStr}`.trim();
+  }).join('; ');
+}
+
+function parsePrescriptionString(str){
+  if(!str) return [];
+  const parts = str.split(';');
+  const items = [];
+  parts.forEach(p => {
+    p = p.trim();
+    if(!p) return;
+    let date = getLocalTodayYMD();
+    let name = p;
+    let m = true, n = true, e = true;
+    let qty = '10';
+
+    const dateMatch = p.match(/^(\d{4}[-\/]\d{2}[-\/]\d{2}):\s*(.*)/);
+    if(dateMatch){
+      date = dateMatch[1].replace(/\//g, '-');
+      name = dateMatch[2];
+    }
+    const timeMatch = name.match(/\[(.*?)\]/);
+    if(timeMatch){
+      const tStr = timeMatch[1];
+      m = tStr.includes('ព្រឹក');
+      n = tStr.includes('ថ្ងៃ');
+      e = tStr.includes('ល្ងាច');
+      name = name.replace(/\[.*?\]/, '').trim();
+    }
+    const qtyMatch = name.match(/\((.*?)\)/);
+    if(qtyMatch){
+      qty = qtyMatch[1];
+      name = name.replace(/\(.*?\)/, '').trim();
+    }
+    items.push({date, name, m, n, e, qty});
+  });
+  return items;
+}
+
+document.getElementById('addMedRowBtn').addEventListener('click', () => addMedicationRow());
+
+function getPendingQueue(){
+  try{
+    const raw = localStorage.getItem(PENDING_SYNC_QUEUE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){
+    return [];
+  }
+}
+
+function savePendingQueue(queue){
+  try{
+    localStorage.setItem(PENDING_SYNC_QUEUE_KEY, JSON.stringify(queue));
+  }catch(e){}
+}
+
+let isFlushingQueue = false;
+async function flushPendingQueue(){
+  if(isFlushingQueue || !navigator.onLine || !webAppUrl) return;
+  const queue = getPendingQueue();
+  if(queue.length === 0) return;
+
+  isFlushingQueue = true;
+  const badge = document.getElementById('syncBadge');
+  badge.textContent = `⏳ កំពុង Sync (${queue.length})...`;
+
+  while(queue.length > 0){
+    const item = queue[0];
+    try{
+      await fetch(webAppUrl, {
+        method:'POST',
+        mode:'no-cors',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(item)
+      });
+      queue.shift();
+      savePendingQueue(queue);
+    } catch(err){
+      break;
+    }
+  }
+
+  isFlushingQueue = false;
+  badge.textContent = '✓ ស្វ័យប្រវត្តិរួចរាល់';
+  setTimeout(()=>{ badge.textContent = '🔄 Sync'; }, 2000);
+}
+
+function pushToSheet(action, data){
+  const payload = { action, data, timestamp: Date.now() };
+  const queue = getPendingQueue();
+  queue.push(payload);
+  savePendingQueue(queue);
+  flushPendingQueue();
+}
+
+window.addEventListener('online', flushPendingQueue);
+
+async function fetchFromSheet(isSilent = false){
+  if(!webAppUrl) return;
+  const badge = document.getElementById('syncBadge');
+  if(!isSilent) badge.textContent = '⏳ កំពុង Sync...';
+  try {
+    const res = await fetch(webAppUrl);
+    const json = await res.json();
+    if(json && json.status === 'success' && Array.isArray(json.data)){
+      const mapped = json.data.map((r, i) => {
+        let name = cleanStr(r['name'] || r[2] || '');
+        let sex = cleanStr(r['sex'] || r[3] || '').toUpperCase();
+        let age = cleanStr(r['age'] || r[4] || '');               
+        let type = cleanStr(r['type'] || r[5] || 'បង់ពេញថ្លៃ');
+        let phone = formatPhoneDisplay(r['phone'] || r[6] || '');
+        
+        let diagnosis = cleanStr(r['diagnosis'] || r[7] || '');   
+        let idc10 = cleanStr(r['idc10'] || r[8] || '');           
+        let treatment = cleanStr(r['treatment'] || r[9] || '');   
+        let teeth = cleanStr(r['teeth'] || r[10] || '');          
+        let doing = cleanStr(r['doing'] || r[11] || '');          
+        let doingDateTime = cleanStr(r['doingDateTime'] || r[12] || ''); 
+        let timeLast = cleanStr(r['timeLast'] || r[13] || '');    
+        let planDo = cleanStr(r['planDo'] || r[14] || '');        
+        let medication = cleanStr(r['medication'] || r[15] || '');
+        let status = cleanStr(r['status'] || r[16] || 'Done'); 
+
+        let timestamp = cleanStr(r['timestamp'] || r[0] || '');
+        let code = cleanStr(r['code'] || r[1] || '') || ('row_' + i);
+
+        if(!name) name = 'មិនមានឈ្មោះ (No Name)';
+
+        return {
+          ...r,
+          code, name, sex, age, type, phone, diagnosis, idc10, treatment, teeth, doing, doingDateTime, timeLast, planDo, medication, status, timestamp,
+          _id: code || ('rec_' + i)
+        };
+      });
+
+      const bestProfileByName = {};
+      mapped.forEach(r => {
+        const key = cleanStr(r.name).toLowerCase();
+        if(!bestProfileByName[key]) bestProfileByName[key] = {phone:'', sex:'', age:'', type:''};
+        if(cleanStr(r.phone)) bestProfileByName[key].phone = r.phone;
+        if(cleanStr(r.type)) bestProfileByName[key].type = r.type;
+        if(cleanStr(r.sex)) bestProfileByName[key].sex = r.sex;
+        if(cleanStr(r.age)) bestProfileByName[key].age = r.age;
+      });
+
+      mapped.forEach(r => {
+        const key = cleanStr(r.name).toLowerCase();
+        const best = bestProfileByName[key];
+        if(best){
+          if(!cleanStr(r.phone) && best.phone) r.phone = best.phone;
+          if(!cleanStr(r.type) && best.type) r.type = best.type;
+          if(!cleanStr(r.sex) && best.sex) r.sex = best.sex;
+          if(!cleanStr(r.age) && best.age) r.age = best.age;
+        }
+      });
+
+      allRecords = mapped.filter(r => {
+        const itemKey = `${cleanStr(r.name).toLowerCase()}_${cleanStr(r.timestamp)}_${cleanStr(r.diagnosis)}`;
+        return !deletedIdentifiers.has(r.code) && 
+               !deletedIdentifiers.has(cleanStr(r.name).toLowerCase()) &&
+               !deletedIdentifiers.has(itemKey);
+      });
+      
+      saveLocalRecords();
+      renderAll();
+      badge.textContent = '✓ Sync ជោគជ័យ';
+      setTimeout(()=>{ badge.textContent = '🔄 Sync'; }, 2500);
+    }
+  } catch(e) {
+    if(!isSilent) {
+      badge.textContent = '⚠️ Sync មិនជោគជ័យ';
+      setTimeout(()=>{ badge.textContent = '🔄 Sync'; }, 2500);
+    }
+  }
+}
+
+function parseTeeth(str){ if(!str) return []; return String(str).split(',').map(s=>s.trim()).filter(Boolean); }
+
+function archCellsHTML(arr, treatedSet, isPrimary = false){
+  const halfLen = arr.length / 2;
+  return arr.map((t, idx)=>{
+    const gap = idx === halfLen ? '<div class="quad-gap"></div>' : '';
+    if(!t) return gap + `<div class="tooth-cell invisible"></div>`;
+    const isTreated = treatedSet.has(t);
+    const primaryCls = isPrimary ? ' primary-tooth' : '';
+    const treatedCls = isTreated ? ' treated' : '';
+    const tooltip = isTreated ? `ធ្មេញលេខ ${t} (បានព្យាបាល - ចុចមើលប្រវត្តិ)` : `ធ្មេញលេខ ${t} (ចុចកត់ត្រាថ្មី)`;
+    return gap + `<div class="tooth-cell${primaryCls}${treatedCls}" data-tooth="${t}" title="${tooltip}">${t}</div>`;
+  }).join('');
+}
+
+function buildToothChartBlockHTML(treatedSet){
+  return `
+    <div class="odontogram-panel" style="margin:0; width:100%;">
+      <div class="arch-label">Upper Arch · ធ្មេញលើ</div>
+      <div class="arch-row upper-perm">${archCellsHTML(UPPER, treatedSet, false)}</div>
+      <div class="arch-row upper-prim">${archCellsHTML(PRIMARY_UPPER_PADDED, treatedSet, true)}</div>
+      <div class="arch-row lower-prim">${archCellsHTML(PRIMARY_LOWER_PADDED, treatedSet, true)}</div>
+      <div class="arch-row lower-perm">${archCellsHTML(LOWER, treatedSet, false)}</div>
+      <div class="arch-label">Lower Arch · ធ្មេញក្រោម</div>
+    </div>
+  `;
+}
+
+function getWeekRange(now){
+  now = now || new Date();
+  const dow = now.getDay();
+  const diffToMonday = (dow===0? -6 : 1-dow);
+  const monday = new Date(now); monday.setDate(now.getDate()+diffToMonday); monday.setHours(0,0,0,0);
+  const sunday = new Date(monday); sunday.setDate(monday.getDate()+6); sunday.setHours(23,59,59,999);
+  return {monday, sunday};
+}
+
+function getAppointments(){
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
+  
+  const rangeStart = new Date(y, m, d - 1, 0, 0, 0, 0);
+  const rangeEnd = new Date(y, m, d + 1, 23, 59, 59, 999);
+
+  const rowsAppt = allRecords.filter(r=>r.timeLast);
+  const todayList = [];
+  rowsAppt.forEach(r=>{
+    const dt = parseAnyDate(r.timeLast);
+    if(!dt) return;
+    if(dt >= rangeStart && dt <= rangeEnd) todayList.push({r, d: dt});
+  });
+  todayList.sort((a,b)=>a.d - b.d);
+
+  const todayProcList = [];
+  allRecords.forEach(r=>{
+    let dt = r.doingDateTime ? parseAnyDate(r.doingDateTime) : (parseAnyDate(r.timestamp) || null);
+    if(dt && dt >= rangeStart && dt <= rangeEnd) todayProcList.push({r, d: dt});
+  });
+  todayProcList.sort((a,b)=>b.d - a.d);
+
+  return {todayList, todayProcList};
+}
+
+function renderApptRow(item){
+  const {r,d} = item;
+  let hr = d.getHours();
+  const ampm = hr >= 12 ? 'PM' : 'AM';
+  hr = hr % 12;
+  if(hr === 0) hr = 12;
+  const timeStr = `${String(hr).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} ${ampm}`;
+  const dayStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+  const planText = cleanStr(r.planDo) || cleanStr(r.treatment) || cleanStr(r.diagnosis) || 'ពិនិត្យព្យាបាល';
+
+  return `
+    <div class="appt-row" data-name="${encodeURIComponent(r.name)}">
+      <div class="appt-time">
+        <div class="mono">${timeStr}</div>
+        <div class="appt-day mono">${dayStr}</div>
+      </div>
+      <div class="appt-main">
+        <div class="appt-name kh">${r.name}</div>
+        <div class="appt-meta">${formatPhoneDisplay(r.phone)||'no phone'} · <span class="kh">${r.treatment||r.diagnosis||'—'}</span></div>
+      </div>
+      <div class="appt-plan-badge kh" title="Plan DO: ${planText}">
+        📋 ${planText}
+      </div>
+    </div>`;
+}
+
+function renderProcRow(item){
+  const {r,d} = item;
+  let hr = d.getHours();
+  const ampm = hr >= 12 ? 'PM' : 'AM';
+  hr = hr % 12;
+  if(hr === 0) hr = 12;
+  const timeStr = `${String(hr).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} ${ampm}`;
+  const dayStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+  const planText = cleanStr(r.doing) || cleanStr(r.treatment) || cleanStr(r.diagnosis) || 'ពិនិត្យព្យាបាល';
+
+  return `
+    <div class="appt-row" data-name="${encodeURIComponent(r.name)}">
+      <div class="appt-time">
+        <div class="mono" style="color:var(--primary-dark);">${timeStr}</div>
+        <div class="appt-day mono">${dayStr}</div>
+      </div>
+      <div class="appt-main">
+        <div class="appt-name kh">${r.name}</div>
+        <div class="appt-meta">${formatPhoneDisplay(r.phone)||'គ្មានលេខ'} · <span class="kh">${r.treatment||r.diagnosis||'—'}</span></div>
+      </div>
+      <div class="appt-plan-badge kh" style="background:var(--primary-soft);color:var(--primary-dark);border-color:rgba(14,147,132,0.4);" title="Procedure: ${planText}">
+        📋 ${planText}
+      </div>
+    </div>`;
+}
+
+function renderAppointments(){
+  const {todayList, todayProcList} = getAppointments();
+  
+  document.getElementById('apptTodayCount').textContent = todayList.length;
+  document.getElementById('procTodayCount').textContent = todayProcList.length;
+  
+  const todayBody = document.getElementById('apptTodayBody');
+  const procBody = document.getElementById('procTodayBody');
+  
+  todayBody.innerHTML = todayList.length
+    ? todayList.map(renderApptRow).join('')
+    : `<div class="empty-state kh" style="padding:20px;font-size:12px;">មិនមានការណាត់ជួបក្នុងចន្លោះ ៣ ថ្ងៃនេះទេ<br><span style="opacity:.7">No appointments (yesterday - tomorrow)</span></div>`;
+    
+  procBody.innerHTML = todayProcList.length
+    ? todayProcList.map(renderProcRow).join('')
+    : `<div class="empty-state kh" style="padding:20px;font-size:12px;">មិនមានការព្យាបាលក្នុងចន្លោះ ៣ ថ្ងៃនេះទេ<br><span style="opacity:.7">No procedures (yesterday - tomorrow)</span></div>`;
+    
+  document.querySelectorAll('.appt-row').forEach(el=>{
+    el.addEventListener('click', ()=> openPatientRecord(decodeURIComponent(el.dataset.name)));
+  });
+}
+
+function renderPatientDemographics(){
+  const patientRows = allRecords.filter(r=>cleanStr(r.name));
+  const latestByPatient = new Map();
+  patientRows.forEach(r=>{
+    const key = patientKey(r);
+    const existing = latestByPatient.get(key);
+    if(!existing || (parseAnyDate(r.timestamp)||0) > (parseAnyDate(existing.timestamp)||0)) latestByPatient.set(key, r);
+  });
+  const patients = Array.from(latestByPatient.values());
+  const totalPatients = patients.length;
+  const totalMale = patients.filter(p=> { let s = String(p.sex||'').toUpperCase(); return s==='M' || s.includes('ប្រុស'); }).length;
+  const totalFemale = patients.filter(p=> { let s = String(p.sex||'').toUpperCase(); return s==='F' || s.includes('ស្រី'); }).length;
+  const totalGirls15 = patients.filter(p=>{ 
+    let s = String(p.sex||'').toUpperCase(); 
+    let a = parseInt(p.age, 10);
+    return (s==='F' || s.includes('ស្រី')) && !isNaN(a) && a<=15; 
+  }).length;
+  const totalChildren15 = patients.filter(p=>{ 
+    let a = parseInt(p.age, 10);
+    return !isNaN(a) && a<=15; 
+  }).length;
+
+  const now = new Date();
+  const todayKey = now.toDateString();
+  const {monday, sunday} = getWeekRange(now);
+  const monthKey = now.getFullYear()+'-'+(now.getMonth()+1);
+  const todaySet = new Set(), weekSet = new Set(), monthSet = new Set();
+  patientRows.forEach(r=>{
+    const d = parseAnyDate(r.timestamp);
+    if(!d) return;
+    const key = patientKey(r);
+    if(d.toDateString()===todayKey) todaySet.add(key);
+    if(d>=monday && d<=sunday) weekSet.add(key);
+    if((d.getFullYear()+'-'+(d.getMonth()+1))===monthKey) monthSet.add(key);
+  });
+
+  const stats = [
+    {label:'អ្នកជំងឺសរុប (នាក់)', sub:'Total Patients', val: totalPatients, cls:'highlight'},
+    {label:'អ្នកជំងឺប្រុសសរុប', sub:'Total Male', val: totalMale, cls:''},
+    {label:'អ្នកជំងឺស្រីសរុប', sub:'Total Female', val: totalFemale, cls:''},
+    {label:'ក្មេងស្រី (១៥ចុះ)', sub:'Girls ≤15', val: totalGirls15, cls:''},
+    {label:'ក្មេងសរុប (១៥ចុះ)', sub:'Children ≤15', val: totalChildren15, cls:''},
+    {label:'អ្នកជំងឺថ្ងៃនេះ', sub:'Patients Today', val: todaySet.size, cls:'amber'},
+    {label:'អ្នកជំងឺសប្តាហ៍នេះ', sub:'Patients This Week', val: weekSet.size, cls:'amber'},
+    {label:'អ្នកជំងឺខែនេះ', sub:'Patients This Month', val: monthSet.size, cls:'amber'},
+  ];
+  document.getElementById('demoStatsRow').innerHTML = stats.map(s=>`
+    <div class="stat-card ${s.cls}"><div class="stat-label kh">${s.label}</div><div class="stat-value">${s.val}</div><div class="stat-khmer">${s.sub}</div></div>`).join('');
+}
+
+function renderCardTypeStats(){
+  const patientRows = allRecords.filter(r=>cleanStr(r.name));
+  const latestByPatient = new Map();
+  patientRows.forEach(r=>{
+    const key = patientKey(r);
+    const existing = latestByPatient.get(key);
+    if(!existing || (parseAnyDate(r.timestamp)||0) > (parseAnyDate(existing.timestamp)||0)) latestByPatient.set(key, r);
+  });
+  const patients = Array.from(latestByPatient.values());
+  const totalPatients = patients.length || 1;
+
+  const counts = {};
+  CARD_TYPES.forEach(t => counts[t] = 0);
+
+  patients.forEach(p => {
+    const type = cleanStr(p.type) || 'បង់ពេញថ្លៃ';
+    if(counts[type] !== undefined) {
+      counts[type]++;
+    } else {
+      counts[type] = (counts[type] || 0) + 1;
+    }
+  });
+
+  const row = document.getElementById('cardTypeStatsRow');
+  row.innerHTML = CARD_TYPES.map(type => {
+    const cnt = counts[type] || 0;
+    const pct = ((cnt / totalPatients) * 100).toFixed(0);
+    const isActive = filterCardType === type;
+    const badgeType = getCardTypeBadgeClass(type);
+    return `
+      <div class="type-stat-card ${badgeType} ${isActive ? 'active' : ''}" onclick="filterByType('${type}')">
+        <span class="type-stat-name kh">${type}</span>
+        <div class="type-stat-count">${cnt}</div>
+        <div class="type-stat-percent">${pct}%</div>
+      </div>
+    `;
+  }).join('');
+
+  const clearBtn = document.getElementById('clearTypeFilterBtn');
+  clearBtn.style.display = filterCardType !== 'all' ? 'inline-block' : 'none';
+}
+
+function filterByType(type){
+  filterCardType = (filterCardType === type && type !== 'all') ? 'all' : type;
+  renderCardTypeStats();
+  renderList();
+}
+
+function renderTreatmentStats(){
+  const counts = {};
+  allRecords.forEach(r => {
+    let treat = cleanStr(r.treatment);
+    if (!treat || treat === '—') return;
+    if (!counts[treat]) counts[treat] = { total: 0, female: 0 };
+    counts[treat].total++;
+    let sex = String(r.sex || '').toUpperCase();
+    if (sex === 'F' || sex.includes('ស្រី')) {
+      counts[treat].female++;
+    }
+  });
+
+  const row = document.getElementById('treatmentStatsRow');
+  const sortedTreatments = Object.keys(counts).sort((a,b) => counts[b].total - counts[a].total);
+
+  if (sortedTreatments.length === 0) {
+     row.innerHTML = `<div style="grid-column:1/-1;text-align:center;font-size:12px;color:var(--ink-dim);padding:14px;">មិនទាន់មានទិន្នន័យទេ</div>`;
+     return;
+  }
+
+  row.innerHTML = sortedTreatments.map(t => {
+    const c = counts[t];
+    return `
+      <div class="type-stat-card type-default" style="text-align:left; padding:12px; display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+        <span class="type-stat-name kh" style="justify-content:flex-start; text-align:left; font-size:11.5px; margin-bottom:8px; line-height:1.4; color:var(--ink); min-height:auto;">${t}</span>
+        <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+          <div>
+            <div style="font-size:9px; color:var(--ink-dim); margin-bottom:2px; font-weight:700;">សរុប/Total</div>
+            <div class="type-stat-count" style="color:var(--primary-dark); font-size:17px; margin-top:0;">${c.total}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:9px; color:var(--coral-dark); margin-bottom:2px; font-weight:700;">ស្រី/Female</div>
+            <div class="type-stat-count" style="color:var(--coral-dark); font-size:15px; margin-top:0;">${c.female}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderThisMonthStats(){
+  const now = new Date();
+  const currentMonthKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+
+  const thisMonthRecords = allRecords.filter(r => {
+    let dtStr = r.doingDateTime || r.timestamp; 
+    const d = parseAnyDate(dtStr);
+    return d && (d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')) === currentMonthKey;
+  });
+
+  const totalVisits = thisMonthRecords.length;
+  let male = 0, female = 0;
+  const treatCounts = {};
+  const cardCounts = {};
+
+  thisMonthRecords.forEach(r => {
+    let sex = String(r.sex || '').toUpperCase();
+    if (sex === 'M' || sex.includes('ប្រុស')) male++;
+    else female++;
+
+    let treat = cleanStr(r.treatment);
+    if (treat && treat !== '—') {
+      treatCounts[treat] = (treatCounts[treat] || 0) + 1;
+    }
+
+    let type = cleanStr(r.type) || 'បង់ពេញថ្លៃ';
+    cardCounts[type] = (cardCounts[type] || 0) + 1;
+  });
+
+  const row = document.getElementById('thisMonthStatsRow');
+  if (totalVisits === 0) {
+    row.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--ink-dim);padding:14px;background:var(--surface-2);border-radius:12px;border:1px dashed var(--border);">មិនទាន់មានទិន្នន័យសម្រាប់ខែនេះទេ (No data for this month)</div>`;
+    return;
+  }
+
+  const sortedTreatments = Object.keys(treatCounts).sort((a,b) => treatCounts[b] - treatCounts[a]);
+  const sortedCards = Object.keys(cardCounts).sort((a,b) => cardCounts[b] - cardCounts[a]);
+
+  let html = `<div class="card-type-stats-grid" style="gap:10px;">`;
+  html += `<div class="type-stat-card" style="background:var(--primary-softer); border-color:var(--primary);"><span class="type-stat-name kh" style="color:var(--primary-dark);">សរុប (Total)</span><div class="type-stat-count" style="color:var(--primary-dark); font-size:22px;">${totalVisits}</div></div>`;
+  html += `<div class="type-stat-card type-red"><span class="type-stat-name kh">ស្រី (Female)</span><div class="type-stat-count" style="font-size:20px;">${female}</div></div>`;
+  html += `<div class="type-stat-card type-blue"><span class="type-stat-name kh">ប្រុស (Male)</span><div class="type-stat-count" style="font-size:20px;">${male}</div></div>`;
+  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+  
+  sortedTreatments.forEach(t => {
+      html += `<div class="type-stat-card type-default" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${t}</span><div class="type-stat-count" style="color:var(--primary-dark);">${treatCounts[t]}</div></div>`;
+  });
+
+  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+
+  sortedCards.forEach(c => {
+      html += `<div class="type-stat-card ${getCardTypeBadgeClass(c)}" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${c}</span><div class="type-stat-count">${cardCounts[c]}</div></div>`;
+  });
+
+  html += `</div>`;
+  row.innerHTML = html;
+}
+
+function renderTodayStats(){
+  const now = new Date();
+  const todayKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+
+  const todayRecords = allRecords.filter(r => {
+    let dtStr = r.doingDateTime || r.timestamp; 
+    const d = parseAnyDate(dtStr);
+    if(!d) return false;
+    const dKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    return dKey === todayKey;
+  });
+
+  const totalVisits = todayRecords.length;
+  let male = 0, female = 0;
+  const treatCounts = {};
+  const cardCounts = {};
+
+  todayRecords.forEach(r => {
+    let sex = String(r.sex || '').toUpperCase();
+    if (sex === 'M' || sex.includes('ប្រុស')) male++;
+    else female++;
+
+    let treat = cleanStr(r.treatment);
+    if (treat && treat !== '—') {
+      treatCounts[treat] = (treatCounts[treat] || 0) + 1;
+    }
+
+    let type = cleanStr(r.type) || 'បង់ពេញថ្លៃ';
+    cardCounts[type] = (cardCounts[type] || 0) + 1;
+  });
+
+  const row = document.getElementById('todayStatsRow');
+  if (totalVisits === 0) {
+    row.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--ink-dim);padding:14px;background:var(--surface-2);border-radius:12px;border:1px dashed var(--border);">មិនទាន់មានទិន្នន័យសម្រាប់ថ្ងៃនេះទេ (No data for today)</div>`;
+    return;
+  }
+
+  const sortedTreatments = Object.keys(treatCounts).sort((a,b) => treatCounts[b] - treatCounts[a]);
+  const sortedCards = Object.keys(cardCounts).sort((a,b) => cardCounts[b] - cardCounts[a]);
+
+  let html = `<div class="card-type-stats-grid" style="gap:10px;">`;
+  html += `<div class="type-stat-card" style="background:var(--primary-softer); border-color:var(--primary);"><span class="type-stat-name kh" style="color:var(--primary-dark);">សរុប (Total)</span><div class="type-stat-count" style="color:var(--primary-dark); font-size:22px;">${totalVisits}</div></div>`;
+  html += `<div class="type-stat-card type-red"><span class="type-stat-name kh">ស្រី (Female)</span><div class="type-stat-count" style="font-size:20px;">${female}</div></div>`;
+  html += `<div class="type-stat-card type-blue"><span class="type-stat-name kh">ប្រុស (Male)</span><div class="type-stat-count" style="font-size:20px;">${male}</div></div>`;
+  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+  
+  sortedTreatments.forEach(t => {
+      html += `<div class="type-stat-card type-default" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${t}</span><div class="type-stat-count" style="color:var(--primary-dark);">${treatCounts[t]}</div></div>`;
+  });
+
+  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+
+  sortedCards.forEach(c => {
+      html += `<div class="type-stat-card ${getCardTypeBadgeClass(c)}" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${c}</span><div class="type-stat-count">${cardCounts[c]}</div></div>`;
+  });
+
+  html += `</div>`;
+  row.innerHTML = html;
+}
+
+function matchesSearch(r, term){ 
+  if(!term) return true; 
+  const hay=[r.name,formatPhoneDisplay(r.phone),r.type,r.diagnosis,r.treatment,r.idc10,r.teeth,r.doing,r.doingDateTime,r.planDo,r.medication].join(' ').toLowerCase(); 
+  return hay.includes(term.toLowerCase()); 
+}
+
+function renderList(){
+  let rows = allRecords;
+  rows = rows.filter(r=>matchesSearch(r, searchTerm));
+
+  const matchingKeys = new Set(rows.map(patientKey));
+  const groups = new Map();
+  allRecords.forEach(r=>{
+    const key = patientKey(r);
+    if(!matchingKeys.has(key)) return;
+    if(!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(r);
+  });
+
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+
+  let patients = Array.from(groups.values()).map(list=>{
+    const sorted = list.slice().sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
+    const latest = sorted[0];
+
+    let activeAppt = null;
+    sorted.forEach(r => {
+      if(r.timeLast){
+        const d = parseAnyDate(r.timeLast);
+        if(d && d >= startOfToday){
+          if(!activeAppt || d < activeAppt.date) activeAppt = {date: d, record: r};
+        }
+      }
+    });
+
+    let lastVisitVal = activeAppt ? activeAppt.record.timeLast : (latest.timeLast || latest.doingDateTime || latest.timestamp);
+    let hasActiveAppt = !!activeAppt;
+
+    return {latest, list, sorted, lastVisitVal, hasActiveAppt, activeAppt};
+  });
+
+  patients.sort((a,b)=> (parseAnyDate(b.latest.timestamp)||0) - (parseAnyDate(a.latest.timestamp)||0));
+
+  document.getElementById('listCount').textContent = patients.length + ' patients';
+  const list = document.getElementById('recordList');
+  if(patients.length===0){ 
+    list.innerHTML = `<div class="empty-state kh">មិនមានកំណត់ត្រា ត្រូវនឹងលក្ខខណ្ឌនេះទេ<br><span style="opacity:.7">No records match this filter</span></div>`; 
+    return; 
+  }
+  
+  list.innerHTML = patients.map(p=>{
+    const nameKey = encodeURIComponent(p.latest.name);
+    
+    let dStr = "—", tStr = "—";
+    if (p.lastVisitVal) {
+      let d = parseAnyDate(p.lastVisitVal);
+      if (d) {
+        dStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+        let hr = d.getHours();
+        const ampm = hr >= 12 ? 'PM' : 'AM';
+        hr = hr % 12;
+        if (hr === 0) hr = 12;
+        tStr = `${String(hr).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} ${ampm}`;
+      } else {
+        dStr = formatDateDisplay(p.lastVisitVal);
+        tStr = '';
+      }
+    }
+
+    let phone = formatPhoneDisplay(p.latest.phone) || 'គ្មានលេខ';
+    let sex = String(p.latest.sex || '').toUpperCase() === 'M' ? 'ប្រុស' : 'ស្រី';
+    let age = p.latest.age ? ` · ${p.latest.age} ឆ្នាំ` : '';
+
+    let allTeeth = new Set();
+    p.list.forEach(r => parseTeeth(r.teeth).forEach(t => allTeeth.add(t)));
+    let allTeethStr = allTeeth.size > 0 ? Array.from(allTeeth).join(', ') : 'ទូទៅ';
+    let txStr = p.latest.treatment && p.latest.treatment !== 'custom' ? p.latest.treatment : (p.latest.diagnosis || '—');
+
+    let isMissedAppt = false;
+    if (p.latest.timeLast) {
+      let apptDate = parseAnyDate(p.latest.timeLast);
+      if (apptDate && apptDate < startOfToday) {
+        isMissedAppt = true;
+      }
+    }
+    
+    let st = p.latest.status === 'Doing' ? 'Appt' : (p.latest.status || 'Missing');
+    let cardClass = '';
+    let badgeStyle = '';
+
+    if (isMissedAppt || st === 'Missing') {
+        cardClass = ' has-missing-appt';
+        badgeStyle = 'background:var(--coral-soft); color:var(--coral-dark); border-color:rgba(228,87,76,0.4);';
+    } else if (p.hasActiveAppt || st === 'Appt') {
+        cardClass = ' has-active-appt';
+        badgeStyle = '';
+    } else {
+        badgeStyle = 'background:var(--primary-soft); color:var(--primary-dark); border-color:rgba(14,147,132,0.4);';
+    }
+
+    return `
+    <div class="appt-row record-card${cardClass}" data-name="${nameKey}">
+      <div class="appt-time">
+        <div class="mono">${tStr}</div>
+        <div class="appt-day mono">${dStr}</div>
+      </div>
+      <div class="appt-main">
+        <div class="appt-name kh" style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
+          ${p.latest.name} 
+          ${p.list.length > 1 ? `<span class="mono" style="font-size:10.5px;color:var(--ink-dim);font-weight:normal;">(${p.list.length} visits)</span>` : ''}
+        </div>
+        <div class="appt-meta">${phone} · <span class="kh">${sex}${age}</span></div>
+      </div>
+      <div class="appt-plan-badge patient-card-badge kh" style="${badgeStyle}">
+        <div style="font-size:11.5px; font-weight:700;">💉 Tx: ${txStr}</div>
+        <div style="font-size:10px; margin-top:3px; opacity:0.9;">🦷 ធ្មេញ៖ ${allTeethStr}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.querySelectorAll('.record-card').forEach(el=> el.addEventListener('click', ()=>{
+    openPatientRecord(decodeURIComponent(el.dataset.name));
+  }));
+}
+
+function openDoDetail(id){
+  const r = allRecords.find(x=>x._id===id || x.code===id);
+  if(!r) return;
+  
+  history.pushState({ modal: 'detail' }, '', '#detail');
+
+  document.getElementById('doDetailName').textContent = r.name + ' · ' + formatDateDisplay(r.timestamp);
+  
+  const formattedProcedure = formatProcedureDisplay(r.doing, r.doingDateTime);
+
+  const presItems = parsePrescriptionString(r.medication);
+  const medByDate = {};
+  presItems.forEach(item => {
+    const d = item.date || 'មិនระបុថ្ងៃ';
+    if(!medByDate[d]) medByDate[d] = [];
+    medByDate[d].push(item);
+  });
+
+  let medHtml = '';
+  Object.keys(medByDate).sort().forEach(dateKey => {
+    medHtml += `<div style="margin-top:6px;font-size:12px;">🗓️ <b>ថ្ងៃទី៖ ${dateKey.replace(/-/g, '/')}</b></div><ul style="margin:4px 0 8px 20px;padding:0;font-size:12px;color:var(--primary-dark);">`;
+    medByDate[dateKey].forEach(it => {
+      const times = [it.m?'ព្រឹក':'', it.n?'ថ្ងៃ':'', it.e?'ល្ងាច':''].filter(Boolean).join(' + ');
+      medHtml += `<li><b>${it.name}</b> (${times || '—'}) · ចំនួន: ${it.qty || '—'}</li>`;
+    });
+    medHtml += `</ul>`;
+  });
+
+  document.getElementById('doDetailBody').innerHTML = `
+    <div class="detail-item full" style="margin-bottom:12px;">
+      <div class="k">Diagnosis (Indication)</div>
+      <div class="v kh">${r.diagnosis||'—'}</div>
+    </div>
+    <div class="detail-item full" style="margin-bottom:12px;">
+      <div class="k">Treatment</div>
+      <div class="v kh">${r.treatment||'—'}</div>
+    </div>
+    <div class="detail-item full" style="margin-bottom:12px;">
+      <div class="k">Diagnosis (ICD10)</div>
+      <div class="v kh">${r.idc10||'—'}</div>
+    </div>
+    <div class="detail-item full" style="margin-bottom:12px;">
+      <div class="k">លេខធ្មេញ · Teeth (FDI)</div>
+      <div class="v mono">${r.teeth||'—'}</div>
+    </div>
+    <div class="detail-item full" style="margin-bottom:12px;">
+      <div class="k">Registration Card</div>
+      <div class="v kh" style="font-weight:700;color:var(--primary-dark);">${r.type||'បង់ពេញថ្លៃ'}</div>
+    </div>
+    <div class="detail-item full" style="margin-bottom:12px;">
+      <div class="k">ស្ថានភាព (Status)</div>
+      <div class="v kh" style="color:var(--primary);font-weight:600;">${r.status||'Missing'}</div>
+    </div>
+    <div class="detail-item full" style="margin-bottom:12px;">
+      <div class="k">នីតិវិធី និងកាលបរិច្ឆេទម៉ោង</div>
+      <div class="v kh">${formattedProcedure}</div>
+    </div>
+    ${r.timeLast ? `
+    <div class="detail-item full" style="margin-bottom:12px;">
+      <div class="k">ការណាត់ជួប និង Plan DO</div>
+      <div class="v kh" style="color:var(--amber-dark);">
+        <b>🗓️ ថ្ងៃណាត់៖</b> <span class="mono">${formatDateDisplay(r.timeLast)}</span>
+        ${r.planDo ? `<br><b>📋 Plan:</b> ${r.planDo}` : ''}
+      </div>
+    </div>` : ''}
+    ${presItems.length ? `
+    <div class="detail-item full" style="margin-top:10px;border-top:1px dashed var(--border);padding-top:10px;">
+      <div class="k">💊 ថ្នាំចេញជូន (តាមថ្ងៃខែឆ្នាំ)</div>
+      ${medHtml}
+    </div>` : ''}
+    <div class="modal-actions">
+      <div class="left-action">
+        <button class="btn btn-danger btn-sm" onclick="document.getElementById('doDetailOverlay').classList.add('hidden'); deleteSingleRecordById('${r._id}')">🗑 លុប Delete</button>
+      </div>
+      <button class="btn btn-outline btn-sm" id="doDetailFullBtn">🦷 Full record</button>
+      <button class="btn btn-primary btn-sm" id="doDetailEditBtn">✏️ Edit</button>
+    </div>
+  `;
+  document.getElementById('doDetailFullBtn').addEventListener('click', ()=>{
+    document.getElementById('doDetailOverlay').classList.add('hidden');
+    openPatientRecord(r.name);
+  });
+  document.getElementById('doDetailEditBtn').addEventListener('click', ()=>{
+    document.getElementById('doDetailOverlay').classList.add('hidden');
+    openForm(r);
+  });
+  document.getElementById('doDetailOverlay').classList.remove('hidden');
+}
+
+function getPatientRecords(name){
+  const target = cleanStr(name).toLowerCase();
+  return allRecords.filter(r => cleanStr(r.name).toLowerCase() === target);
+}
+
+function getAllTreatedTeethSet(records){
+  const set = new Set();
+  records.forEach(r=>{
+    parseTeeth(r.teeth).forEach(t=> set.add(t));
+  });
+  return set;
+}
+
+function openToothHistoryModal(toothNum, patientName){
+  history.pushState({ modal: 'toothHistory' }, '', '#toothHistory');
+
+  const records = getPatientRecords(patientName);
+  
+  const toothRecords = records.filter(r => {
+    const teethArr = parseTeeth(r.teeth);
+    return teethArr.includes(toothNum.toString());
+  });
+  
+  document.getElementById('toothHistoryModalTitle').textContent = `🦷 ប្រវត្តិធ្មេញលេខ ${toothNum} (${patientName})`;
+  const body = document.getElementById('toothHistoryModalBody');
+  
+  if(toothRecords.length === 0){
+    body.innerHTML = `
+      <div class="empty-state kh" style="padding:26px 14px;">
+        មិនទាន់មានកំណត់ត្រាព្យាបាលធ្មេញលេខ <b>${toothNum}</b> ទេ<br>
+        <button class="btn btn-primary btn-sm" style="margin-top:14px;" id="popupAddTxBtn">＋ បន្ថែមការព្យាបាលធ្មេញ ${toothNum}</button>
+      </div>`;
+    document.getElementById('popupAddTxBtn')?.addEventListener('click', ()=>{
+      document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
+      const latest = records[0] || {};
+      openForm(null, {name: patientName, phone: latest.phone, sex: latest.sex, age: latest.age, type: latest.type, teeth: toothNum});
+    });
+  } else {
+    let html = `
+      <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:12px;color:var(--ink-dim);">សរុប <b>${toothRecords.length}</b> កំណត់ត្រាសម្រាប់ធ្មេញនេះ</span>
+        <button class="btn btn-outline btn-sm" id="popupAddTxBtn">＋ បន្ថែមការព្យាបាល</button>
+      </div>
+    `;
+    html += renderClinicalNotesHTML(toothRecords);
+    body.innerHTML = html;
+    
+    document.getElementById('popupAddTxBtn')?.addEventListener('click', ()=>{
+      document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
+      const latest = records[0] || {};
+      openForm(null, {name: patientName, phone: latest.phone, sex: latest.sex, age: latest.age, type: latest.type, teeth: toothNum});
+    });
+  }
+  
+  document.getElementById('toothHistoryModalOverlay').classList.remove('hidden');
+}
+
+function deletePatient(patientName){
+  if(!patientName) return;
+  showConfirm(`តើលោកអ្នកពិតជាចង់លុបកំណត់ត្រាទាំងអស់របស់អ្នកជំងឺ "${patientName}" មែនទេ?\nសកម្មភាពនេះមិនអាចត្រឡប់ក្រោយបានឡើយ!`, ()=>{
+    const normalized = cleanStr(patientName).toLowerCase();
+    deletedIdentifiers.add(normalized);
+    
+    allRecords.filter(r => cleanStr(r.name).toLowerCase() !== normalized);
+    saveDeletedIdentifiers();
+    saveLocalRecords();
+    renderAll();
+    closePatientModal();
+    pushToSheet('deletePatient', {name: patientName});
+  });
+}
+
+function deleteSingleRecordById(recordId){
+  const recToDelete = allRecords.find(x => x._id === recordId || x.code === recordId);
+  if(!recToDelete) return;
+
+  const dateStr = formatDateDisplay(recToDelete.timestamp);
+  const diagStr = recToDelete.treatment || recToDelete.diagnosis || '';
+  const teethStr = recToDelete.teeth ? ` (ធ្មេញ ${recToDelete.teeth})` : '';
+
+  showConfirm(`តើលោកអ្នកពិតជាចង់លុបកំណត់ត្រា "${diagStr}${teethStr} - ${dateStr}" នេះមែនទេ?`, ()=>{
+    const pName = cleanStr(recToDelete.name).toLowerCase();
+    const itemKey = `${pName}_${cleanStr(recToDelete.timestamp)}_${cleanStr(recToDelete.treatment || recToDelete.diagnosis)}`;
+    
+    if(recToDelete.code) deletedIdentifiers.add(recToDelete.code);
+    deletedIdentifiers.add(recToDelete._id);
+    deletedIdentifiers.add(itemKey);
+
+    allRecords = allRecords.filter(x => x._id !== recToDelete._id && x.code !== recToDelete.code);
+    saveDeletedIdentifiers();
+    saveLocalRecords();
+    renderAll();
+
+    pushToSheet('deleteRecord', {
+      code: recToDelete.code,
+      _id: recToDelete._id,
+      timestamp: recToDelete.timestamp,
+      name: recToDelete.name,
+      teeth: recToDelete.teeth,
+      treatment: recToDelete.treatment
+    });
+
+    closeFormModal();
+    if(activePatientContext) openPatientRecord(activePatientContext);
+  });
+}
+
+function deleteSingleRecord(){
+  if(editingRecordId){
+    deleteSingleRecordById(editingRecordId);
+  } else if(editingIndex !== null && allRecords[editingIndex]){
+    deleteSingleRecordById(allRecords[editingIndex]._id);
+  } else {
+    alert('មិនអាចកំណត់អត្តសញ្ញាណកំណត់ត្រាដែលត្រូវលុបបានទេ');
+  }
+}
+
+function formatProcedureDisplay(doing, dateTime) {
+  if(!doing) return '—';
+  let dtStr = dateTime ? `[🕒 ${formatDateDisplay(dateTime)}]` : '';
+  return `${doing} <span class="mono" style="color:var(--primary-dark);font-size:11px;">${dtStr}</span>`;
+}
+
+window.quickUpdateStatus = function(event, id, newStatus) {
+  event.stopPropagation();
+  const idx = allRecords.findIndex(x => x._id === id || x.code === id);
+  if(idx !== -1) {
+    allRecords[idx].status = newStatus;
+    saveLocalRecords();
+    pushToSheet('updateRecord', allRecords[idx]);
+    
+    const container = event.target.closest('.status-pills');
+    container.querySelectorAll('.s-pill').forEach(el => { el.className = 's-pill'; });
+    if(newStatus === 'Done') event.target.classList.add('active-done');
+    if(newStatus === 'Appt') event.target.classList.add('active-doing');
+    if(newStatus === 'Missing') event.target.classList.add('active-missing');
+  }
+};
+
+function renderClinicalNotesHTML(records) {
+  const rows = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
+  return `
+    <div class="emr-table-wrap">
+      <table class="emr-table">
+        <thead>
+          <tr>
+            <th style="width:90px;">កាលបរិច្ឆេទ<br>(Date)</th>
+            <th style="width:60px;">ធ្មេញ<br>(Tooth)</th>
+            <th style="width:160px;">ការធ្វើរោគវិនិច្ឆ័យ<br>(Diagnosis / Tx)</th>
+            <th>កំណត់ត្រាគ្លីនិក & នីតិវិធី<br>(Clinical Notes & Proc)</th>
+            <th style="width:120px;">ការណាត់បន្ទាប់<br>(Next Plan)</th>
+            <th style="width:85px;text-align:center;">ស្ថានភាព<br>(Status)</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.map(r => `
+            <tr class="emr-tr" onclick="openDetail('${r._id}', true)">
+              <td data-label="កាលបរិច្ឆេទ (Date)" class="mono" style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">${formatDateDisplay(r.timestamp).split(' ')[0]}</td>
+              <td data-label="ធ្មេញ (Tooth)" class="mono" style="font-weight:800;color:var(--primary-dark);font-size:13px;">${r.teeth || '—'}</td>
+              <td data-label="ការធ្វើរោគវិនិច្ឆ័យ (Diagnosis / Tx)" class="kh">
+                <div style="font-weight:700;color:var(--ink);font-size:13px;">${r.treatment || '—'}</div>
+                <div style="font-size:10.5px;color:var(--ink-dim);margin-top:4px;">${r.diagnosis || '—'}</div>
+              </td>
+              <td data-label="កំណត់ត្រាគ្លីនិក & នីតិវិធី (Clinical Notes & Proc)" class="kh">
+                <div style="margin-bottom:6px;font-size:12.5px;"><b>DO:</b> ${r.doing || '—'} ${r.doingDateTime ? `<span class="mono" style="font-size:10.5px;color:#888;margin-left:4px;">[🕒 ${formatDateDisplay(r.doingDateTime)}]</span>` : ''}</div>
+                ${r.medication ? `<div style="font-size:11.5px;color:var(--primary-dark);border-top:1px dashed var(--border-soft);padding-top:6px;">💊 <b>Rx:</b> ${r.medication}</div>` : ''}
+              </td>
+              <td data-label="ការណាត់បន្ទាប់ (Next Plan)" class="kh" style="font-size:12px;">
+                ${r.timeLast ? `<div class="mono" style="color:var(--amber-dark);font-weight:700;margin-bottom:4px;">🗓️ ${formatDateDisplay(r.timeLast).split(' ')[0]}</div>` : '<div style="color:var(--ink-dim);">—</div>'}
+                ${r.planDo ? `<div style="color:var(--ink-soft);line-height:1.4;">📋 ${r.planDo}</div>` : ''}
+              </td>
+              <td data-label="ស្ថានភាព (Status)" style="text-align:center;">
+                <div class="emr-status ${r.status==='Done'?'done':(r.status==='Appt'||r.status==='Doing'?'doing':'missing')}">${r.status === 'Doing' ? 'Appt' : (r.status || 'Missing')}</div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function openPatientRecord(name){
+  history.pushState({ modal: 'patient' }, '', '#patient');
+  
+  const records = getPatientRecords(name);
+  if(records.length===0){
+    closePatientModal();
+    return;
+  }
+  const sortedRecords = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
+  const latest = sortedRecords[0];
+  const treatedTeethSet = getAllTreatedTeethSet(records);
+
+  const realPhone = formatPhoneDisplay(sortedRecords.find(r => cleanStr(r.phone))?.phone || latest.phone || '');
+  const realSex = sortedRecords.find(r => cleanStr(r.sex))?.sex || latest.sex || 'F';
+  const realAge = sortedRecords.find(r => cleanStr(r.age) !== '')?.age || latest.age || '';
+  const realType = sortedRecords.find(r => cleanStr(r.type))?.type || latest.type || 'បង់ពេញថ្លៃ';
+
+  const sexKhmer = realSex.toUpperCase() === 'M' ? 'ប្រុស (M)' : (realSex.toUpperCase() === 'F' ? 'ស្រី (F)' : '—');
+  const ageDisplay = realAge !== '' ? `${realAge} ឆ្នាំ` : '—';
+  const lastVisitFormatted = formatDateDisplay(latest.timestamp);
+  const nextApptFormatted = latest.timeLast ? formatDateDisplay(latest.timeLast) : '—';
+
+  const safeName = latest.name.replace(/'/g, "\\'");
+  const typeBadgeCls = getCardTypeBadgeClass(realType);
+  
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+  let isMissedAppt = false;
+  if (latest.timeLast) {
+    let apptDate = parseAnyDate(latest.timeLast);
+    if (apptDate && apptDate < startOfToday) {
+      isMissedAppt = true;
+    }
+  }
+  let nameColorStyle = isMissedAppt ? 'color: var(--coral-dark) !important;' : '';
+
+  document.getElementById('patientBody').innerHTML = `
+    <div class="emr-top-split">
+      <div class="emr-header-panel">
+        <div>
+          <div style="display:flex; align-items:center; gap:14px; margin-bottom:18px;">
+            <div class="emr-avatar">👤</div>
+            <div>
+              <h2 class="emr-pat-name kh" style="${nameColorStyle}">${latest.name}</h2>
+              <div class="mono" style="font-size:11px; color:var(--ink-soft); margin-top:2px;">ID: ${latest.code || 'N/A'}</div>
+            </div>
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
+            <div style="background:var(--surface-2); padding:10px; border-radius:8px; border:1px solid var(--border-soft); text-align:center;">
+              <div style="font-size:10px; color:var(--ink-dim); font-weight:700; text-transform:uppercase;">ភេទ (Sex)</div>
+              <div class="kh" style="font-size:13px; font-weight:700; color:var(--ink); margin-top:4px;">${sexKhmer}</div>
+            </div>
+            <div style="background:var(--surface-2); padding:10px; border-radius:8px; border:1px solid var(--border-soft); text-align:center;">
+              <div style="font-size:10px; color:var(--ink-dim); font-weight:700; text-transform:uppercase;">អាយុ (Age)</div>
+              <div class="mono" style="font-size:13px; font-weight:700; color:var(--ink); margin-top:4px;">${ageDisplay}</div>
+            </div>
+          </div>
+          
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:12.5px;">
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-soft);">
+              <span style="color:var(--ink-dim); font-weight:600;">ប្រភេទប័ណ្ណ:</span>
+              <span class="kh badge-type ${typeBadgeCls}" style="font-weight:700; padding:2px 8px; border-radius:6px; font-size:10.5px;">${realType}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-soft);">
+              <span style="color:var(--ink-dim); font-weight:600;">ទូរស័ព្ទ:</span>
+              <span class="mono" style="font-weight:700;">${realPhone || '—'}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--border-soft);">
+              <span style="color:var(--ink-dim); font-weight:600;">ថ្ងៃជួបចុងក្រោយ:</span>
+              <span class="mono" style="font-weight:700;">${lastVisitFormatted.split(' ')[0]}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding:8px 0; background:var(--amber-soft); border-radius:6px; padding-left:8px; padding-right:8px;">
+              <span style="color:var(--amber-dark); font-weight:700;">🗓️ ថ្ងៃណាត់:</span>
+              <span class="mono" style="font-weight:800; color:var(--amber-dark);">${nextApptFormatted.split(' ')[0] || '—'}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="emr-actions-bar">
+          <button type="button" class="btn btn-primary btn-full kh" id="addVisitBtn">＋ កត់ត្រាព្យាបាលថ្មី (New Visit)</button>
+          <button type="button" class="btn btn-outline kh" onclick="openXrayGallery('${safeName}')">📷 មើល X-Ray</button>
+          <button type="button" class="btn btn-outline kh" id="printPatientBtn">🖨 បោះពុម្ព</button>
+          <button type="button" class="btn btn-danger btn-full kh" id="deletePatientBtn" onclick="deletePatient('${safeName}')">🗑 លុបអ្នកជំងឺនេះ</button>
+        </div>
+      </div>
+
+      <div class="emr-chart-section">
+        <div class="emr-section-head kh">
+          <span>🦷 គំនូសបំព្រួញធ្មេញ (Dental Chart)</span>
+          <span style="font-size:11.5px; font-weight:600; color:var(--ink-dim); text-transform:none;">ធ្មេញពាក់ព័ន្ធសរុប: <b style="color:var(--amber-dark); font-size:13px;">${treatedTeethSet.size}</b></span>
+        </div>
+        <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:16px;">
+          ${buildToothChartBlockHTML(treatedTeethSet)}
+        </div>
+      </div>
+    </div>
+
+    <div class="emr-notes-section">
+      <div class="emr-section-head kh">
+        <span>📜 ប្រវត្តិព្យាបាល (Clinical Notes)</span>
+        <span style="font-size:11px; font-weight:600; color:var(--ink-dim); text-transform:none;">ចំនួនមកព្យាបាលសរុប: <b style="color:var(--primary-dark); font-size:13px;">${records.length} លើក</b></span>
+      </div>
+      ${renderClinicalNotesHTML(records)}
+    </div>
+  `;
+
+  document.querySelectorAll('.odontogram-panel .tooth-cell').forEach(cell => {
+    cell.addEventListener('click', (e) => {
+      if (!cell.dataset.tooth) return; 
+      e.stopPropagation();
+      openToothHistoryModal(cell.dataset.tooth, latest.name);
+    });
+  });
+
+  document.getElementById('addVisitBtn').addEventListener('click', ()=>{
+    openForm(null, {name: latest.name, phone: realPhone, sex: realSex, age: realAge, type: realType});
+  });
+
+  document.getElementById('printPatientBtn').addEventListener('click', ()=>{
+    setPrintMode('portrait');
+    document.getElementById('printOverlayTitle').textContent = 'កំណត់ត្រា · Print Record';
+    document.getElementById('printArea').innerHTML = buildPatientPrintHTML(latest, records, treatedTeethSet, realPhone, realSex, realAge, realType);
+    document.getElementById('exportAllExcelBtn').classList.add('hidden');
+    document.getElementById('printOverlay').classList.remove('hidden');
+  });
+
+  activePatientContext = latest.name;
+  document.getElementById('patientOverlay').classList.remove('hidden');
+}
+
+function buildPatientPrintHTML(latest, records, treatedTeethSet, realPhone, realSex, realAge, realType){
+  const rows = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
+  const now = new Date();
+  const printDateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
+  return `
+  <div class="print-sheet" id="patientPaperInner">
+    <div class="ps-head">
+      <div>
+        <div class="ps-clinic kh">${clinicInfo.name}</div>
+        <div class="ps-sub">${clinicInfo.address||''}${clinicInfo.phone? ' · '+clinicInfo.phone:''}</div>
+      </div>
+      <div class="ps-head-right">
+        <span class="ps-tag">Full Dental Record</span>
+        <div class="ps-printed mono">Printed ${printDateStr}</div>
+      </div>
+    </div>
+    <div class="ps-info-grid">
+      <div class="ps-info-item"><div class="k">Patient Name</div><div class="v kh">${latest.name||'—'}</div></div>
+      <div class="ps-info-item"><div class="k">Sex / Age</div><div class="v">${realSex} / ${realAge}</div></div>
+      <div class="ps-info-item"><div class="k">Registration Card</div><div class="v kh">${realType||latest.type||'បង់ពេញថ្លៃ'}</div></div>
+      <div class="ps-info-item"><div class="k">Phone</div><div class="v">${realPhone||latest.phone||'—'}</div></div>
+      <div class="ps-info-item"><div class="k">Total visits</div><div class="v">${records.length}</div></div>
+      <div class="ps-info-item"><div class="k">Teeth involved</div><div class="v">${treatedTeethSet.size} teeth</div></div>
+      <div class="ps-info-item"><div class="k">Next Visit</div><div class="v mono">${formatDateDisplay(latest.timeLast||latest.doingDateTime||latest.timestamp)}</div></div>
+    </div>
+
+    <div class="ps-section-title">Dental Chart — Treated Teeth</div>
+    ${buildToothChartBlockHTML(treatedTeethSet)}
+
+    <div class="ps-section-title">Full Visit History</div>
+    <table class="ps-visit-table">
+      <thead>
+        <tr>
+          <th>Treatment</th>
+          <th class="mono">Teeth (FDI)</th>
+          <th>Procedures & Date-Time</th>
+          <th class="mono">Next Visit / Plan DO</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r=>`
+          <tr>
+            <td class="kh"><b>${r.treatment||r.diagnosis||'—'}</b></td>
+            <td class="mono">${r.teeth||'—'}</td>
+            <td class="kh">${r.doing||'—'} ${r.doingDateTime ? `<span class="mono" style="font-size:10.5px;color:#555;"><br>🕒 ${formatDateDisplay(r.doingDateTime)}</span>`:''}</td>
+            <td class="mono">
+              ${r.timeLast ? formatDateDisplay(r.timeLast) : '—'}
+              ${r.planDo ? `<br><span class="kh" style="font-size:10.5px;color:#444;">${r.planDo}</span>` : ''}
+            </td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="ps-foot">សូមអរគុណ! · Thank you for your visit</div>
+  `;
+}
+
+function setPrintMode(mode){
+  const el = document.getElementById('dynamicPageStyle');
+  if (mode === 'landscape') {
+    el.textContent = '@page{ size: A4 landscape; margin: 10mm; }';
+  } else {
+    el.textContent = '@page{ size: A4 portrait; margin: 15mm; }';
+  }
+}
+
+function exportAllToPdf() {
+  if(allRecords.length===0){ alert('មិនទាន់មានកំណត់ត្រាសម្រាប់នាំចេញទេ'); return; }
+  document.getElementById('reportOverlay').classList.add('hidden');
+  setPrintMode('landscape');
+  document.getElementById('printOverlayTitle').textContent = 'ទិន្នន័យជំងឺ (All Data)';
+  document.getElementById('exportAllExcelBtn').classList.remove('hidden');
+  
+  let rowsHtml = allRecords.map(r => {
+    return `
+      <tr>
+        <td class="mono">${formatDateDisplay(r.timestamp).split(' ')[0]}</td>
+        <td class="kh"><b>${r.name||'—'}</b></td>
+        <td>${r.sex||'—'}/${r.age||'—'}</td>
+        <td class="mono">${formatPhoneDisplay(r.phone)||'—'}</td>
+        <td class="kh">${r.type||'បង់ពេញថ្លៃ'}</td>
+        <td class="kh">${r.diagnosis||'—'}</td>
+        <td class="kh">${r.treatment||'—'}</td>
+        <td class="mono">${r.teeth||'—'}</td>
+        <td class="kh">${r.status === 'Doing' ? 'Appt' : (r.status || 'Missing')}</td>
+      </tr>
+    `;
+  }).join('');
+
+  document.getElementById('printArea').innerHTML = `
+    <div class="print-sheet" style="padding:0;">
+      <div style="text-align:center; margin-bottom: 20px;">
+        <h2 class="kh" style="margin:0; font-size: 18px; color: var(--primary-dark);">របាយការណ៍បញ្ជីអ្នកជំងឺទាំងអស់ (All Patient Records)</h2>
+        <div class="mono" style="margin-top:5px; color:#555; font-size:11px;">សរុប: ${allRecords.length} · នាំចេញនៅ: ${getLocalTodayYMD()}</div>
+      </div>
+      <table class="ps-visit-table" style="width:100%; border-collapse:collapse; font-size:10px;">
+        <thead>
+          <tr style="background: var(--surface-2);">
+            <th>កាលបរិច្ឆេទ (Date)</th>
+            <th>ឈ្មោះ (Name)</th>
+            <th>ភេទ/អាយុ</th>
+            <th>ទូរស័ព្ទ (Phone)</th>
+            <th>ប្រភេទប័ណ្ណ (Card)</th>
+            <th>Indication</th>
+            <th>Treatment</th>
+            <th>Teeth</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>
+  `;
+  
+  document.getElementById('printOverlay').classList.remove('hidden');
+}
+
+function openForm(editRecord, prefill){
+  history.pushState({ modal: 'form' }, '', '#form');
+  
+  editingIndex = null;
+  editingOriginalTimestamp = null;
+  editingOriginalRecord = null;
+  editingRecordId = null;
+  document.getElementById('detailOverlay').classList.add('hidden');
+  document.getElementById('patientOverlay').classList.add('hidden');
+  document.getElementById('doDetailOverlay').classList.add('hidden');
+  document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
+
+  const todayDateOnly = getLocalTodayYMD();
+  const nowDateTime = getLocalNowDateTime();
+  const deleteBtn = document.getElementById('deleteFormBtn');
+  const medTbody = document.getElementById('medTableBody');
+  medTbody.innerHTML = '';
+
+  const groupNameSexAge = document.getElementById('group_name_sex_age');
+  const groupPhoneVisitType = document.getElementById('group_phone_visit_type');
+
+  if(editRecord){
+    editingRecordId = editRecord._id;
+    editingIndex = allRecords.findIndex(x=>x._id===editRecord._id || x.code===editRecord._id);
+    editingOriginalTimestamp = editRecord.timestamp || null;
+    editingOriginalRecord = {...editRecord};
+
+    groupNameSexAge.style.display = 'grid';
+    groupPhoneVisitType.style.display = 'grid';
+
+    document.getElementById('f_name').value = editRecord.name||'';
+    document.getElementById('f_sex').value = (editRecord.sex || 'F').toUpperCase();
+    document.getElementById('f_age').value = editRecord.age !== undefined ? editRecord.age : '';
+    document.getElementById('f_phone').value = formatPhoneDisplay(editRecord.phone)||'';
+    document.getElementById('f_type').value = editRecord.type || 'បង់ពេញថ្លៃ';
+    
+    const vDateYMDTime = dateToYMDTime(editRecord.timestamp) || nowDateTime;
+    document.getElementById('f_visitDateTime').value = vDateYMDTime;
+    
+    const knownDiag = ['ឈឺធ្មេញ', 'ធ្មេញរង្គើរ', 'ឈាមអញ្ចាញធ្មេញ', 'ហើមអញ្ចាញ', 'ខ្ទុះអញ្ចាញ'];
+    if(knownDiag.includes(editRecord.diagnosis)){
+      document.getElementById('f_diagnosis').value = editRecord.diagnosis;
+      document.getElementById('f_diagnosis_custom').style.display='none';
+      document.getElementById('f_diagnosis_custom').value='';
+    } else {
+      document.getElementById('f_diagnosis').value = 'custom';
+      document.getElementById('f_diagnosis_custom').style.display='block';
+      document.getElementById('f_diagnosis_custom').value = editRecord.diagnosis||'';
+    }
+
+    const knownTreat = [
+      'វះកាត់ ចង់ថ្គាម', 'វះកាត់ វះបួស', 'វះកាត់ ផ្សេងៗ',
+      'ដកធ្មេញ ព្រៃ', 'ដកធ្មេញ ស្រុក',
+      'ប៉ះធ្មេញ GIC', 'ប៉ះធ្មេញ Amalgam', 'ប៉ះធ្មេញ Composite', 'ប៉ះធ្មេញ ផ្សេងៗ',
+      'ថតធ្មេញ X-ray', 'ព្យាបាលធ្មេញ (RCT)', 'សំអាតកំបោរ Scaling',
+      'បិតការពារ Sealant', 'ភ្លុយអរ Varnish or Gel', 'ដាក់ធ្មេញ ជាប់', 'ដាក់ធ្មេញ ដោះ', 'ពិគ្រោះជំងឺ'
+    ];
+    if(knownTreat.includes(editRecord.treatment)){
+      document.getElementById('f_treatment').value = editRecord.treatment;
+      document.getElementById('f_treatment_custom').style.display='none';
+      document.getElementById('f_treatment_custom').value='';
+    } else {
+      document.getElementById('f_treatment').value = 'custom';
+      document.getElementById('f_treatment_custom').style.display='block';
+      document.getElementById('f_treatment_custom').value = editRecord.treatment||'';
+    }
+
+    if(editRecord.idc10){
+      document.getElementById('f_idc10').value = editRecord.idc10;
+    }
+    
+    document.getElementById('f_teeth').value = editRecord.teeth||'';
+
+    const currentDoing = editRecord.doing || '';
+    if(KNOWN_PROCEDURES.includes(currentDoing)){
+      procSelect.value = currentDoing;
+      procDoing.style.display = 'none';
+      procDoing.value = currentDoing;
+    } else if(currentDoing) {
+      procSelect.value = 'custom';
+      procDoing.style.display = 'block';
+      procDoing.value = currentDoing;
+    } else {
+      procSelect.value = 'Opening';
+      procDoing.style.display = 'none';
+      procDoing.value = 'Opening';
+    }
+    
+    const recDT = editRecord.doingDateTime ? dateToYMDTime(editRecord.doingDateTime) : nowDateTime;
+    document.getElementById('f_doingDateTime').value = recDT;
+    
+    let st = editRecord.status === 'Doing' ? 'Appt' : (editRecord.status || 'Done');
+    selectStatusCheckbox(st);
+
+    document.getElementById('f_apptDateTime').value = editRecord.timeLast ? dateToYMDTime(editRecord.timeLast) : nowDateTime;
+    document.getElementById('f_planDo').value = editRecord.planDo || '';
+
+    const parsedMeds = parsePrescriptionString(editRecord.medication);
+    if(parsedMeds.length > 0){
+      parsedMeds.forEach(m => addMedicationRow(m));
+    } else {
+      addMedicationRow({date: todayDateOnly});
+    }
+    
+    document.getElementById('formTitle').textContent = 'កែសម្រួលកំណត់ត្រា · Edit Case';
+    document.getElementById('saveForm').textContent = 'រក្សាទុកការកែប្រែ Save changes';
+    deleteBtn.classList.remove('hidden');
+  } else if(prefill && prefill.name) {
+    groupNameSexAge.style.display = 'none';
+    groupPhoneVisitType.style.display = 'none';
+
+    document.getElementById('f_name').value = prefill.name;
+    document.getElementById('f_sex').value = (prefill.sex || 'F').toUpperCase();
+    document.getElementById('f_age').value = prefill.age !== undefined ? prefill.age : '';
+    document.getElementById('f_phone').value = formatPhoneDisplay(prefill.phone) || '';
+    document.getElementById('f_type').value = prefill.type || 'បង់ពេញថ្លៃ';
+
+    document.getElementById('f_visitDateTime').value = nowDateTime;
+    document.getElementById('f_diagnosis').value = 'ឈឺធ្មេញ';
+    
+    if (prefill.treatment) {
+      const knownTreat = [
+        'វះកាត់ ចង់ថ្គាម', 'វះកាត់ វះបួស', 'វះកាត់ ផ្សេងៗ', 'ដកធ្មេញ ព្រៃ', 'ដកធ្មេញ ស្រុក',
+        'ប៉ះធ្មេញ GIC', 'ប៉ះធ្មេញ Amalgam', 'ប៉ះធ្មេញ Composite', 'ប៉ះធ្មេញ ផ្សេងៗ',
+        'ថតធ្មេញ X-ray', 'ព្យាបាលធ្មេញ (RCT)', 'សំអាតកំបោរ Scaling',
+        'បិតការពារ Sealant', 'ភ្លុយអរ Varnish or Gel', 'ដាក់ធ្មេញ ជាប់', 'ដាក់ធ្មេញ ដោះ', 'ពិគ្រោះជំងឺ'
+      ];
+      if (knownTreat.includes(prefill.treatment)) {
+        document.getElementById('f_treatment').value = prefill.treatment;
+        document.getElementById('f_treatment_custom').style.display = 'none';
+      } else {
+        document.getElementById('f_treatment').value = 'custom';
+        document.getElementById('f_treatment_custom').style.display = 'block';
+        document.getElementById('f_treatment_custom').value = prefill.treatment;
+      }
+    } else {
+      document.getElementById('f_treatment').value = 'ព្យាបាលធ្មេញ (RCT)';
+      document.getElementById('f_treatment_custom').style.display = 'none'; 
+      document.getElementById('f_treatment_custom').value = '';
+    }
+
+    document.getElementById('f_idc10').value = 'K04-ជំងឺលើបណ្តូលធ្មេញ (Pulp)';
+    document.getElementById('f_diagnosis_custom').style.display = 'none';
+    document.getElementById('f_diagnosis_custom').value = '';
+    document.getElementById('f_teeth').value = prefill.teeth || ''; 
+    
+    procSelect.value = 'Opening';
+    procDoing.style.display = 'none';
+    procDoing.value = 'Opening';
+
+    document.getElementById('f_doingDateTime').value = nowDateTime;
+    selectStatusCheckbox('Appt'); 
+    
+    document.getElementById('f_apptDateTime').value = nowDateTime;
+    document.getElementById('f_planDo').value = '';
+
+    addMedicationRow({date: todayDateOnly});
+    
+    document.getElementById('formTitle').textContent = `កត់ត្រាការព្យាបាលបន្ថែម · Add Treatment (${prefill.name})`;
+    document.getElementById('saveForm').textContent = 'រក្សាទុក Save record';
+    deleteBtn.classList.add('hidden');
+  } else {
+    groupNameSexAge.style.display = 'grid';
+    groupPhoneVisitType.style.display = 'grid';
+
+    document.getElementById('f_name').value = '';
+    document.getElementById('f_sex').value = 'F'; 
+    document.getElementById('f_age').value = '';
+    document.getElementById('f_phone').value = '';
+    document.getElementById('f_type').value = 'បង់ពេញថ្លៃ';
+
+    document.getElementById('f_visitDateTime').value = nowDateTime;
+    document.getElementById('f_diagnosis').value = 'ឈឺធ្មេញ';
+    document.getElementById('f_treatment').value = 'ព្យាបាលធ្មេញ (RCT)';
+    document.getElementById('f_idc10').value = 'K04-ជំងឺលើបណ្តូលធ្មេញ (Pulp)';
+    document.getElementById('f_diagnosis_custom').style.display = 'none'; 
+    document.getElementById('f_diagnosis_custom').value = '';
+    document.getElementById('f_treatment_custom').style.display = 'none'; 
+    document.getElementById('f_treatment_custom').value = '';
+    document.getElementById('f_teeth').value = ''; 
+    
+    procSelect.value = 'Opening';
+    procDoing.style.display = 'none';
+    procDoing.value = 'Opening';
+
+    document.getElementById('f_doingDateTime').value = nowDateTime;
+    selectStatusCheckbox('Done'); 
+    
+    document.getElementById('f_apptDateTime').value = nowDateTime;
+    document.getElementById('f_planDo').value = '';
+
+    addMedicationRow({date: todayDateOnly});
+    
+    document.getElementById('formTitle').textContent = 'កំណត់ត្រាជំងឺមាត់ធ្មេញថ្មី · New Record';
+    document.getElementById('saveForm').textContent = 'រក្សាទុក Save record';
+    deleteBtn.classList.add('hidden');
+  }
+  document.getElementById('formOverlay').classList.remove('hidden');
+}
+
+function closeFormModal(){
+  document.getElementById('formOverlay').classList.add('hidden');
+  if (window.location.hash === '#form') history.replaceState(null, null, window.location.pathname);
+  
+  editingIndex = null; editingOriginalTimestamp = null; editingOriginalRecord = null; editingRecordId = null;
+  if(activePatientContext) openPatientRecord(activePatientContext);
+}
+
+async function saveRecord(){
+  const name = cleanStr(document.getElementById('f_name').value);
+  if(!name){ alert('សូមបញ្ចូលឈ្មោះអ្នកជំងឺ / Please enter a patient name'); return; }
+  const sex = document.getElementById('f_sex').value;
+  const age = document.getElementById('f_age').value.trim();
+  const typeVal = document.getElementById('f_type').value.trim() || 'បង់ពេញថ្លៃ';
+  
+  const diagSel = document.getElementById('f_diagnosis').value;
+  const diagnosis = diagSel==='custom' ? document.getElementById('f_diagnosis_custom').value.trim() : diagSel;
+
+  const treatSel = document.getElementById('f_treatment').value;
+  const treatment = treatSel==='custom' ? document.getElementById('f_treatment_custom').value.trim() : treatSel;
+
+  const idc10 = document.getElementById('f_idc10').value;
+  
+  const visitDateTimeVal = document.getElementById('f_visitDateTime').value;
+  const doingDateTimeVal = document.getElementById('f_doingDateTime').value;
+  const statusVal = currentFormStatus;
+  
+  const procSelVal = procSelect.value;
+  const doingVal = procSelVal === 'custom' ? procDoing.value.trim() : procSelVal;
+
+  const isAppt = (statusVal === 'Appt');
+  const apptDateTimeVal = isAppt ? document.getElementById('f_apptDateTime').value : '';
+  const planDoVal = isAppt ? document.getElementById('f_planDo').value.trim() : '';
+
+  const medItems = getPrescriptionData();
+  const medicationString = stringifyPrescription(medItems);
+
+  const wasEditing = editingIndex !== null;
+  const code = wasEditing ? (allRecords[editingIndex].code || genCode()) : genCode();
+
+  const rawTs = visitDateTimeVal || editingOriginalTimestamp || getLocalNowDateTime();
+  const cleanTs = formatDateDisplay(rawTs);
+
+  const phoneVal = formatPhoneDisplay(document.getElementById('f_phone').value);
+
+  const rec = {
+    timestamp: cleanTs,
+    code: code, 
+    name: name, 
+    sex: sex,
+    age: age,
+    type: typeVal,
+    phone: phoneVal,
+    diagnosis: diagnosis,
+    idc10: idc10,
+    treatment: treatment,
+    teeth: document.getElementById('f_teeth').value.trim(),
+    timeLast: apptDateTimeVal ? formatDateDisplay(apptDateTimeVal) : '',
+    planDo: planDoVal,
+    doing: doingVal,
+    doingDateTime: doingDateTimeVal ? formatDateDisplay(doingDateTimeVal) : '',
+    medication: medicationString,
+    status: statusVal
+  };
+
+  const payload = {...rec};
+  if(wasEditing && editingOriginalRecord){
+    payload.original = {
+      code: editingOriginalRecord.code,
+      timestamp: editingOriginalRecord.timestamp,
+      name: editingOriginalRecord.name,
+      teeth: editingOriginalRecord.teeth,
+      diagnosis: editingOriginalRecord.diagnosis
+    };
+  }
+
+  if(wasEditing){ allRecords[editingIndex] = {...rec, _id: allRecords[editingIndex]._id}; }
+  else { allRecords.unshift({...rec, _id: code}); }
+  
+  saveLocalRecords();
+  renderAll();
+  
+  pushToSheet(wasEditing? 'updateRecord':'addRecord', payload);
+  
+  document.getElementById('formOverlay').classList.add('hidden');
+  if (window.location.hash === '#form') history.replaceState(null, null, window.location.pathname);
+  
+  editingIndex = null; editingOriginalTimestamp = null; editingOriginalRecord = null; editingRecordId = null;
+  if(activePatientContext) openPatientRecord(activePatientContext);
+}
+
+function exportToExcel(){
+  if(allRecords.length===0){ alert('មិនទាន់មានកំណត់ត្រាសម្រាប់នាំចេញទេ'); return; }
+  
+  const headers = ["កាលបរិច្ឆេទ (Date)", "កូដ (Code)", "ឈ្មោះ (Name)", "ភេទ", "អាយុ", "Registration Card", "ទូរស័ព្ទ (Phone)", "Diagnosis (Indication)", "Diagnosis (ICD10)", "Treatment", "លេខធ្មេញ (Teeth)", "នីតិវិធី", "កាលបរិច្ឆេទម៉ោងនីតិវិធី", "ថ្ងៃខែឆ្នាំ និងម៉ោងណាត់", "គម្រោងព្យាបាល", "ថ្នាំ (Medication)", "ស្ថានភាព (Status)"];
+  
+  const escapeCsv = (val) => {
+    let str = String(val === undefined || val === null ? '' : val).trim();
+    if(str.includes('"') || str.includes(',') || str.includes('\n') || str.includes('\r')){
+      str = '"' + str.replace(/"/g, '""') + '"';
+    }
+    return str;
+  };
+
+  const rows = allRecords.map(r => {
+    return [
+      escapeCsv(formatDateDisplay(r.timestamp)),
+      escapeCsv(r.code),
+      escapeCsv(r.name),
+      escapeCsv(r.sex),
+      escapeCsv(r.age),
+      escapeCsv(r.type || 'បង់ពេញថ្លៃ'),
+      escapeCsv(formatPhoneDisplay(r.phone)),
+      escapeCsv(r.diagnosis),
+      escapeCsv(r.idc10),
+      escapeCsv(r.treatment),
+      escapeCsv(r.teeth),
+      escapeCsv(r.doing),
+      escapeCsv(formatDateDisplay(r.doingDateTime)),
+      escapeCsv(formatDateDisplay(r.timeLast)),
+      escapeCsv(r.planDo),
+      escapeCsv(r.medication),
+      escapeCsv(r.status || 'Missing')
+    ].join(',');
+  });
+
+  const csvContent = '\uFEFF' + headers.map(escapeCsv).join(',') + '\r\n' + rows.join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const d = new Date();
+  const dateStr = `${d.getFullYear()}_${String(d.getMonth()+1).padStart(2,'0')}_${String(d.getDate()).padStart(2,'0')}`;
+  link.setAttribute('href', url);
+  link.setAttribute('download', `Kep_Dental_Records_${dateStr}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+let cameFromPatient = false;
+function openDetail(id, fromPatient){
+  history.pushState({ modal: 'detail' }, '', '#detail');
+  
+  const r = allRecords.find(x=>x._id===id || x.code===id);
+  if(!r) return;
+  cameFromPatient = !!fromPatient;
+  if(cameFromPatient) {
+      document.getElementById('patientOverlay').classList.add('hidden');
+      document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
+  }
+  document.getElementById('detailName').textContent = r.name;
+  const teethArr = parseTeeth(r.teeth);
+  
+  const presItems = parsePrescriptionString(r.medication);
+  const typeBadgeCls = getCardTypeBadgeClass(r.type);
+
+  const medByDate = {};
+  presItems.forEach(item => {
+    const d = item.date || 'មិនระបុថ្ងៃ';
+    if(!medByDate[d]) medByDate[d] = [];
+    medByDate[d].push(item);
+  });
+
+  let medHtml = '';
+  Object.keys(medByDate).sort().forEach(dateKey => {
+    medHtml += `<div style="margin-top:6px;font-size:12px;">🗓️ <b>ថ្ងៃទី៖ ${dateKey.replace(/-/g, '/')}</b></div><ul style="margin:4px 0 8px 20px;padding:0;font-size:12px;color:var(--primary-dark);">`;
+    medByDate[dateKey].forEach(it => {
+      const times = [it.m?'ព្រឹក':'', it.n?'ថ្ងៃ':'', it.e?'ល្ងាច':''].filter(Boolean).join(' + ');
+      medHtml += `<li><b>${it.name}</b> (${times || '—'}) · ចំនួន: ${it.qty || '—'}</li>`;
+    });
+    medHtml += `</ul>`;
+  });
+
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-grid">
+      <div class="detail-item"><div class="k">Diagnosis (Indication)</div><div class="v kh">${r.diagnosis||'—'}</div></div>
+      <div class="detail-item"><div class="k">Treatment</div><div class="v kh">${r.treatment||'—'}</div></div>
+      <div class="detail-item"><div class="k">Diagnosis (ICD10)</div><div class="v kh">${r.idc10||'—'}</div></div>
+      <div class="detail-item"><div class="k">លេខធ្មេញ · Teeth (FDI)</div><div class="v mono">${teethArr.length? teethArr.join(', '):'—'}</div></div>
+      <div class="detail-item"><div class="k">Registration Card</div><div class="v kh"><span class="badge-type ${typeBadgeCls}">${r.type||'បង់ពេញថ្លៃ'}</span></div></div>
+      <div class="detail-item"><div class="k">ស្ថានភាព (Status)</div><div class="v kh" style="color:var(--primary);font-weight:600;">${r.status === 'Doing' ? 'Appt' : (r.status || 'Missing')}</div></div>
+      ${r.doing? `<div class="detail-item full" style="grid-column:1/-1;"><div class="k">នីតិវិធី · Procedures</div><div class="v kh">${r.doing}</div></div>`:''}
+      ${r.doingDateTime? `<div class="detail-item full" style="grid-column:1/-1;"><div class="k">ម៉ោង និងថ្ងៃខែឆ្នាំនីតិវិធី · Procedure Date-Time</div><div class="v mono" style="color:var(--primary-dark);font-weight:700;">🕒 ${formatDateDisplay(r.doingDateTime)}</div></div>`:''}
+      <div class="detail-item"><div class="k">ទូរស័ព្ទ</div><div class="v">${formatPhoneDisplay(r.phone)||'—'}</div></div>
+      <div class="detail-item"><div class="k">កាលបរិច្ឆេទ / ថ្ងៃចូល</div><div class="v mono">${formatDateDisplay(r.timestamp)}</div></div>
+      <div class="detail-item"><div class="k">Next Visit</div><div class="v mono">${formatDateDisplay(r.timeLast||r.doingDateTime||r.timestamp)}</div></div>
+      ${r.planDo? `<div class="detail-item full" style="grid-column:1/-1;"><div class="k">Plan DO (គម្រោងព្យាបាលលើកក្រោយ)</div><div class="v kh" style="color:var(--amber-dark);font-weight:600;">📋 ${r.planDo}</div></div>`:''}
+    </div>
+    
+    ${presItems.length ? `
+    <div style="margin-top:14px;border-top:1px dashed var(--border);padding-top:10px;">
+      <div class="k" style="font-size:11px;font-weight:700;color:var(--ink-dim);text-transform:uppercase;margin-bottom:6px;">📋 វេជ្ជបញ្ជាចេញថ្នាំ (តាមថ្ងៃខែឆ្នាំ)</div>
+      ${medHtml}
+    </div>
+    ` : ''}
+
+    <div class="modal-actions">
+      <div class="left-action">
+        <button class="btn btn-danger btn-sm" onclick="document.getElementById('doDetailOverlay').classList.add('hidden'); deleteSingleRecordById('${r._id}')">🗑 លុប Delete</button>
+      </div>
+      ${!cameFromPatient? `<button type="button" class="btn btn-outline btn-sm" id="viewPatientBtn">🦷 Full record</button>`:''}
+      <button type="button" class="btn btn-outline btn-sm" id="editRecBtn">✏️ កែសម្រួល Edit</button>
+      <button type="button" class="btn btn-primary btn-sm" id="printRecordBtn">🖨 Print Record</button>
+    </div>
+  `;
+  if(!cameFromPatient){
+    document.getElementById('viewPatientBtn').addEventListener('click', ()=>{
+      closeDetailModal();
+      openPatientRecord(r.name);
+    });
+  }
+  document.getElementById('editRecBtn').addEventListener('click', ()=>{
+    document.getElementById('detailOverlay').classList.add('hidden');
+    openForm(r);
+  });
+  document.getElementById('printRecordBtn').addEventListener('click', ()=>{
+    setPrintMode('portrait');
+    const now = new Date();
+    const printDateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
+    document.getElementById('printOverlayTitle').textContent = 'កំណត់ត្រា · Print Record';
+    document.getElementById('printArea').innerHTML = `
+      <div class="print-sheet">
+        <div class="ps-head">
+          <div>
+            <div class="ps-clinic kh">${clinicInfo.name}</div>
+            <div class="ps-sub">${clinicInfo.address||''}${clinicInfo.phone? ' · '+clinicInfo.phone:''}</div>
+          </div>
+          <div class="ps-head-right">
+            <span class="ps-tag">Case Record</span>
+            <div class="ps-printed mono">Printed ${printDateStr}</div>
+          </div>
+        </div>
+        <div class="ps-info-grid">
+          <div class="ps-info-item"><div class="k">Date</div><div class="v mono">${formatDateDisplay(r.timestamp)}</div></div>
+          <div class="ps-info-item"><div class="k">Patient</div><div class="v kh">${r.name||'—'}</div></div>
+          <div class="ps-info-item"><div class="k">Sex / Age</div><div class="v">${r.sex || '—'} / ${r.age || '—'}</div></div>
+          <div class="ps-info-item"><div class="k">Registration Card</div><div class="v kh">${r.type||'បង់ពេញថ្លៃ'}</div></div>
+          <div class="ps-info-item"><div class="k">Phone</div><div class="v">${formatPhoneDisplay(r.phone)||'—'}</div></div>
+          <div class="ps-info-item"><div class="k">Diagnosis (Indication)</div><div class="v kh">${r.diagnosis||'—'}</div></div>
+          <div class="ps-info-item"><div class="k">Treatment</div><div class="v kh">${r.treatment||'—'}</div></div>
+          <div class="ps-info-item"><div class="k">Teeth (FDI)</div><div class="v mono">${r.teeth||'—'}</div></div>
+          <div class="ps-info-item"><div class="k">Next Visit</div><div class="v mono">${formatDateDisplay(r.timeLast||r.doingDateTime||r.timestamp)}</div></div>
+        </div>
+        ${r.doing? `<div class="ps-note kh"><b>Procedures:</b> ${r.doing} ${r.doingDateTime ? `[🕒 ${formatDateDisplay(r.doingDateTime)}]`:''}</div>`:''}
+        ${r.planDo? `<div class="ps-note kh" style="margin-top:6px;color:var(--amber-dark);"><b>Plan DO:</b> ${r.planDo}</div>`:''}
+        ${r.medication? `<div class="ps-note kh" style="margin-top:8px;"><b>Medication / ថ្នាំ:</b> ${r.medication}</div>`:''}
+        <div class="ps-foot">សូមអរគុណ! · Thank you!</div>
+      </div>
+    `;
+    document.getElementById('exportAllExcelBtn').classList.add('hidden');
+    document.getElementById('printOverlay').classList.add('hidden');
+    document.getElementById('printOverlay').classList.remove('hidden');
+  });
+  document.getElementById('detailOverlay').classList.remove('hidden');
+}
+
+function closeDetailModal(){
+  document.getElementById('detailOverlay').classList.add('hidden');
+  if (window.location.hash === '#detail') history.replaceState(null, null, window.location.pathname);
+  if(cameFromPatient && activePatientContext){ openPatientRecord(activePatientContext); }
+  cameFromPatient = false;
+}
+
+function openSettings(){
+  history.pushState({ modal: 'settings' }, '', '#settings');
+  document.getElementById('s_clinicName').value = clinicInfo.name;
+  document.getElementById('s_address').value = clinicInfo.address;
+  document.getElementById('s_phone').value = clinicInfo.phone;
+  document.getElementById('s_webappurl').value = webAppUrl;
+  document.getElementById('settingsOverlay').classList.remove('hidden');
+}
+
+function saveSettings(){
+  clinicInfo = { name: document.getElementById('s_clinicName').value.trim() || 'Kep Hospital-Dental Service', address: document.getElementById('s_address').value.trim(), phone: document.getElementById('s_phone').value.trim() };
+  webAppUrl = document.getElementById('s_webappurl').value.trim();
+  localStorage.setItem('kep_dental_webapp_url', webAppUrl);
+  document.getElementById('settingsOverlay').classList.add('hidden');
+  if (window.location.hash === '#settings') history.replaceState(null, null, window.location.pathname);
+}
+
+function renderAll(){ 
+  renderPatientDemographics(); 
+  renderTodayStats();
+  renderThisMonthStats();
+  renderCardTypeStats(); 
+  renderTreatmentStats(); 
+  renderAppointments(); 
+  renderList(); 
+}
+
+function closePatientModal(){
+  document.getElementById('patientOverlay').classList.add('hidden');
+  if (window.location.hash === '#patient') history.replaceState(null, null, window.location.pathname);
+  activePatientContext = null;
+}
+
+document.getElementById('fabAdd').addEventListener('click', ()=>{ activePatientContext = null; openForm(); });
+document.getElementById('closeForm').addEventListener('click', closeFormModal);
+document.getElementById('cancelForm').addEventListener('click', closeFormModal);
+document.getElementById('saveForm').addEventListener('click', saveRecord);
+document.getElementById('closeDetail').addEventListener('click', closeDetailModal);
+document.getElementById('closeDoDetail').addEventListener('click', ()=>{
+    document.getElementById('doDetailOverlay').classList.add('hidden');
+    if (window.location.hash === '#detail') history.replaceState(null, null, window.location.pathname);
+});
+document.getElementById('closeToothHistoryModal').addEventListener('click', ()=>{
+    document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
+    if (window.location.hash === '#toothHistory') history.replaceState(null, null, window.location.pathname);
+});
+document.getElementById('closePatient').addEventListener('click', closePatientModal);
+document.getElementById('exportAllExcelBtn').addEventListener('click', exportToExcel);
+document.getElementById('exportAllPdfBtn').addEventListener('click', exportAllToPdf);
+document.getElementById('searchInput').addEventListener('input', (e)=>{ searchTerm=e.target.value; renderList(); });
+document.getElementById('f_diagnosis').addEventListener('change', (e)=>{ document.getElementById('f_diagnosis_custom').style.display = e.target.value==='custom' ? 'block':'none'; });
+document.getElementById('f_treatment').addEventListener('change', (e)=>{ document.getElementById('f_treatment_custom').style.display = e.target.value==='custom' ? 'block':'none'; });
+document.getElementById('closePrint').addEventListener('click', ()=>document.getElementById('printOverlay').classList.add('hidden'));
+document.getElementById('closePrintBtn').addEventListener('click', ()=>document.getElementById('printOverlay').classList.add('hidden'));
+document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+document.getElementById('settingsBtn').addEventListener('click', openSettings);
+document.getElementById('closeSettings').addEventListener('click', ()=>{
+    document.getElementById('settingsOverlay').classList.add('hidden');
+    if (window.location.hash === '#settings') history.replaceState(null, null, window.location.pathname);
+});
+document.getElementById('saveSettingsBtn').addEventListener('click', saveSettings);
+document.getElementById('detailOverlay').addEventListener('click', (e)=>{ if(e.target.id==='detailOverlay') closeDetailModal(); });
+document.getElementById('doDetailOverlay').addEventListener('click', (e)=>{ 
+    if(e.target.id==='doDetailOverlay') {
+      document.getElementById('doDetailOverlay').classList.add('hidden');
+      if (window.location.hash === '#detail') history.replaceState(null, null, window.location.pathname);
+    } 
+});
+document.getElementById('toothHistoryModalOverlay').addEventListener('click', (e)=>{ 
+    if(e.target.id==='toothHistoryModalOverlay') {
+      document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
+      if (window.location.hash === '#toothHistory') history.replaceState(null, null, window.location.pathname);
+    }
+});
+document.getElementById('formOverlay').addEventListener('click', (e)=>{ if(e.target.id==='formOverlay') closeFormModal(); });
+document.getElementById('patientOverlay').addEventListener('click', (e)=>{ if(e.target.id==='patientOverlay') closePatientModal(); });
+
+document.getElementById('syncBadge').addEventListener('click', () => fetchFromSheet(false));
+
+['printOverlay','settingsOverlay'].forEach(id=>{
+  document.getElementById(id).addEventListener('click', (e)=>{ 
+      if(e.target.id===id) {
+          document.getElementById(id).classList.add('hidden'); 
+          if (window.location.hash === '#' + id.replace('Overlay','')) history.replaceState(null, null, window.location.pathname);
+      }
+  });
+});
+
+/* ---------- X-Ray Gallery Function ---------- */
+async function openXrayGallery(patientName) {
+  history.pushState({ modal: 'xrayGallery' }, '', '#xrayGallery');
+  document.getElementById('xrayGalleryTitle').textContent = `📷 រូបភាព X-Ray៖ ${patientName}`;
+  const body = document.getElementById('xrayGalleryBody');
+
+  body.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <span style="font-size:12px; color:var(--ink-dim);">ថតឯកសារ X-Ray របស់ឈ្មោះ <b>${patientName}</b></span>
+      <button class="btn btn-primary btn-sm kh" onclick="document.getElementById('xrayGalleryOverlay').classList.add('hidden'); document.getElementById('f_name').value = '${patientName.replace(/'/g, "\\'")}'; openXrayModal();">
+        ＋ Upload រូបថ្មី
+      </button>
+    </div>
+    <div id="xrayGalleryContent" style="text-align:center; padding: 40px 14px;">
+      <div class="mono" style="color:var(--primary-dark); font-size:14px;">⏳ កំពុងស្វែងរករូបភាព...</div>
+    </div>
+  `;
+  document.getElementById('xrayGalleryOverlay').classList.remove('hidden');
+
+  try {
+    const urlSeparator = webAppUrl.includes('?') ? '&' : '?';
+    const fetchUrl = `${webAppUrl}${urlSeparator}action=getXrays&patientName=${encodeURIComponent(patientName)}&t=${Date.now()}`;
+    
+    const response = await fetch(fetchUrl);
+    const result = await response.json();
+    
+    const content = document.getElementById('xrayGalleryContent');
+    
+    if (result.status === 'success' && result.data && result.data.length > 0) {
+      let gridHtml = '<div class="xray-gallery-grid">';
+      result.data.forEach(img => {
+        let imgSrc = img.thumbnail;
+        let fileIdMatch = img.url.match(/[-\w]{25,}/);
+        let fileId = fileIdMatch ? fileIdMatch[0] : '';
+        if (fileId) {
+            imgSrc = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+        }
+
+        gridHtml += `
+          <div class="xray-item" onclick="window.open('${img.url}', '_blank')">
+            <img src="${imgSrc}" alt="X-Ray" loading="lazy" onerror="this.src='https://via.placeholder.com/150?text=Error'">
+            <div class="xray-info">
+              <div class="xray-date">${img.name.split('_XRAY')[0] || img.date}</div>
+              <div class="xray-date" style="font-size:9px;opacity:0.7;">${img.date}</div>
+            </div>
+          </div>
+        `;
+      });
+      gridHtml += '</div>';
+      content.innerHTML = gridHtml;
+      content.style.padding = '0';
+      content.style.textAlign = 'left';
+    } else {
+      content.innerHTML = `
+        <div class="empty-state kh" style="padding: 40px 14px; border:none; background:transparent;">
+          <div style="font-size:36px;margin-bottom:12px;">🖼️</div>
+          មិនមានរូបភាព X-Ray សម្រាប់អ្នកជំងឺនេះទេ
+        </div>
+      `;
+    }
+  } catch (error) {
+    document.getElementById('xrayGalleryContent').innerHTML = `
+      <div class="empty-state kh" style="padding: 30px 14px; border:none; background:transparent;">
+        <div style="font-size:32px;margin-bottom:12px;">⚠️</div>
+        <div style="color:var(--coral-dark);">មានបញ្ហាក្នុងការទាញយករូបភាព។</div>
+        <div style="font-size:11px; opacity:0.8; margin-top:8px;">សូមប្រាកដថា Google Apps Script របស់អ្នកបាន Update កូដថ្មីរួចរាល់។</div>
+      </div>
+    `;
+  }
+}
+
+document.getElementById('closeXrayGallery')?.addEventListener('click', () => {
+  document.getElementById('xrayGalleryOverlay').classList.add('hidden');
+  if (window.location.hash === '#xrayGallery') history.replaceState(null, null, window.location.pathname);
+});
+document.getElementById('xrayGalleryOverlay')?.addEventListener('click', (e) => {
+  if (e.target.id === 'xrayGalleryOverlay') {
+    document.getElementById('xrayGalleryOverlay').classList.add('hidden');
+    if (window.location.hash === '#xrayGallery') history.replaceState(null, null, window.location.pathname);
+  }
+});
+
+/* ---------- X-Ray upload (Google Drive) ---------- */
+const XRAY_FOLDER_ID = '1wPtreqtKW2eODRcU8GwXLzgSljCsM7AS';
+let xraySelectedBase64 = null;
+let xraySelectedMime = null;
+let xraySelectedExt = 'jpg';
+
+function openXrayModal(){
+  history.pushState({ modal: 'xrayUpload' }, '', '#xrayUpload');
+  resetXrayModal();
+  document.getElementById('xrayModalOverlay').classList.remove('hidden');
+}
+function closeXrayModal(){
+  document.getElementById('xrayModalOverlay').classList.add('hidden');
+  if (window.location.hash === '#xrayUpload') history.replaceState(null, null, window.location.pathname);
+  resetXrayModal();
+}
+function resetXrayModal(){
+  xraySelectedBase64 = null; xraySelectedMime = null;
+  document.getElementById('xrayFileInput').value = '';
+  document.getElementById('xrayPreviewImg').classList.add('hidden');
+  document.getElementById('xrayPreviewImg').src = '';
+  document.getElementById('xrayPlaceholder').classList.remove('hidden');
+  document.getElementById('xrayFileName').textContent = '';
+  const status = document.getElementById('xrayStatus');
+  status.textContent = '';
+  status.style.color = 'var(--primary-dark)';
+  document.getElementById('xrayAddBtn').disabled = true;
+}
+
+document.getElementById('xrayFileInput').addEventListener('change', function(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    document.getElementById('xrayStatus').textContent = '⚠️ សូមជ្រើសរើសឯកសាររូបភាព';
+    return;
+  }
+  document.getElementById('xrayFileName').textContent = file.name;
+  compressImageToBase64(file, function(base64, mime){
+    xraySelectedBase64 = base64;
+    xraySelectedMime = mime;
+    xraySelectedExt = mime === 'image/png' ? 'png' : 'jpg';
+    const img = document.getElementById('xrayPreviewImg');
+    img.src = 'data:' + mime + ';base64,' + base64;
+    img.classList.remove('hidden');
+    document.getElementById('xrayPlaceholder').classList.add('hidden');
+    document.getElementById('xrayAddBtn').disabled = false;
+  });
+});
+
+function compressImageToBase64(file, callback){
+  const reader = new FileReader();
+  reader.onload = function(evt){
+    const img = new Image();
+    img.onload = function(){
+      const maxDim = 1600;
+      let w = img.width, h = img.height;
+      if(w > maxDim || h > maxDim){
+        if(w > h){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      callback(dataUrl.split(',')[1], 'image/jpeg');
+    };
+    img.src = evt.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+document.getElementById('xrayCancelBtn').addEventListener('click', closeXrayModal);
+document.getElementById('closeXrayModal').addEventListener('click', closeXrayModal);
+document.getElementById('xrayModalOverlay').addEventListener('click', (e)=>{ if(e.target.id==='xrayModalOverlay') closeXrayModal(); });
+document.getElementById('xrayAddBtn').addEventListener('click', uploadXrayImage);
+
+async function uploadXrayImage(){
+  if(!xraySelectedBase64) return;
+  const btn = document.getElementById('xrayAddBtn');
+  const status = document.getElementById('xrayStatus');
+  btn.disabled = true;
+  status.style.color = 'var(--primary-dark)';
+  status.textContent = '⏳ កំពុងបង្ហោះទៅ Drive...';
+
+  const patientName = cleanStr(document.getElementById('f_name').value) || 'Unknown';
+  const recordCode = (editingIndex !== null && allRecords[editingIndex]) ? (allRecords[editingIndex].code || '') : '';
+  const stamp = new Date().toISOString().replace(/[:.]/g,'-');
+  const filename = `${patientName}${recordCode ? '_'+recordCode : ''}_XRAY_${stamp}.${xraySelectedExt}`;
+
+  const payload = {
+    action: 'uploadXray',
+    data: {
+      folderId: XRAY_FOLDER_ID,
+      filename: filename,
+      mimeType: xraySelectedMime,
+      base64: xraySelectedBase64,
+      patientName: patientName,
+      recordCode: recordCode
+    },
+    timestamp: Date.now()
+  };
+
+  try{
+    if(navigator.onLine && webAppUrl){
+      await fetch(webAppUrl, {
+        method:'POST',
+        mode:'no-cors',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body: JSON.stringify(payload)
+      });
+      status.textContent = '✓ បានបញ្ជូនទៅ Drive រួចរាល់';
+      setTimeout(closeXrayModal, 1200);
+    } else {
+      const queue = getPendingQueue();
+      queue.push(payload);
+      savePendingQueue(queue);
+      status.textContent = '📶 គ្មានអ៊ីនធឺណិត — រក្សាទុកសម្រាប់ Sync ពេលក្រោយ';
+      setTimeout(closeXrayModal, 1500);
+    }
+  }catch(err){
+    status.style.color = 'var(--coral-dark)';
+    status.textContent = '⚠️ មានបញ្ហា សូមព្យាយាមម្តងទៀត';
+    btn.disabled = false;
+  }
+}
+
+// ស្គ្រីបសម្រាប់ Report Modal 
+document.getElementById('reportBtn').addEventListener('click', () => {
+    history.pushState({ modal: 'report' }, '', '#report');
+    document.getElementById('reportOverlay').classList.remove('hidden');
+});
+document.getElementById('closeReport').addEventListener('click', () => {
+    document.getElementById('reportOverlay').classList.add('hidden');
+    if (window.location.hash === '#report') history.replaceState(null, null, window.location.pathname);
+});
+document.getElementById('reportOverlay').addEventListener('click', (e) => { 
+    if(e.target.id === 'reportOverlay') {
+        document.getElementById('reportOverlay').classList.add('hidden');
+        if (window.location.hash === '#report') history.replaceState(null, null, window.location.pathname);
+    }
+});
+
+/* =========================================
+   មុខងារសម្រាប់បញ្ជីជំងឺ (Disease List)
+   ========================================= */
+document.getElementById('closeDiseaseList').addEventListener('click', () => {
+    document.getElementById('diseaseListOverlay').classList.add('hidden');
+    if (window.location.hash === '#diseaseList') history.replaceState(null, null, window.location.pathname);
+});
+document.getElementById('diseaseListOverlay').addEventListener('click', (e) => { 
+    if(e.target.id === 'diseaseListOverlay') {
+        document.getElementById('diseaseListOverlay').classList.add('hidden');
+        if (window.location.hash === '#diseaseList') history.replaceState(null, null, window.location.pathname);
+    }
+});
+
+function openDiseaseListModal() {
+    history.pushState({ modal: 'diseaseList' }, '', '#diseaseList');
+    
+    document.getElementById('reportOverlay').classList.add('hidden');
+    
+    populateDiseaseListYearOptions();
+    document.getElementById('dlFilterMonth').value = '';
+    document.getElementById('dlFilterYear').value = '';
+    renderDiseaseListTable(allRecords);
+    
+    document.getElementById('diseaseListOverlay').classList.remove('hidden');
+}
+
+function populateDiseaseListYearOptions() {
+    const yearSel = document.getElementById('dlFilterYear');
+    const years = new Set();
+    allRecords.forEach(r => {
+        const d = parseAnyDate(r.timestamp);
+        if (d) years.add(d.getFullYear());
+    });
+    const sorted = [...years].sort((a, b) => b - a);
+    const currentVal = yearSel.value;
+    yearSel.innerHTML = '<option value="">ទាំងអស់ · All</option>' +
+        sorted.map(y => `<option value="${y}">${y}</option>`).join('');
+    yearSel.value = currentVal;
+}
+
+function applyDiseaseListFilter() {
+    const month = document.getElementById('dlFilterMonth').value;
+    const year = document.getElementById('dlFilterYear').value;
+    
+    let filtered = allRecords;
+    if (month || year) {
+        filtered = allRecords.filter(r => {
+            const d = parseAnyDate(r.timestamp);
+            if (!d) return false;
+            if (month && (d.getMonth() + 1) !== parseInt(month, 10)) return false;
+            if (year && d.getFullYear() !== parseInt(year, 10)) return false;
+            return true;
+        });
+    }
+    renderDiseaseListTable(filtered);
+}
+
+function renderDiseaseListTable(records) {
+    const container = document.getElementById('diseaseListTableContainer');
+    
+    let total = records.length;
+    let male = 0, female = 0, kids = 0;
+
+    records.forEach(r => {
+      let sex = String(r.sex || '').toUpperCase();
+      if (sex === 'M' || sex.includes('ប្រុស')) male++;
+      else if (sex === 'F' || sex.includes('ស្រី')) female++;
+
+      let ageNum = parseInt(r.age, 10);
+      if (!isNaN(ageNum) && ageNum <= 15) kids++;
+    });
+
+    // បញ្ចូលស្ថិតិសង្ខេបជាប់នឹង Filter Button
+    document.getElementById('dlSumTotal').textContent = total;
+    document.getElementById('dlSumMale').textContent = male;
+    document.getElementById('dlSumFemale').textContent = female;
+    document.getElementById('dlSumKids').textContent = kids;
+
+    const headers = [
+        "លេខរៀង", "លេខកូដអ្នកជំងឺ", "ឈ្មោះអ្នកជំងឺ", "អាណាព្យាបាល", "អាយុ <15 ឆ្នាំ", "អាយុ >15 ឆ្នាំ", 
+        "ភេទ ប្រុស", "ភេទ ស្រី", "លេខទូរស័ព្ទ", "ថ្ងៃខែ/ម៉ោងចូល", "រោគវិនិច្ឆ័យ", "ពិគ្រោះ និង ថ្នាំ", 
+        "វះកាត់ ចង់ថ្គាម", "វះកាត់ វះបួស", "វះកាត់ ផ្សេងៗ", "ដកធ្មេញ ព្រៃ", "ដកធ្មេញ ស្រុក", 
+        "ប៉ះធ្មេញ GIC", "ប៉ះធ្មេញ Amalgam", "ប៉ះធ្មេញ Composite", "ប៉ះធ្មេញ ផ្សេងៗ", "ថតធ្មេញ XRay", 
+        "ព្យាបាលធ្មេញ RCT", "សំអាតកំបោរ Scaling", "បិតការពារ Sealant", "ប្រើភ្លុយអរ F Varnish", 
+        "ដាក់ធ្មេញ ជាប់", "ដាក់ធ្មេញ ដោះ", "ប្រភេទបង់ថ្លៃ", "ថ្ងៃខែឆ្នាំ/ម៉ោងចេញ", "សម្គាល់"
+    ];
+
+    let thead = headers.map(h => `<th>${h}</th>`).join('');
+    let tbody = '';
+
+    records.forEach((r, idx) => {
+        let ageNum = parseInt(r.age, 10);
+        let isChild = (!isNaN(ageNum) && ageNum < 15) ? r.age : '';
+        let isAdult = (!isNaN(ageNum) && ageNum >= 15) ? r.age : '';
+        
+        let sex = String(r.sex || '').toUpperCase();
+        let isM = (sex === 'M' || sex.includes('ប្រុស')) ? '✓' : '';
+        let isF = (sex === 'F' || sex.includes('ស្រី')) ? '✓' : '';
+        
+        let tx = cleanStr(r.treatment);
+        let has = (matchTxt) => (tx === matchTxt || (tx.includes(matchTxt) && tx !== 'custom')) ? '✓' : '';
+        
+        let dtIn = formatDateDisplay(r.timestamp);
+        let dtOut = r.timeLast ? formatDateDisplay(r.timeLast) : (r.doingDateTime ? formatDateDisplay(r.doingDateTime) : '—');
+
+        tbody += `<tr>
+            <td>${idx + 1}</td>
+            <td class="mono">${r.code || '—'}</td>
+            <td class="text-left kh"><b>${r.name || '—'}</b></td>
+            <td></td>
+            <td>${isChild}</td>
+            <td>${isAdult}</td>
+            <td>${isM}</td>
+            <td>${isF}</td>
+            <td class="mono">${formatPhoneDisplay(r.phone)}</td>
+            <td class="mono">${dtIn}</td>
+            <td class="kh">${r.diagnosis || '—'}</td>
+            <td>${has('ពិគ្រោះជំងឺ')}</td>
+            <td>${has('វះកាត់ ចង់ថ្គាម')}</td>
+            <td>${has('វះកាត់ វះបួស')}</td>
+            <td>${has('វះកាត់ ផ្សេងៗ')}</td>
+            <td>${has('ដកធ្មេញ ព្រៃ')}</td>
+            <td>${has('ដកធ្មេញ ស្រុក')}</td>
+            <td>${has('ប៉ះធ្មេញ GIC')}</td>
+            <td>${has('ប៉ះធ្មេញ Amalgam')}</td>
+            <td>${has('ប៉ះធ្មេញ Composite')}</td>
+            <td>${has('ប៉ះធ្មេញ ផ្សេងៗ')}</td>
+            <td>${has('ថតធ្មេញ X-ray')}</td>
+            <td>${has('ព្យាបាលធ្មេញ (RCT)')}</td>
+            <td>${has('សំអាតកំបោរ Scaling')}</td>
+            <td>${has('បិតការពារ Sealant')}</td>
+            <td>${has('ភ្លុយអរ Varnish or Gel')}</td>
+            <td>${has('ដាក់ធ្មេញ ជាប់')}</td>
+            <td>${has('ដាក់ធ្មេញ ដោះ')}</td>
+            <td class="kh">${r.type || 'បង់ពេញថ្លៃ'}</td>
+            <td class="mono">${dtOut !== '—' ? dtOut : ''}</td>
+            <td class="kh text-left">${r.planDo || r.doing || ''}</td>
+        </tr>`;
+    });
+
+    container.innerHTML = `
+      <div style="text-align: center; margin-bottom: 10px;">
+         <h3 class="kh">បញ្ជីជំងឺ (DHIS2)</h3>
+         <div class="mono" style="margin-top:4px; color:var(--ink-dim); font-size:11px;">សរុប · Total: ${records.length}</div>
+      </div>
+      <table class="dl-table" id="diseaseListTable">
+        <thead><tr>${thead}</tr></thead>
+        <tbody>${tbody}</tbody>
+      </table>`;
+}
+
+function exportDiseaseListPDF() {
+    setPrintMode('landscape');
+    document.body.classList.add('printing-disease-list');
+    window.print();
+    document.body.classList.remove('printing-disease-list');
+    setPrintMode('portrait');
+}
+
+function exportDiseaseListExcel() {
+    const table = document.getElementById("diseaseListTable");
+    if (!table) return;
+
+    let csv = [];
+    const rows = table.querySelectorAll("tr");
+    
+    for (let i = 0; i < rows.length; i++) {
+        let row = [], cols = rows[i].querySelectorAll("td, th");
+        for (let j = 0; j < cols.length; j++) {
+            let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, "").trim();
+            data = '"' + data.replace(/"/g, '""') + '"';
+            row.push(data);
+        }
+        csv.push(row.join(","));
+    }
+    
+    const csvContent = '\uFEFF' + csv.join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    
+    const d = new Date();
+    const dateStr = `${d.getFullYear()}_${String(d.getMonth()+1).padStart(2,'0')}_${String(d.getDate()).padStart(2,'0')}`;
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Disease_List_Report_${dateStr}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+/* Print របាយការណ៍ */
+window.printReportPanel = function(btn) {
+    setPrintMode('landscape');
+    const panel = btn.closest('.card-type-stats-panel');
+    panel.classList.add('print-isolate');
+    document.body.classList.add('printing-panel');
+    
+    window.print();
+    
+    document.body.classList.remove('printing-panel');
+    panel.classList.remove('print-isolate');
+    setPrintMode('portrait');
+};
+
+window.printFullReport = function() {
+    setPrintMode('portrait');
+    document.body.classList.add('printing-full-report');
+    
+    window.print();
+    
+    document.body.classList.remove('printing-full-report');
+};
+
+let storedUrl = localStorage.getItem('kep_dental_webapp_url');
+if(storedUrl && storedUrl !== DEFAULT_WEB_APP_URL) {
+    webAppUrl = storedUrl;
+} else {
+    webAppUrl = DEFAULT_WEB_APP_URL;
+    localStorage.setItem('kep_dental_webapp_url', webAppUrl);
+}
+
+loadLocalRecords();
+flushPendingQueue();
+fetchFromSheet(true);
+</script>
+</body>
+</html>
