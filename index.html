@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ផ្នែកសេវាជំងឺមាត់ធ្មេញ · Dental Service Record</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -37,6 +37,24 @@
   button{font-family:inherit;}
   .hidden{display:none !important;}
 
+  /* App Lock Screen */
+  #appLockOverlay {
+    position: fixed; inset: 0; background: rgba(11, 42, 39, 0.95);
+    backdrop-filter: blur(8px); z-index: 99999;
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+  }
+  .lock-box {
+    background: #fff; border-radius: 20px; padding: 32px 24px;
+    width: 100%; max-width: 360px; text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+  }
+  .lock-box input {
+    width: 100%; font-size: 26px; text-align: center; letter-spacing: 8px;
+    padding: 10px; border-radius: 12px; border: 2px solid var(--border);
+    margin: 16px 0 8px; outline: none; transition: 0.2s;
+  }
+  .lock-box input:focus { border-color: var(--primary); }
+
   /* topbar */
   .topbar{background:var(--surface);border-bottom:1px solid var(--border-soft);padding:14px 22px;position:sticky;top:0;z-index:40;box-shadow:0 2px 16px -10px rgba(11,59,54,0.12);}
   .topbar-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
@@ -61,19 +79,6 @@
     transition: all .15s ease;
     height: 34px;
     white-space: nowrap;
-  }
-
-  .icon-btn {
-    width: 34px;
-    height: 34px;
-    padding: 0;
-    border-radius: 8px;
-    font-size: 16px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all .15s ease;
   }
 
   .sync-badge{
@@ -245,7 +250,7 @@
 
   /* Search Input */
   .search-input-topbar{
-    flex:none;width:280px;min-width:160px;padding:8px 14px;font-size:13px;
+    flex:none;width:240px;min-width:140px;padding:8px 14px;font-size:13px;
     background:#ffffff; border:2px solid var(--coral); border-radius:10px;
     box-shadow:0 0 0 3px rgba(228,87,76,0.12), inset 0 1px 3px rgba(0,0,0,0.04);
     font-weight:500; transition:all .2s ease; height: 34px;
@@ -450,13 +455,6 @@
   .emr-status.doing { background: #E1EFFF; color: #0B5ED7; border: 1px solid #0B5ED740; }
   .emr-status.missing { background: #F8D7DA; color: #721C24; border: 1px solid #721C2440; }
 
-  .status-pills { display: flex; gap: 4px; background: var(--surface-2); padding: 4px; border-radius: 8px; border: 1px solid var(--border); width: fit-content; }
-  .s-pill { font-size: 10.5px; font-weight: 700; padding: 4px 8px; border-radius: 6px; cursor: pointer; color: var(--ink-dim); transition: all 0.15s ease; }
-  .s-pill:hover { background: var(--border-soft); color: var(--ink); }
-  .s-pill.active-done { background: #E0F2E9; color: #198754; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-  .s-pill.active-doing { background: #E1EFFF; color: #0B5ED7; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-  .s-pill.active-missing { background: #F8D7DA; color: #DC3545; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-
   /* Form Layout */
   .form-grid{display:grid;grid-template-columns:1fr;gap:12px;}
   .field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-dim);margin-bottom:5px;}
@@ -640,6 +638,18 @@
 </head>
 <body>
 
+<!-- App Lock Overlay (ការពារពេលបើកកម្មវិធី) -->
+<div id="appLockOverlay">
+  <div class="lock-box">
+    <div style="font-size: 40px; margin-bottom: 8px;">🔒</div>
+    <h3 class="kh" style="margin: 0; font-size: 17px; color: var(--ink);">សន្តិសុខប្រព័ន្ធមាត់ធ្មេញ</h3>
+    <p class="kh" style="font-size: 12px; color: var(--ink-dim); margin-top: 6px;">សូមបញ្ចូលលេខសម្ងាត់ PIN ដើម្បីចូលប្រើប្រាស់</p>
+    <input type="password" id="appLockInput" class="mono" maxlength="8" placeholder="••••••" autofocus>
+    <div id="appLockError" class="kh" style="color: var(--coral); font-size: 12px; min-height: 18px; margin-bottom: 12px;"></div>
+    <button class="btn btn-primary btn-block kh" id="appLockBtn">ចូលប្រើប្រាស់ · Unlock</button>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="topbar-inner">
     <div class="brand">
@@ -658,7 +668,8 @@
       <input type="text" class="search-input search-input-topbar kh" id="searchInput" placeholder="🔍 ស្វែងរក ឈ្មោះ, លេខធ្មេញ...">
       <button class="topbar-btn-uniform btn-ghost kh" id="reportBtn" title="របាយការណ៍" style="border: 1.5px solid #0B5ED7; color: #0B5ED7;">📊 Report</button>
       <span class="topbar-btn-uniform sync-badge" id="syncBadge" title="ចុចដើម្បីទាញទិន្នន័យពី Sheet មក App">🔄 Sync</span>
-      <button class="topbar-btn-uniform btn-outline" id="settingsBtn" title="ការកំណត់គ្លីនិក">⚙</button>
+      <!-- ប៊ូតុងព័ត៌មានគ្លីនិក (ការពារដោយ PIN) -->
+      <button class="topbar-btn-uniform btn-outline kh" id="settingsBtn" title="ព័ត៌មានគ្លីនិក">🏥 Clinic Info</button>
     </div>
   </div>
 </div>
@@ -686,6 +697,61 @@
     <span class="mono" id="listCount" style="font-size:12px;color:var(--ink-dim)"></span>
   </div>
   <div class="record-list" id="recordList"></div>
+</div>
+
+<!-- PIN Confirmation Modal សម្រាប់ចូល Clinic Info -->
+<div class="overlay hidden" id="clinicPinOverlay" style="z-index: 125;">
+  <div class="modal narrow" style="max-width: 360px;">
+    <div class="modal-head">
+      <h2 class="kh">🔒 បញ្ចូល PIN គ្លីនិក</h2>
+      <button class="x" id="closeClinicPin">✕</button>
+    </div>
+    <div class="modal-body" style="text-align: center; padding: 22px;">
+      <p class="kh" style="font-size: 13px; color: var(--ink-dim); margin-bottom: 12px;">
+        សូមបញ្ចូល PIN ដើម្បីចូលទៅកាន់ ព័ត៌មានគ្លីនិក · Clinic Info
+      </p>
+      <input type="password" id="clinicPinInput" class="mono" maxlength="8" placeholder="••••••" 
+             style="text-align: center; font-size: 24px; letter-spacing: 6px; width: 100%; padding: 8px; border: 2px solid var(--border); border-radius: 10px; margin-bottom: 8px; outline:none;">
+      <div id="clinicPinError" class="kh" style="color: var(--coral); font-size: 12px; min-height: 18px; margin-bottom: 12px;"></div>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-outline btn-block kh" id="cancelClinicPin">បោះបង់</button>
+        <button class="btn btn-primary btn-block kh" id="submitClinicPin">ផ្ទៀងផ្ទាត់</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal កំណត់ថែមថយ Lists (Treatment, Diagnosis, Procedures, Registration Card) -->
+<div class="overlay hidden" id="listsSettingOverlay" style="z-index: 120;">
+  <div class="modal" style="max-width: 650px;">
+    <div class="modal-head">
+      <h2 class="kh">⚙️ ការកំណត់ជម្រើសទិន្នន័យ (Settings)</h2>
+      <button class="x" id="closeListsSetting">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display: flex; gap: 6px; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; margin-bottom: 14px; flex-wrap: wrap;">
+        <button type="button" class="btn btn-sm btn-primary kh opt-tab" onclick="switchSettingTab('treatment', this)">Treatment</button>
+        <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('diagnosis', this)">Diagnosis</button>
+        <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('procedure', this)">Procedures</button>
+        <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('regcard', this)">Registration Card</button>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+        <input type="text" id="newOptionInput" class="kh" placeholder="បញ្ចូលឈ្មោះថ្មី..." style="flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
+        <button type="button" class="btn btn-primary kh" onclick="addNewCustomOption()">＋ បន្ថែម</button>
+      </div>
+
+      <div id="optionsListContainer" style="max-height: 320px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 8px; padding: 8px; background: var(--surface-2);">
+      </div>
+
+      <div class="modal-actions" style="margin-top: 15px;">
+        <div class="left-action">
+          <button type="button" class="btn btn-outline btn-sm kh" onclick="resetOptionsToDefault()">🔄 លំនាំដើម (Default)</button>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm kh" id="saveListsSettingBtn">រួចរាល់ Done</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Detail modal -->
@@ -761,20 +827,11 @@
           </div>
           <div class="field">
             <label>Registration Card (Type)</label>
-            <select id="f_type" class="kh">
-              <option value="បង់ពេញថ្លៃ">បង់ពេញថ្លៃ</option>
-              <option value="លើកលែង">លើកលែង</option>
-              <option value="មូលនិធិសមធម៌ (ក្រីក្រ)">មូលនិធិសមធម៌ (ក្រីក្រ)</option>
-              <option value="មូលនិធិសមធម៌ (ហានិភ័យ)">មូលនិធិសមធម៌ (ហានិភ័យ)</option>
-              <option value="មូលនិធិសមធម៌ (ក្រៅប្រព័ន្ធ)">មូលនិធិសមធម៌ (ក្រៅប្រព័ន្ធ)</option>
-              <option value="ប.ស.ស (កម្មករ)">ប.ស.ស (កម្មករ)</option>
-              <option value="ប.ស.ស (សាធារណៈឬក្នុងបន្ទុក)">ប.ស.ស (សាធារណៈឬក្នុងបន្ទុក)</option>
-              <option value="ប.ស.ស (ស្វ័យនិយោជន៍)">ប.ស.ស (ស្វ័យនិយោជន៍)</option>
-            </select>
+            <select id="f_type" class="kh"></select>
           </div>
         </div>
         
-        <!-- Row 3: Teeth, Diagnosis (Indication), Diagnosis (ICD10) នៅជួរជាមួយគ្នា -->
+        <!-- Row 3: Teeth, Diagnosis (Indication), Diagnosis (ICD10) -->
         <div class="row-three-cols">
           <div class="field">
             <label>លេខធ្មេញ · Teeth (FDI)</label>
@@ -783,14 +840,7 @@
 
           <div class="field">
             <label>Diagnosis (Indication)</label>
-            <select id="f_diagnosis" class="kh">
-              <option value="ឈឺធ្មេញ">ឈឺធ្មេញ</option>
-              <option value="ធ្មេញរង្គើរ">ធ្មេញរង្គើរ</option>
-              <option value="ឈាមអញ្ចាញធ្មេញ">ឈាមអញ្ចាញធ្មេញ</option>
-              <option value="ហើមអញ្ចាញ">ហើមអញ្ចាញ</option>
-              <option value="ខ្ទុះអញ្ចាញ">ខ្ទុះអញ្ចាញ</option>
-              <option value="custom">ផ្សេងទៀត / Custom…</option>
-            </select>
+            <select id="f_diagnosis" class="kh"></select>
             <input type="text" id="f_diagnosis_custom" placeholder="សរសេរផ្សេង / type custom" style="margin-top:6px;display:none;">
           </div>
 
@@ -814,50 +864,16 @@
           </div>
         </div>
 
-        <!-- Row 4: Treatment, Procedures, Procedure Time នៅជួរជាមួយគ្នា -->
+        <!-- Row 4: Treatment, Procedures, Procedure Time -->
         <div class="row-treatment-proc-time">
           <div class="field">
             <label>Treatment</label>
-            <select id="f_treatment" class="kh">
-              <option value="វះកាត់ ចង់ថ្គាម">វះកាត់ ចង់ថ្គាម</option>
-              <option value="វះកាត់ វះបួស">វះកាត់ វះបួស</option>
-              <option value="វះកាត់ ផ្សេងៗ">វះកាត់ ផ្សេងៗ</option>
-              <option value="ដកធ្មេញ ព្រៃ">ដកធ្មេញ ព្រៃ</option>
-              <option value="ដកធ្មេញ ស្រុក">ដកធ្មេញ ស្រុក</option>
-              <option value="ប៉ះធ្មេញ GIC">ប៉ះធ្មេញ GIC</option>
-              <option value="ប៉ះធ្មេញ Amalgam">ប៉ះធ្មេញ Amalgam</option>
-              <option value="ប៉ះធ្មេញ Composite">ប៉ះធ្មេញ Composite</option>
-              <option value="ប៉ះធ្មេញ ផ្សេងៗ">ប៉ះធ្មេញ ផ្សេងៗ</option>
-              <option value="ថតធ្មេញ X-ray">ថតធ្មេញ X-ray</option>
-              <option value="ព្យាបាលធ្មេញ (RCT)">ព្យាបាលធ្មេញ (RCT)</option>
-              <option value="សំអាតកំបោរ Scaling">សំអាតកំបោរ Scaling</option>
-              <option value="បិតការពារ Sealant">បិតការពារ Sealant</option>
-              <option value="ភ្លុយអរ Varnish or Gel">ភ្លុយអរ Varnish or Gel</option>
-              <option value="ដាក់ធ្មេញ ជាប់">ដាក់ធ្មេញ ជាប់</option>
-              <option value="ដាក់ធ្មេញ ដោះ">ដាក់ធ្មេញ ដោះ</option>
-              <option value="ពិគ្រោះជំងឺ">ពិគ្រោះជំងឺ</option>
-              <option value="custom">ផ្សេងទៀត / Custom…</option>
-            </select>
+            <select id="f_treatment" class="kh"></select>
             <input type="text" id="f_treatment_custom" placeholder="សរសេរផ្សេង / type custom" style="margin-top:6px;display:none;">
           </div>
           <div class="field">
             <label>នីតិវិធី · Procedures</label>
-            <select id="f_procedure_select" class="kh">
-              <option value="Opening">Opening</option>
-              <option value="Dressing Calcium">Dressing Calcium</option>
-              <option value="Obturation">Obturation</option>
-              <option value="Scaling upper/lower">Scaling upper/lower</option>
-              <option value="Irrigation with NaOCl">Irrigation with NaOCl</option>
-              <option value="Working length measurement">Working length measurement</option>
-              <option value="Tooth Extraction">Tooth Extraction</option>
-              <option value="Suture">Suture</option>
-              <option value="Composite Restoration">Composite Restoration</option>
-              <option value="GIC Filling">GIC Filling</option>
-              <option value="Crown preparation">Crown preparation</option>
-              <option value="Impression taking">Impression taking</option>
-              <option value="Crown cementation">Crown cementation</option>
-              <option value="custom">ផ្សេងទៀត / Custom…</option>
-            </select>
+            <select id="f_procedure_select" class="kh"></select>
             <textarea id="f_doing" class="kh" placeholder="សរសេរនីតិវិធីលម្អិត / custom procedure..." style="margin-top:6px;display:none;"></textarea>
           </div>
           <div class="field">
@@ -991,10 +1007,16 @@
   </div>
 </div>
 
-<!-- Settings modal -->
+<!-- Settings modal (ព័ត៌មានគ្លីនិក - មានប៊ូតុង ⚙️ Settings នៅ Bar ខាងលើស្តាំ) -->
 <div class="overlay hidden" id="settingsOverlay">
   <div class="modal narrow">
-    <div class="modal-head"><h2 class="kh">ព័ត៌មានគ្លីនិក · Clinic Info</h2><button class="x" id="closeSettings">✕</button></div>
+    <div class="modal-head">
+      <h2 class="kh">ព័ត៌មានគ្លីនិក · Clinic Info</h2>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <button class="btn btn-outline btn-sm kh" id="listsSettingBtn" title="កំណត់ជម្រើស Treatment, Diag, Proc, Cards" style="padding:4px 10px; font-size:11.5px; border-color:var(--primary); color:var(--primary-dark);">⚙️ Settings</button>
+        <button class="x" id="closeSettings">✕</button>
+      </div>
+    </div>
     <div class="modal-body">
       <div class="field" style="margin-bottom:10px;"><div class="k" style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">ឈ្មោះគ្លីនិក</div><input type="text" id="s_clinicName"></div>
       <div class="field" style="margin-bottom:10px;"><div class="k" style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--ink-dim);margin-bottom:5px;">អាសយដ្ឋាន</div><input type="text" id="s_address"></div>
@@ -1041,7 +1063,7 @@
         <div id="thisMonthStatsRow"></div>
       </div>
 
-      <!-- 3. Demographics Stats (ស្ថិតិអ្នកជំងឺសរុប) -->
+      <!-- 3. Demographics Stats -->
       <div class="card-type-stats-panel" style="margin-top: 15px;">
         <div class="card-type-stats-head">
           <h4 class="kh">ស្ថិតិអ្នកជំងឺសរុប · Overall Demographics</h4>
@@ -1075,7 +1097,7 @@
   </div>
 </div>
 
-<!-- Disease List Modal (បញ្ជីជំងឺ) -->
+<!-- Disease List Modal (DHIS2) -->
 <div class="overlay hidden" id="diseaseListOverlay" style="z-index: 105;">
   <div class="modal" style="max-width: 95vw; height: 90vh; display: flex; flex-direction: column;">
     <div class="modal-head">
@@ -1099,7 +1121,6 @@
           </select>
           <button class="btn btn-primary btn-sm kh" onclick="applyDiseaseListFilter()">🔍 ត្រង · Filter</button>
           
-          <!-- Summary badges ជាប់នឹង Button Filter -->
           <div id="dlSummaryBadges" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-left: 6px;">
             <span class="dl-summary-badge kh" style="color:var(--primary-dark); border-color:var(--primary-soft); background:var(--primary-softer);">
               សរុប: <span class="val" id="dlSumTotal">0</span>
@@ -1128,28 +1149,209 @@
 </div>
 
 <script>
+/* ==========================================================
+   កូដ PIN សម្ងាត់ (២៣០១០១ / ២៣១០១០)
+   ========================================================== */
+const VALID_PINS = ["230101", "231010"];
+
+function isValidPin(pin) {
+  return VALID_PINS.includes(String(pin).trim());
+}
+
+// គ្រប់គ្រង Lock Screen ពេលបើកកម្មវិធី
+const appLockOverlay = document.getElementById('appLockOverlay');
+const appLockInput = document.getElementById('appLockInput');
+const appLockBtn = document.getElementById('appLockBtn');
+const appLockError = document.getElementById('appLockError');
+
+function checkAppUnlock() {
+  if (isValidPin(appLockInput.value)) {
+    appLockOverlay.classList.add('hidden');
+    sessionStorage.setItem('dental_app_unlocked', 'true');
+  } else {
+    appLockError.textContent = '⚠️ លេខកូដ PIN មិនត្រឹមត្រូវទេ!';
+    appLockInput.value = '';
+    appLockInput.focus();
+  }
+}
+
+appLockBtn.addEventListener('click', checkAppUnlock);
+appLockInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') checkAppUnlock(); });
+
+if (sessionStorage.getItem('dental_app_unlocked') === 'true') {
+  appLockOverlay.classList.add('hidden');
+}
+
+// គ្រប់គ្រង PIN សម្រាប់ Clinic Info
+const clinicPinOverlay = document.getElementById('clinicPinOverlay');
+const clinicPinInput = document.getElementById('clinicPinInput');
+const clinicPinError = document.getElementById('clinicPinError');
+
+function openClinicPinPrompt() {
+  clinicPinInput.value = '';
+  clinicPinError.textContent = '';
+  clinicPinOverlay.classList.remove('hidden');
+  setTimeout(() => clinicPinInput.focus(), 100);
+}
+
+function verifyClinicPin() {
+  if (isValidPin(clinicPinInput.value)) {
+    clinicPinOverlay.classList.add('hidden');
+    openSettings();
+  } else {
+    clinicPinError.textContent = '⚠️ លេខកូដ PIN មិនត្រឹមត្រូវទេ!';
+    clinicPinInput.value = '';
+    clinicPinInput.focus();
+  }
+}
+
+document.getElementById('settingsBtn').addEventListener('click', openClinicPinPrompt);
+document.getElementById('submitClinicPin').addEventListener('click', verifyClinicPin);
+clinicPinInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') verifyClinicPin(); });
+document.getElementById('closeClinicPin').addEventListener('click', () => clinicPinOverlay.classList.add('hidden'));
+document.getElementById('cancelClinicPin').addEventListener('click', () => clinicPinOverlay.classList.add('hidden'));
+
+/* ==========================================================
+   ការកំណត់បញ្ជីទិន្នន័យ (Lists Setting: Treatment, Diag, Proc, Cards)
+   ========================================================== */
+const DEFAULT_LISTS = {
+  treatment: [
+    'វះកាត់ ចង់ថ្គាម', 'វះកាត់ វះបួស', 'វះកាត់ ផ្សេងៗ', 'ដកធ្មេញ ព្រៃ', 'ដកធ្មេញ ស្រុក',
+    'ប៉ះធ្មេញ GIC', 'ប៉ះធ្មេញ Amalgam', 'ប៉ះធ្មេញ Composite', 'ប៉ះធ្មេញ ផ្សេងៗ',
+    'ថតធ្មេញ X-ray', 'ព្យាបាលធ្មេញ (RCT)', 'សំអាតកំបោរ Scaling',
+    'បិតការពារ Sealant', 'ភ្លុយអរ Varnish or Gel', 'ដាក់ធ្មេញ ជាប់', 'ដាក់ធ្មេញ ដោះ', 'ពិគ្រោះជំងឺ'
+  ],
+  diagnosis: ['ឈឺធ្មេញ', 'ធ្មេញរង្គើរ', 'ឈាមអញ្ចាញធ្មេញ', 'ហើមអញ្ចាញ', 'ខ្ទុះអញ្ចាញ'],
+  procedure: [
+    'Opening', 'Dressing Calcium', 'Obturation', 'Scaling upper/lower',
+    'Irrigation with NaOCl', 'Working length measurement', 'Tooth Extraction',
+    'Suture', 'Composite Restoration', 'GIC Filling', 'Crown preparation',
+    'Impression taking', 'Crown cementation'
+  ],
+  regcard: [
+    'បង់ពេញថ្លៃ', 'លើកលែង', 'មូលនិធិសមធម៌ (ក្រីក្រ)', 'មូលនិធិសមធម៌ (ហានិភ័យ)',
+    'មូលនិធិសមធម៌ (ក្រៅប្រព័ន្ធ)', 'ប.ស.ស (កម្មករ)', 'ប.ស.ស (សាធារណៈឬក្នុងបន្ទុក)',
+    'ប.ស.ស (ស្វ័យនិយោជន៍)'
+  ]
+};
+
+let appCustomLists = JSON.parse(localStorage.getItem('dental_custom_lists_app')) || JSON.parse(JSON.stringify(DEFAULT_LISTS));
+let currentSettingTab = 'treatment';
+
+function saveCustomLists() {
+  localStorage.setItem('dental_custom_lists_app', JSON.stringify(appCustomLists));
+  populateAllSelectDropdowns();
+  renderCardTypeStats();
+}
+
+function switchSettingTab(tabKey, btnElement) {
+  currentSettingTab = tabKey;
+  document.querySelectorAll('.opt-tab').forEach(b => {
+    b.className = 'btn btn-sm btn-ghost kh opt-tab';
+  });
+  btnElement.className = 'btn btn-sm btn-primary kh opt-tab';
+  renderOptionsList();
+}
+
+function renderOptionsList() {
+  const container = document.getElementById('optionsListContainer');
+  const items = appCustomLists[currentSettingTab] || [];
+  
+  if (items.length === 0) {
+    container.innerHTML = `<div class="kh" style="text-align:center;color:var(--ink-dim);padding:14px;">មិនទាន់មានទិន្នន័យទេ</div>`;
+    return;
+  }
+
+  container.innerHTML = items.map((item, idx) => `
+    <div style="display:flex; justify-content:space-between; align-items:center; background:#fff; padding:7px 12px; border-radius:6px; margin-bottom:5px; border:1px solid var(--border-soft);">
+      <span class="kh" style="font-size:12.5px; font-weight:600;">${item}</span>
+      <button type="button" class="btn btn-danger btn-sm" style="padding:2px 8px; font-size:11px;" onclick="removeCustomOption(${idx})">✕ លុប</button>
+    </div>
+  `).join('');
+}
+
+function addNewCustomOption() {
+  const input = document.getElementById('newOptionInput');
+  const val = input.value.trim();
+  if (!val) return;
+  
+  if (!appCustomLists[currentSettingTab].includes(val)) {
+    appCustomLists[currentSettingTab].push(val);
+    saveCustomLists();
+    renderOptionsList();
+  }
+  input.value = '';
+}
+
+function removeCustomOption(idx) {
+  appCustomLists[currentSettingTab].splice(idx, 1);
+  saveCustomLists();
+  renderOptionsList();
+}
+
+function resetOptionsToDefault() {
+  showConfirm('តើអ្នកពិតជាចង់កំណត់ជម្រើសទាំងអស់ទៅលំនាំដើមវិញមែនទេ?', () => {
+    appCustomLists = JSON.parse(JSON.stringify(DEFAULT_LISTS));
+    saveCustomLists();
+    renderOptionsList();
+  });
+}
+
+function populateAllSelectDropdowns() {
+  // Treatment
+  const tSel = document.getElementById('f_treatment');
+  if (tSel) {
+    const curVal = tSel.value;
+    tSel.innerHTML = appCustomLists.treatment.map(t => `<option value="${t}">${t}</option>`).join('') + 
+                     `<option value="custom">ផ្សេងទៀត / Custom…</option>`;
+    if (curVal) tSel.value = curVal;
+  }
+
+  // Diagnosis
+  const dSel = document.getElementById('f_diagnosis');
+  if (dSel) {
+    const curVal = dSel.value;
+    dSel.innerHTML = appCustomLists.diagnosis.map(d => `<option value="${d}">${d}</option>`).join('') + 
+                     `<option value="custom">ផ្សេងទៀត / Custom…</option>`;
+    if (curVal) dSel.value = curVal;
+  }
+
+  // Procedures
+  const pSel = document.getElementById('f_procedure_select');
+  if (pSel) {
+    const curVal = pSel.value;
+    pSel.innerHTML = appCustomLists.procedure.map(p => `<option value="${p}">${p}</option>`).join('') + 
+                     `<option value="custom">ផ្សេងទៀត / Custom…</option>`;
+    if (curVal) pSel.value = curVal;
+  }
+
+  // Registration Card
+  const cSel = document.getElementById('f_type');
+  if (cSel) {
+    const curVal = cSel.value;
+    cSel.innerHTML = appCustomLists.regcard.map(c => `<option value="${c}">${c}</option>`).join('');
+    if (curVal) cSel.value = curVal;
+  }
+}
+
+document.getElementById('listsSettingBtn').addEventListener('click', () => {
+  renderOptionsList();
+  document.getElementById('listsSettingOverlay').classList.remove('hidden');
+});
+document.getElementById('closeListsSetting').addEventListener('click', () => {
+  document.getElementById('listsSettingOverlay').classList.add('hidden');
+});
+document.getElementById('saveListsSettingBtn').addEventListener('click', () => {
+  document.getElementById('listsSettingOverlay').classList.add('hidden');
+});
+
+/* ==========================================================
+   តកូដ Core Functionality របស់ App
+   ========================================================== */
 const UPPER = ["18","17","16","15","14","13","12","11","21","22","23","24","25","26","27","28"];
 const PRIMARY_UPPER_PADDED = ["","","","55","54","53","52","51","61","62","63","64","65","","",""];
 const PRIMARY_LOWER_PADDED = ["","","","85","84","83","82","81","71","72","73","74","75","","",""];
 const LOWER = ["48","47","46","45","44","43","42","41","31","32","33","34","35","36","37","38"];
-
-const CARD_TYPES = [
-  "បង់ពេញថ្លៃ",
-  "លើកលែង",
-  "មូលនិធិសមធម៌ (ក្រីក្រ)",
-  "មូលនិធិសមធម៌ (ហានិភ័យ)",
-  "មូលនិធិសមធម៌ (ក្រៅប្រព័ន្ធ)",
-  "ប.ស.ស (កម្មករ)",
-  "ប.ស.ស (សាធារណៈឬក្នុងបន្ទុក)",
-  "ប.ស.ស (ស្វ័យនិយោជន៍)"
-];
-
-const KNOWN_PROCEDURES = [
-  "Opening", "Dressing Calcium", "Obturation", "Scaling upper/lower",
-  "Irrigation with NaOCl", "Working length measurement", "Tooth Extraction",
-  "Suture", "Composite Restoration", "GIC Filling", "Crown preparation",
-  "Impression taking", "Crown cementation"
-];
 
 const LOCAL_STORAGE_RECORDS_KEY = 'kep_dental_records_cache_v4';
 const PENDING_SYNC_QUEUE_KEY = 'kep_dental_pending_push_queue_v3';
@@ -1169,7 +1371,6 @@ let editingOriginalTimestamp = null;
 let editingOriginalRecord = null;
 let editingRecordId = null;
 let activePatientContext = null;
-let isMobileView = false;
 let currentFormStatus = 'Appt';
 
 function selectStatusCheckbox(status) {
@@ -1861,8 +2062,9 @@ function renderCardTypeStats(){
   const patients = Array.from(latestByPatient.values());
   const totalPatients = patients.length || 1;
 
+  const dynamicTypes = appCustomLists.regcard;
   const counts = {};
-  CARD_TYPES.forEach(t => counts[t] = 0);
+  dynamicTypes.forEach(t => counts[t] = 0);
 
   patients.forEach(p => {
     const type = cleanStr(p.type) || 'បង់ពេញថ្លៃ';
@@ -1874,7 +2076,7 @@ function renderCardTypeStats(){
   });
 
   const row = document.getElementById('cardTypeStatsRow');
-  row.innerHTML = CARD_TYPES.map(type => {
+  row.innerHTML = dynamicTypes.map(type => {
     const cnt = counts[type] || 0;
     const pct = ((cnt / totalPatients) * 100).toFixed(0);
     const isActive = filterCardType === type;
@@ -2395,22 +2597,6 @@ function formatProcedureDisplay(doing, dateTime) {
   return `${doing} <span class="mono" style="color:var(--primary-dark);font-size:11px;">${dtStr}</span>`;
 }
 
-window.quickUpdateStatus = function(event, id, newStatus) {
-  event.stopPropagation();
-  const idx = allRecords.findIndex(x => x._id === id || x.code === id);
-  if(idx !== -1) {
-    allRecords[idx].status = newStatus;
-    saveLocalRecords();
-    pushToSheet('updateRecord', allRecords[idx]);
-    
-    const container = event.target.closest('.status-pills');
-    container.querySelectorAll('.s-pill').forEach(el => { el.className = 's-pill'; });
-    if(newStatus === 'Done') event.target.classList.add('active-done');
-    if(newStatus === 'Appt') event.target.classList.add('active-doing');
-    if(newStatus === 'Missing') event.target.classList.add('active-missing');
-  }
-};
-
 function renderClinicalNotesHTML(records) {
   const rows = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
   return `
@@ -2722,6 +2908,8 @@ function openForm(editRecord, prefill){
   const groupNameSexAge = document.getElementById('group_name_sex_age');
   const groupPhoneVisitType = document.getElementById('group_phone_visit_type');
 
+  populateAllSelectDropdowns();
+
   if(editRecord){
     editingRecordId = editRecord._id;
     editingIndex = allRecords.findIndex(x=>x._id===editRecord._id || x.code===editRecord._id);
@@ -2740,7 +2928,7 @@ function openForm(editRecord, prefill){
     const vDateYMDTime = dateToYMDTime(editRecord.timestamp) || nowDateTime;
     document.getElementById('f_visitDateTime').value = vDateYMDTime;
     
-    const knownDiag = ['ឈឺធ្មេញ', 'ធ្មេញរង្គើរ', 'ឈាមអញ្ចាញធ្មេញ', 'ហើមអញ្ចាញ', 'ខ្ទុះអញ្ចាញ'];
+    const knownDiag = appCustomLists.diagnosis;
     if(knownDiag.includes(editRecord.diagnosis)){
       document.getElementById('f_diagnosis').value = editRecord.diagnosis;
       document.getElementById('f_diagnosis_custom').style.display='none';
@@ -2751,13 +2939,7 @@ function openForm(editRecord, prefill){
       document.getElementById('f_diagnosis_custom').value = editRecord.diagnosis||'';
     }
 
-    const knownTreat = [
-      'វះកាត់ ចង់ថ្គាម', 'វះកាត់ វះបួស', 'វះកាត់ ផ្សេងៗ',
-      'ដកធ្មេញ ព្រៃ', 'ដកធ្មេញ ស្រុក',
-      'ប៉ះធ្មេញ GIC', 'ប៉ះធ្មេញ Amalgam', 'ប៉ះធ្មេញ Composite', 'ប៉ះធ្មេញ ផ្សេងៗ',
-      'ថតធ្មេញ X-ray', 'ព្យាបាលធ្មេញ (RCT)', 'សំអាតកំបោរ Scaling',
-      'បិតការពារ Sealant', 'ភ្លុយអរ Varnish or Gel', 'ដាក់ធ្មេញ ជាប់', 'ដាក់ធ្មេញ ដោះ', 'ពិគ្រោះជំងឺ'
-    ];
+    const knownTreat = appCustomLists.treatment;
     if(knownTreat.includes(editRecord.treatment)){
       document.getElementById('f_treatment').value = editRecord.treatment;
       document.getElementById('f_treatment_custom').style.display='none';
@@ -2775,7 +2957,8 @@ function openForm(editRecord, prefill){
     document.getElementById('f_teeth').value = editRecord.teeth||'';
 
     const currentDoing = editRecord.doing || '';
-    if(KNOWN_PROCEDURES.includes(currentDoing)){
+    const knownProc = appCustomLists.procedure;
+    if(knownProc.includes(currentDoing)){
       procSelect.value = currentDoing;
       procDoing.style.display = 'none';
       procDoing.value = currentDoing;
@@ -2784,9 +2967,9 @@ function openForm(editRecord, prefill){
       procDoing.style.display = 'block';
       procDoing.value = currentDoing;
     } else {
-      procSelect.value = 'Opening';
+      procSelect.value = knownProc[0] || 'Opening';
       procDoing.style.display = 'none';
-      procDoing.value = 'Opening';
+      procDoing.value = knownProc[0] || 'Opening';
     }
     
     const recDT = editRecord.doingDateTime ? dateToYMDTime(editRecord.doingDateTime) : nowDateTime;
@@ -2819,15 +3002,10 @@ function openForm(editRecord, prefill){
     document.getElementById('f_type').value = prefill.type || 'បង់ពេញថ្លៃ';
 
     document.getElementById('f_visitDateTime').value = nowDateTime;
-    document.getElementById('f_diagnosis').value = 'ឈឺធ្មេញ';
+    document.getElementById('f_diagnosis').value = appCustomLists.diagnosis[0] || 'ឈឺធ្មេញ';
     
     if (prefill.treatment) {
-      const knownTreat = [
-        'វះកាត់ ចង់ថ្គាម', 'វះកាត់ វះបួស', 'វះកាត់ ផ្សេងៗ', 'ដកធ្មេញ ព្រៃ', 'ដកធ្មេញ ស្រុក',
-        'ប៉ះធ្មេញ GIC', 'ប៉ះធ្មេញ Amalgam', 'ប៉ះធ្មេញ Composite', 'ប៉ះធ្មេញ ផ្សេងៗ',
-        'ថតធ្មេញ X-ray', 'ព្យាបាលធ្មេញ (RCT)', 'សំអាតកំបោរ Scaling',
-        'បិតការពារ Sealant', 'ភ្លុយអរ Varnish or Gel', 'ដាក់ធ្មេញ ជាប់', 'ដាក់ធ្មេញ ដោះ', 'ពិគ្រោះជំងឺ'
-      ];
+      const knownTreat = appCustomLists.treatment;
       if (knownTreat.includes(prefill.treatment)) {
         document.getElementById('f_treatment').value = prefill.treatment;
         document.getElementById('f_treatment_custom').style.display = 'none';
@@ -2837,7 +3015,7 @@ function openForm(editRecord, prefill){
         document.getElementById('f_treatment_custom').value = prefill.treatment;
       }
     } else {
-      document.getElementById('f_treatment').value = 'ព្យាបាលធ្មេញ (RCT)';
+      document.getElementById('f_treatment').value = appCustomLists.treatment[0] || 'ព្យាបាលធ្មេញ (RCT)';
       document.getElementById('f_treatment_custom').style.display = 'none'; 
       document.getElementById('f_treatment_custom').value = '';
     }
@@ -2847,9 +3025,9 @@ function openForm(editRecord, prefill){
     document.getElementById('f_diagnosis_custom').value = '';
     document.getElementById('f_teeth').value = prefill.teeth || ''; 
     
-    procSelect.value = 'Opening';
+    procSelect.value = appCustomLists.procedure[0] || 'Opening';
     procDoing.style.display = 'none';
-    procDoing.value = 'Opening';
+    procDoing.value = appCustomLists.procedure[0] || 'Opening';
 
     document.getElementById('f_doingDateTime').value = nowDateTime;
     selectStatusCheckbox('Appt'); 
@@ -2870,11 +3048,11 @@ function openForm(editRecord, prefill){
     document.getElementById('f_sex').value = 'F'; 
     document.getElementById('f_age').value = '';
     document.getElementById('f_phone').value = '';
-    document.getElementById('f_type').value = 'បង់ពេញថ្លៃ';
+    document.getElementById('f_type').value = appCustomLists.regcard[0] || 'បង់ពេញថ្លៃ';
 
     document.getElementById('f_visitDateTime').value = nowDateTime;
-    document.getElementById('f_diagnosis').value = 'ឈឺធ្មេញ';
-    document.getElementById('f_treatment').value = 'ព្យាបាលធ្មេញ (RCT)';
+    document.getElementById('f_diagnosis').value = appCustomLists.diagnosis[0] || 'ឈឺធ្មេញ';
+    document.getElementById('f_treatment').value = appCustomLists.treatment[0] || 'ព្យាបាលធ្មេញ (RCT)';
     document.getElementById('f_idc10').value = 'K04-ជំងឺលើបណ្តូលធ្មេញ (Pulp)';
     document.getElementById('f_diagnosis_custom').style.display = 'none'; 
     document.getElementById('f_diagnosis_custom').value = '';
@@ -2882,9 +3060,9 @@ function openForm(editRecord, prefill){
     document.getElementById('f_treatment_custom').value = '';
     document.getElementById('f_teeth').value = ''; 
     
-    procSelect.value = 'Opening';
+    procSelect.value = appCustomLists.procedure[0] || 'Opening';
     procDoing.style.display = 'none';
-    procDoing.value = 'Opening';
+    procDoing.value = appCustomLists.procedure[0] || 'Opening';
 
     document.getElementById('f_doingDateTime').value = nowDateTime;
     selectStatusCheckbox('Done'); 
@@ -3152,7 +3330,6 @@ function openDetail(id, fromPatient){
       </div>
     `;
     document.getElementById('exportAllExcelBtn').classList.add('hidden');
-    document.getElementById('printOverlay').classList.add('hidden');
     document.getElementById('printOverlay').classList.remove('hidden');
   });
   document.getElementById('detailOverlay').classList.remove('hidden');
@@ -3220,7 +3397,6 @@ document.getElementById('f_treatment').addEventListener('change', (e)=>{ documen
 document.getElementById('closePrint').addEventListener('click', ()=>document.getElementById('printOverlay').classList.add('hidden'));
 document.getElementById('closePrintBtn').addEventListener('click', ()=>document.getElementById('printOverlay').classList.add('hidden'));
 document.getElementById('printBtn').addEventListener('click', ()=>window.print());
-document.getElementById('settingsBtn').addEventListener('click', openSettings);
 document.getElementById('closeSettings').addEventListener('click', ()=>{
     document.getElementById('settingsOverlay').classList.add('hidden');
     if (window.location.hash === '#settings') history.replaceState(null, null, window.location.pathname);
@@ -3244,7 +3420,7 @@ document.getElementById('patientOverlay').addEventListener('click', (e)=>{ if(e.
 
 document.getElementById('syncBadge').addEventListener('click', () => fetchFromSheet(false));
 
-['printOverlay','settingsOverlay'].forEach(id=>{
+['printOverlay','settingsOverlay','clinicPinOverlay','listsSettingOverlay'].forEach(id=>{
   document.getElementById(id).addEventListener('click', (e)=>{ 
       if(e.target.id===id) {
           document.getElementById(id).classList.add('hidden'); 
@@ -3493,14 +3669,11 @@ document.getElementById('diseaseListOverlay').addEventListener('click', (e) => {
 
 function openDiseaseListModal() {
     history.pushState({ modal: 'diseaseList' }, '', '#diseaseList');
-    
     document.getElementById('reportOverlay').classList.add('hidden');
-    
     populateDiseaseListYearOptions();
     document.getElementById('dlFilterMonth').value = '';
     document.getElementById('dlFilterYear').value = '';
     renderDiseaseListTable(allRecords);
-    
     document.getElementById('diseaseListOverlay').classList.remove('hidden');
 }
 
@@ -3550,7 +3723,6 @@ function renderDiseaseListTable(records) {
       if (!isNaN(ageNum) && ageNum <= 15) kids++;
     });
 
-    // បញ្ចូលស្ថិតិសង្ខេបជាប់នឹង Filter Button
     document.getElementById('dlSumTotal').textContent = total;
     document.getElementById('dlSumMale').textContent = male;
     document.getElementById('dlSumFemale').textContent = female;
@@ -3701,6 +3873,8 @@ if(storedUrl && storedUrl !== DEFAULT_WEB_APP_URL) {
     localStorage.setItem('kep_dental_webapp_url', webAppUrl);
 }
 
+// ចាប់ផ្តើមដំណើរការ
+populateAllSelectDropdowns();
 loadLocalRecords();
 flushPendingQueue();
 fetchFromSheet(true);
