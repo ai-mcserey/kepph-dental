@@ -106,7 +106,7 @@
   /* demographics stats */
   .stats2{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-bottom:14px;}
   .stat-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:14px;padding:12px 14px;box-shadow:var(--shadow-sm);position:relative;overflow:hidden;}
-  .stat-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--primary);}
+  .stat-card::before{content:"absolute;left:0;top:0;bottom:0;width:4px;background:var(--primary);}
   .stat-card.debt::before{background:var(--coral);}
   .stat-card.amber::before{background:var(--amber);}
   .stat-card.highlight{background:linear-gradient(145deg, #ffffff, var(--primary-softer));border-color:var(--primary-soft);}
@@ -669,7 +669,7 @@
       <button class="topbar-btn-uniform btn-ghost kh" id="reportBtn" title="របាយការណ៍" style="border: 1.5px solid #0B5ED7; color: #0B5ED7;">📊 Report</button>
       <span class="topbar-btn-uniform sync-badge" id="syncBadge" title="ចុចដើម្បីទាញទិន្នន័យពី Sheet មក App">🔄 Sync</span>
       <!-- ប៊ូតុងព័ត៌មានគ្លីនិក (ការពារដោយ PIN) -->
-      <button class="topbar-btn-uniform btn-outline kh" id="settingsBtn" title="ព័ត៌មានគ្លីនិក">🏥 Clinic Info</button>
+      <button class="topbar-btn-uniform btn-outline" id="settingsBtn" title="ព័ត៌មានគ្លីនិក · Settings" style="padding: 7px 10px; font-size: 16px;">⚙️</button>
     </div>
   </div>
 </div>
@@ -730,8 +730,7 @@
     </div>
     <div class="modal-body">
       <div style="display: flex; gap: 6px; border-bottom: 1.5px solid var(--border); padding-bottom: 8px; margin-bottom: 14px; flex-wrap: wrap;">
-        <button type="button" class="btn btn-sm btn-primary kh opt-tab" onclick="switchSettingTab('treatment', this)">Treatment</button>
-        <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('diagnosis', this)">Diagnosis</button>
+        <button type="button" class="btn btn-sm btn-primary kh opt-tab" onclick="switchSettingTab('diagnosis', this)">Diagnosis</button>
         <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('procedure', this)">Procedures</button>
         <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('regcard', this)">Registration Card</button>
       </div>
@@ -1236,7 +1235,7 @@ const DEFAULT_LISTS = {
 };
 
 let appCustomLists = JSON.parse(localStorage.getItem('dental_custom_lists_app')) || JSON.parse(JSON.stringify(DEFAULT_LISTS));
-let currentSettingTab = 'treatment';
+let currentSettingTab = 'diagnosis';
 
 function saveCustomLists() {
   localStorage.setItem('dental_custom_lists_app', JSON.stringify(appCustomLists));
