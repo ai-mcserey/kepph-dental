@@ -3,32 +3,32 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ផ្នែកសេវាជំងឺមាត់ធ្មេញ · Dental Service Record</title>
+<title>ផ្នែកសេវាជំងឺមាត់ធ្មេញ · Dental Service EMR KEPPH</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#EAF6F3; --surface:#FFFFFF; --surface-2:#F3FBF9;
-    --border:#D9EDE8; --border-soft:#E8F4F1;
-    --ink:#0B3B36; --ink-soft:#4C6864; --ink-dim:#8AA6A2;
-    --primary:#0E9384; --primary-dark:#0B7267; --primary-soft:#D8F3EE; --primary-softer:#EDFAF7;
+    --bg:#EAF2FC; --surface:#FFFFFF; --surface-2:#F3F8FE;
+    --border:#D6E4F5; --border-soft:#E5EEF9;
+    --ink:#0B2A4A; --ink-soft:#4A6382; --ink-dim:#8AA0BC;
+    --primary:#1A6BDB; --primary-dark:#0B4FB3; --primary-soft:#D9E8FC; --primary-softer:#EEF5FE;
     --amber:#E8A33D; --amber-soft:#FBEBD2; --amber-dark:#8A5C16;
     --coral:#E4574C; --coral-soft:#FBE1DE; --coral-dark:#A43227;
-    --shadow:0 12px 30px -16px rgba(11,59,54,0.18);
-    --shadow-sm:0 4px 14px -8px rgba(11,59,54,0.16);
+    --shadow:0 12px 30px -16px rgba(11,42,74,0.18);
+    --shadow-sm:0 4px 14px -8px rgba(11,42,74,0.16);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
   body{
     background:
-      radial-gradient(1000px 460px at 8% -8%, rgba(14,147,132,0.08), transparent 55%),
+      radial-gradient(1000px 460px at 8% -8%, rgba(26,107,219,0.08), transparent 55%),
       radial-gradient(800px 400px at 105% 0%, rgba(232,163,61,0.07), transparent 55%),
       var(--bg);
     color:var(--ink);
     font-family:'Inter','Noto Sans Khmer',sans-serif;
     min-height:100vh;
-    padding-bottom:70px;
+    padding-bottom:0;
     transition: all 0.3s ease;
   }
   .kh{font-family:'Noto Sans Khmer','Inter',sans-serif;}
@@ -39,7 +39,7 @@
 
   /* App Lock Screen */
   #appLockOverlay {
-    position: fixed; inset: 0; background: rgba(11, 42, 39, 0.95);
+    position: fixed; inset: 0; background: rgba(8, 28, 56, 0.95);
     backdrop-filter: blur(8px); z-index: 99999;
     display: flex; align-items: center; justify-content: center; padding: 20px;
   }
@@ -56,7 +56,7 @@
   .lock-box input:focus { border-color: var(--primary); }
 
   /* topbar */
-  .topbar{background:var(--surface);border-bottom:1px solid var(--border-soft);padding:14px 22px;position:sticky;top:0;z-index:40;box-shadow:0 2px 16px -10px rgba(11,59,54,0.12);}
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border-soft);padding:14px 22px;position:sticky;top:0;z-index:40;box-shadow:0 2px 16px -10px rgba(11,42,74,0.12);}
   .topbar-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
   .brand{display:flex;align-items:center;gap:11px;}
   .brand-mark{width:42px;height:42px;border-radius:12px;background:linear-gradient(155deg, var(--primary), var(--primary-dark));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--shadow-sm);}
@@ -90,7 +90,7 @@
 
   .btn{border:none;cursor:pointer;font-weight:600;font-size:13.5px;padding:9px 15px;border-radius:9px;display:inline-flex;align-items:center;gap:7px;transition:all .13s ease;}
   .btn:active{transform:translateY(1px);}
-  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 6px 16px -6px rgba(14,147,132,0.5);}
+  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 6px 16px -6px rgba(26,107,219,0.5);}
   .btn-primary:hover{background:var(--primary-dark);}
   .btn-outline{background:var(--surface);color:var(--ink);border:1.5px solid var(--border);}
   .btn-outline:hover{border-color:var(--primary);background:var(--primary-softer);}
@@ -306,13 +306,13 @@
 
   /* Modals */
   .overlay{
-    position:fixed; inset:0; background:rgba(11,42,39,0.4); backdrop-filter:blur(3px); z-index:60;
+    position:fixed; inset:0; background:rgba(8,28,56,0.4); backdrop-filter:blur(3px); z-index:60;
     display:flex; align-items:flex-start; justify-content:center; padding:30px 16px; overflow-y:auto;
     overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
   }
   
-  #toothHistoryModalOverlay { z-index: 75 !important; background: rgba(11,42,39,0.55) !important; }
-  #doDetailOverlay          { z-index: 80 !important; background: rgba(11,42,39,0.6) !important; }
+  #toothHistoryModalOverlay { z-index: 75 !important; background: rgba(8,28,56,0.55) !important; }
+  #doDetailOverlay          { z-index: 80 !important; background: rgba(8,28,56,0.6) !important; }
   #formOverlay              { z-index: 85 !important; }
   #xrayModalOverlay         { z-index: 95 !important; }
   #xrayGalleryOverlay       { z-index: 96 !important; }
@@ -362,7 +362,7 @@
   .xray-item:hover {
     transform: translateY(-3px);
     border-color: var(--primary);
-    box-shadow: 0 6px 14px -6px rgba(14,147,132,0.4);
+    box-shadow: 0 6px 14px -6px rgba(26,107,219,0.4);
   }
   .xray-item img {
     width: 100%;
@@ -383,7 +383,7 @@
     font-weight: 600;
   }
 
-  .modal{background:var(--bg);border:1px solid var(--border);border-radius:18px;max-width:760px;width:100%;box-shadow:0 30px 70px -20px rgba(11,59,54,0.4);overflow:hidden;margin-bottom:40px;}
+  .modal{background:var(--bg);border:1px solid var(--border);border-radius:18px;max-width:760px;width:100%;box-shadow:0 30px 70px -20px rgba(11,42,74,0.4);overflow:hidden;margin-bottom:40px;}
   .modal.narrow{max-width:480px;}
   .modal-head{background:var(--surface);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);}
   .modal-head h2{margin:0;font-size:15px;color:var(--ink);}
@@ -438,7 +438,7 @@
   .tooth-cell.primary-tooth { height: 26px; font-size: 10px; background: var(--amber-soft); border-color: rgba(232,163,61,0.3); color: var(--amber-dark); }
   .tooth-cell.invisible { visibility: hidden; pointer-events: none; border: none; background: transparent; }
   .tooth-cell:hover:not(.invisible) { border-color: var(--primary); transform: scale(1.15); z-index: 2; box-shadow: var(--shadow-sm); }
-  .tooth-cell.treated { background: var(--primary) !important; border-color: var(--primary-dark) !important; color: #fff !important; font-weight: 800 !important; box-shadow: 0 4px 10px -3px rgba(14,147,132,0.4); transform: translateY(-2px); }
+  .tooth-cell.treated { background: var(--primary) !important; border-color: var(--primary-dark) !important; color: #fff !important; font-weight: 800 !important; box-shadow: 0 4px 10px -3px rgba(26,107,219,0.4); transform: translateY(-2px); }
   .tooth-cell.treated:hover:not(.invisible) { transform: scale(1.15) translateY(-2px); background: var(--primary-dark) !important; }
   .arch-label { font-size: 10.5px; text-align: center; color: var(--ink-dim); letter-spacing: .05em; text-transform: uppercase; margin: 10px 0; font-weight: 800; }
 
@@ -503,21 +503,21 @@
   .detail-item .v{font-size:13.5px;color:var(--ink);margin-top:2px;}
 
   /* print sheets */
-  .print-sheet{background:#fff;color:#1A2E2B;font-family:'Inter',sans-serif;padding:8mm 2mm;}
+  .print-sheet{background:#fff;color:#14243F;font-family:'Inter',sans-serif;padding:8mm 2mm;}
   .ps-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:2.5px solid var(--primary);padding-bottom:14px;margin-bottom:20px;}
   .ps-clinic{font-family:'Sora',sans-serif;font-size:22px;font-weight:700;color:var(--primary-dark);}
-  .ps-sub{font-size:11.5px;color:#6B827F;margin-top:4px;}
+  .ps-sub{font-size:11.5px;color:#64789A;margin-top:4px;}
   .ps-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--primary-dark);background:var(--primary-soft);padding:5px 13px;border-radius:999px;}
   .ps-head-right{text-align:right;}
-  .ps-printed{font-size:10.5px;color:#8AA6A2;margin-top:6px;}
+  .ps-printed{font-size:10.5px;color:#8AA0BC;margin-top:6px;}
   .ps-info-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 22px;margin:6px 0 18px;}
-  .ps-info-item .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:#8AA6A2;font-weight:700;}
-  .ps-info-item .v{font-size:13.5px;color:#1A2E2B;margin-top:3px;font-weight:600;}
-  .ps-section-title{font-size:13px;font-weight:700;color:var(--primary-dark);margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid #E1EEEC;}
-  .ps-foot{text-align:center;font-size:11px;color:#8AA6A2;margin-top:20px;}
+  .ps-info-item .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;color:#8AA0BC;font-weight:700;}
+  .ps-info-item .v{font-size:13.5px;color:#14243F;margin-top:3px;font-weight:600;}
+  .ps-section-title{font-size:13px;font-weight:700;color:var(--primary-dark);margin:22px 0 10px;padding-bottom:6px;border-bottom:1px solid #DCE7F5;}
+  .ps-foot{text-align:center;font-size:11px;color:#8AA0BC;margin-top:20px;}
   .ps-visit-table{width:100%;border-collapse:collapse;font-size:11.5px;margin-top:4px;}
-  .ps-visit-table th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:#8AA6A2;padding:6px 8px;border-bottom:1.5px solid #1A2E2B;}
-  .ps-visit-table td{padding:6px 8px;border-bottom:1px solid #E9F1F0;color:#33504C;}
+  .ps-visit-table th{text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;color:#8AA0BC;padding:6px 8px;border-bottom:1.5px solid #14243F;}
+  .ps-visit-table td{padding:6px 8px;border-bottom:1px solid #E6EEF8;color:#34496B;}
   .ps-visit-table td.mono, .ps-visit-table th.mono{font-family:'IBM Plex Mono',monospace;}
 
   @media print {
@@ -633,6 +633,251 @@
       padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
     }
   }
+
+  /* ==========================================================
+     EMR SHELL — left sidebar, header, pages
+     ========================================================== */
+  :root{
+    --sb-w:252px; --sb-w-rail:72px;
+    --sb-bg:#0C3B7C; --sb-ink:#A9C2E4; --sb-ink-dim:#8FB0DE; --sb-line:rgba(255,255,255,.09);
+  }
+  .app-shell{display:flex;min-height:100vh;}
+  .main{flex:1 1 auto;min-width:0;}
+
+  .sidebar{
+    position:sticky;top:0;align-self:flex-start;
+    height:100vh;height:100dvh;
+    width:var(--sb-w);flex:0 0 var(--sb-w);
+    background:var(--sb-bg);color:var(--sb-ink);
+    display:flex;flex-direction:column;z-index:50;overflow:hidden;
+    transition:width .18s ease, flex-basis .18s ease, transform .22s ease;
+  }
+  .sb-brand{display:flex;align-items:center;gap:11px;padding:18px 16px 14px;flex:none;}
+  .sb-brand .brand-mark{width:40px;height:40px;}
+  .sb-brand-title{color:#fff;font-size:14.5px;font-weight:700;line-height:1.3;}
+  .sb-brand-sub{font-size:11.5px;color:var(--sb-ink-dim);margin-top:2px;font-weight:500;}
+
+  .sb-nav{flex:1 1 auto;overflow-y:auto;padding:4px 10px 10px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent;}
+  .sb-group-label{font-size:11.5px;font-weight:600;color:var(--sb-ink-dim);padding:16px 12px 6px;}
+  .sb-item{
+    width:100%;display:flex;align-items:center;gap:12px;position:relative;
+    padding:9px 12px;border:none;border-radius:10px;background:transparent;
+    color:var(--sb-ink);font:inherit;font-size:13.5px;font-weight:500;text-align:left;cursor:pointer;
+    transition:background .13s ease,color .13s ease;
+  }
+  .sb-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+  .sb-item.active{background:rgba(255,255,255,.12);color:#fff;box-shadow:inset 3px 0 0 var(--amber);}
+  .sb-ico{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .sb-label{flex:1 1 auto;min-width:0;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .sb-label small{display:block;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:400;color:var(--sb-ink-dim);margin-top:1px;}
+  .sb-item.active .sb-label small{color:#B4CBEA;}
+  .sb-badge{
+    min-width:22px;height:20px;padding:0 6px;border-radius:999px;flex:none;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;
+    background:rgba(255,255,255,.12);color:#DCE8FA;
+  }
+  .sb-badge[hidden]{display:none;}
+  .sb-badge.amber{background:var(--amber);color:#3A2708;}
+  .sb-badge.warn{background:var(--coral);color:#fff;}
+
+  .sb-foot{flex:none;padding:8px 10px 12px;border-top:1px solid var(--sb-line);}
+  .sb-clinic{padding:8px 12px 6px;font-size:12px;line-height:1.35;color:#DCE8FA;font-weight:600;}
+  .sb-foot .sb-item{padding:8px 12px;font-size:12.5px;}
+  .sb-foot .sb-ico{width:18px;height:18px;}
+  #sbCollapseBtn .sb-ico{transition:transform .18s ease;}
+
+  .sb-scrim{display:none;position:fixed;inset:0;background:rgba(4,20,44,.5);z-index:49;}
+
+  .sidebar :focus-visible,.chip:focus-visible,.tb-menu:focus-visible,.kpi:focus-visible,.link-btn:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+
+  /* header */
+  .topbar{padding:12px 24px;}
+  .topbar .topbar-inner{max-width:1240px;flex-wrap:wrap;}
+  .tb-left{display:flex;align-items:center;gap:12px;min-width:0;}
+  .tb-menu{display:none;width:38px;height:38px;flex:none;align-items:center;justify-content:center;border-radius:10px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);cursor:pointer;}
+  .tb-menu svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;}
+  .page-head h1{margin:0;font-size:19px;line-height:1.3;color:var(--ink);font-weight:700;}
+  .page-head .sub{font-size:12px;color:var(--ink-dim);margin-top:1px;font-weight:500;}
+  .btn-add{background:var(--primary-dark);color:#fff;border:none;box-shadow:var(--shadow-sm);}
+  .btn-add:hover{background:var(--primary);}
+  .search-wrap{position:relative;}
+  .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;fill:none;stroke:var(--ink-dim);stroke-width:2;stroke-linecap:round;pointer-events:none;}
+  .search-wrap .search-input-topbar{padding-left:34px;border:1.5px solid var(--border);box-shadow:none;background:var(--surface);}
+  .search-wrap .search-input-topbar:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(26,107,219,.15);}
+  .wrap{max-width:1240px;padding:22px 24px 40px;}
+
+  /* page tools + chips */
+  .page-tools{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 14px;}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:999px;cursor:pointer;
+    border:1.5px solid var(--border);background:var(--surface);color:var(--ink-soft);
+    font-family:'Inter','Noto Sans Khmer',sans-serif;font-size:12.5px;font-weight:600;
+  }
+  .chip:hover{border-color:var(--primary);}
+  .chip.active{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff;}
+  .chip-n{font-family:'IBM Plex Mono',monospace;font-size:11px;opacity:.85;}
+  .dot{width:8px;height:8px;border-radius:50%;flex:none;background:var(--ink-dim);display:inline-block;}
+  .dot.amber{background:var(--amber);} .dot.coral{background:var(--coral);}
+  .dot.teal{background:var(--primary);} .dot.blue{background:#0B5ED7;} .dot.violet{background:#7C5CDB;}
+  .chip.active .dot{box-shadow:0 0 0 2px rgba(255,255,255,.55);}
+  .link-btn{background:none;border:none;padding:2px 4px;font:inherit;font-size:12px;font-weight:600;color:var(--primary-dark);cursor:pointer;border-radius:6px;}
+  .link-btn:hover{text-decoration:underline;}
+
+  /* dashboard KPIs */
+  .kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+  .kpi{
+    display:flex;align-items:center;gap:14px;text-align:left;cursor:pointer;
+    padding:14px 16px;border-radius:14px;border:1px solid var(--border-soft);
+    background:var(--surface);box-shadow:var(--shadow-sm);font:inherit;color:inherit;
+  }
+  .kpi:hover{border-color:var(--primary);}
+  .kpi-ico{width:42px;height:42px;border-radius:12px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--primary-soft);color:var(--primary-dark);}
+  .kpi-ico svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;}
+  .kpi.amber .kpi-ico{background:var(--amber-soft);color:var(--amber-dark);}
+  .kpi.coral .kpi-ico{background:var(--coral-soft);color:var(--coral-dark);}
+  .kpi.blue .kpi-ico{background:#E1EFFF;color:#0B5ED7;}
+  .kpi-txt{min-width:0;}
+  .kpi-val,.kpi-lbl{display:block;}
+  .kpi-val{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:700;line-height:1;color:var(--ink);}
+  .kpi-lbl{font-size:12px;color:var(--ink-soft);margin-top:5px;line-height:1.3;}
+
+  /* appointments page */
+  .appt-group-head{display:flex;align-items:center;gap:8px;margin:18px 0 8px;font-size:13.5px;font-weight:700;color:var(--ink);}
+  .appt-group-head:first-child{margin-top:4px;}
+  .appt-group-head .count-pill{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;color:var(--primary-dark);background:var(--primary-soft);padding:2px 9px;border-radius:999px;}
+  .appt-hint{font-size:11.5px;font-weight:500;color:var(--ink-dim);}
+  .appt-list{background:var(--surface);border:1px solid var(--border-soft);border-radius:16px;padding:6px 14px;box-shadow:var(--shadow);}
+  .appt-list .appt-row.appt-missed .appt-time .mono{color:var(--coral-dark);}
+  .appt-list .appt-row.appt-missed .appt-plan-badge{background:var(--coral-soft);color:var(--coral-dark);border-color:rgba(228,87,76,.4);}
+
+
+  /* ---------- Inventory ---------- */
+  .inv-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .inv-select{height:34px;max-width:180px;padding:0 10px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--ink);font:inherit;font-size:12.5px;}
+  .inv-select:focus{outline:none;border-color:var(--primary);}
+  .inv-status{font-size:11.5px;color:var(--ink-dim);}
+  .inv-status.ok{color:var(--primary-dark);} .inv-status.warn{color:var(--coral-dark);}
+  .inv-name{font-weight:700;font-size:13.5px;color:var(--ink);}
+  .inv-cat{font-size:11.5px;color:var(--ink-dim);margin-top:2px;}
+  .inv-qty{font-size:16px;font-weight:700;color:var(--ink);}
+  .inv-pill{display:inline-flex;margin-left:6px;padding:2px 8px;border-radius:6px;font-size:10.5px;font-weight:700;white-space:nowrap;}
+  .inv-pill.ok{background:var(--primary-soft);color:var(--primary-dark);}
+  .inv-pill.low,.inv-pill.expiring{background:var(--amber-soft);color:var(--amber-dark);}
+  .inv-pill.out,.inv-pill.expired{background:var(--coral-soft);color:var(--coral-dark);}
+  .emr-table td.inv-actions{white-space:nowrap;text-align:right;}
+  .inv-btn{width:30px;height:30px;margin-left:4px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--ink);font-size:14px;cursor:pointer;}
+  .inv-btn:hover{border-color:var(--primary);background:var(--primary-softer);}
+  .inv-btn.del:hover{border-color:#f5b5af;background:var(--coral-soft);}
+  .inv-btn:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
+  .inv-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  #invFormOverlay{z-index:90 !important;}
+  body[data-page="inventory"] .topbar .search-wrap,
+  body[data-page="inventory"] #fabAdd,
+  body[data-page="xray"] .topbar .search-wrap,
+  body[data-page="xray"] #fabAdd{display:none;}
+  @media (max-width:640px){
+    .inv-row-2{grid-template-columns:1fr;}
+    .emr-table td.inv-actions{text-align:left;}
+    .emr-table td.inv-actions::before{display:none !important;}
+    .inv-tools{width:100%;}
+    .inv-tools .search-wrap{flex:1 1 100%;}
+  }
+
+  /* ---------- X-Ray page ---------- */
+  .xr-name{font-size:14px;font-weight:700;color:var(--primary-dark);}
+  .emr-tr:hover .xr-name{text-decoration:underline;}
+  .xr-orphan{font-size:10.5px;font-weight:700;color:var(--amber-dark);background:var(--amber-soft);border-radius:6px;padding:1px 7px;margin-left:8px;}
+  .emr-table td.xr-act{text-align:right;white-space:nowrap;}
+  .kpi[data-noop]{cursor:default;}
+  .xv-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;}
+  .xv-item{cursor:pointer;}
+  .xv-item:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+  .xv-item img{background:#0A1A33;}
+  #xrayLightbox{z-index:97 !important;background:rgba(4,14,32,.86) !important;align-items:center;padding:12px;}
+  .xl-box{width:min(1000px,100%);background:#0A1A33;border-radius:16px;overflow:hidden;box-shadow:0 30px 70px -20px rgba(0,0,0,.6);}
+  .xl-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;color:#DCE8FA;}
+  .xl-title{font-size:13px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .xl-btns{display:flex;align-items:center;gap:8px;flex:none;}
+  .xl-stage{position:relative;display:flex;align-items:center;justify-content:center;min-height:40vh;background:#050F22;}
+  .xl-stage img{max-width:100%;max-height:78vh;object-fit:contain;display:block;}
+  .xl-nav{position:absolute;top:50%;transform:translateY(-50%);width:42px;height:56px;border:none;border-radius:10px;background:rgba(255,255,255,.14);color:#fff;font-size:26px;cursor:pointer;}
+  .xl-nav:hover{background:rgba(255,255,255,.26);}
+  .xl-nav.prev{left:10px;} .xl-nav.next{right:10px;}
+  .xl-nav[disabled]{opacity:.25;cursor:default;}
+  .xl-note{position:absolute;color:#9DBAE3;font-size:12px;padding:0 20px;text-align:center;}
+  @media (max-width:640px){ .emr-table td.xr-act{text-align:left;} .emr-table td.xr-act::before{display:none !important;} }
+
+  /* ---------- sidebar: inner wrapper, edge handle, sync states ---------- */
+  .sidebar{overflow:visible;}
+  .sb-inner{display:flex;flex-direction:column;width:100%;height:100%;overflow:hidden;}
+  .sb-handle{
+    position:absolute;top:74px;right:-14px;z-index:2;
+    width:28px;height:28px;padding:0;border-radius:50%;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    border:1.5px solid var(--border);background:var(--surface);color:var(--primary-dark);
+    box-shadow:0 6px 14px -6px rgba(6,20,44,.55);
+    transition:background .13s ease,color .13s ease,border-color .13s ease;
+  }
+  .sb-handle:hover{background:var(--primary);border-color:var(--primary);color:#fff;}
+  .sb-handle .sb-ico{width:15px;height:15px;stroke-width:2.4;}
+  .sb-handle:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+  body.sb-collapsed .sb-handle .sb-ico{transform:rotate(180deg);}
+  @keyframes sbspin{to{transform:rotate(360deg);}}
+  #sbSyncBtn.syncing .sb-ico{animation:sbspin .9s linear infinite;}
+  #sbSyncBtn.sync-err{color:#FFB4AB;}
+  @media (prefers-reduced-motion:reduce){ #sbSyncBtn.syncing .sb-ico{animation:none;} }
+  .appt-panel{min-width:0;}
+  @media (max-width:1024px){ .appt-grid{grid-template-columns:1fr;} }
+
+  @media print{ .app-shell{display:none !important;} }
+  @media (prefers-reduced-motion:reduce){ .sidebar,.sb-item,#sbCollapseBtn .sb-ico{transition:none !important;} }
+
+  /* collapsed rail (desktop) */
+  @media (min-width:901px){
+    body.sb-collapsed .sidebar{width:var(--sb-w-rail);flex-basis:var(--sb-w-rail);}
+    body.sb-collapsed .sb-brand{justify-content:center;padding:18px 0 14px;}
+    body.sb-collapsed .sb-brand-text,body.sb-collapsed .sb-label,
+    body.sb-collapsed .sb-group-label,body.sb-collapsed .sb-clinic{display:none;}
+    body.sb-collapsed .sb-item{justify-content:center;padding:11px 0;}
+    body.sb-collapsed .sb-foot .sb-item{padding:9px 0;}
+    body.sb-collapsed .sb-badge{position:absolute;top:3px;right:10px;min-width:16px;height:16px;padding:0 4px;font-size:9.5px;}
+    body.sb-collapsed .sb-badge.quiet{display:none;}
+    body.sb-collapsed .sb-group + .sb-group{border-top:1px solid var(--sb-line);margin-top:8px;padding-top:8px;}
+    body.sb-collapsed #sbCollapseBtn .sb-ico{transform:rotate(180deg);}
+  }
+
+  /* drawer (tablet / phone) */
+  @media (max-width:900px){
+    .sidebar{
+      position:fixed;left:0;top:0;bottom:0;width:min(84vw,288px);flex:none;
+      transform:translateX(-102%);visibility:hidden;box-shadow:none;
+      transition:transform .22s ease, visibility 0s linear .22s;
+    }
+    body.sb-open .sidebar{transform:none;visibility:visible;transition:transform .22s ease, visibility 0s;box-shadow:24px 0 48px -16px rgba(0,0,0,.45);}
+    body.sb-open .sb-scrim{display:block;}
+    .tb-menu{display:inline-flex;}
+    #sbCollapseBtn{display:none;}
+    .topbar{padding:10px 14px;}
+    .wrap{padding:16px 14px 40px;}
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:640px){
+    .topbar-actions{width:100%;}
+    .search-wrap{flex:1 1 0;min-width:0;order:0;}
+    .search-wrap .search-input-topbar{width:100%;}
+    #fabAdd{
+      position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:45;
+      height:46px;padding:0 18px;border-radius:999px;font-size:13.5px;
+      box-shadow:0 12px 26px -8px rgba(11,42,74,.55);
+    }
+    .wrap{padding-bottom:96px;}
+    .appt-list{background:none;border:none;box-shadow:none;padding:0;}
+    .kpi{padding:12px;gap:10px;}
+    .kpi-ico{width:36px;height:36px;border-radius:10px;}
+    .kpi-val{font-size:20px;}
+  }
 </style>
 <style id="dynamicPageStyle">@page{ size: A4 portrait; margin: 15mm; }</style>
 </head>
@@ -642,61 +887,290 @@
 <div id="appLockOverlay">
   <div class="lock-box">
     <div style="font-size: 40px; margin-bottom: 8px;">🔒</div>
-    <h3 class="kh" style="margin: 0; font-size: 17px; color: var(--ink);">សន្តិសុខប្រព័ន្ធមាត់ធ្មេញ</h3>
+    <h3 class="kh" style="margin: 0; font-size: 17px; color: var(--ink);">ផ្នែកសេវាមាត់ធ្មេញ</h3>
     <p class="kh" style="font-size: 12px; color: var(--ink-dim); margin-top: 6px;">សូមបញ្ចូលលេខសម្ងាត់ PIN ដើម្បីចូលប្រើប្រាស់</p>
+    <p id="appLockNote" class="kh hidden" style="font-size: 12px; color: var(--primary-dark); background: var(--primary-softer); border-radius: 8px; padding: 6px 10px; margin: 10px 0 0;">🔒 ចាក់សោដោយស្វ័យប្រវត្តិ ព្រោះមិនបានប្រើ ២០ នាទី</p>
     <input type="password" id="appLockInput" class="mono" maxlength="8" placeholder="••••••" autofocus>
     <div id="appLockError" class="kh" style="color: var(--coral); font-size: 12px; min-height: 18px; margin-bottom: 12px;"></div>
     <button class="btn btn-primary btn-block kh" id="appLockBtn">ចូលប្រើប្រាស់ · Unlock</button>
   </div>
 </div>
 
-<div class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
+<div class="app-shell" id="appShell">
+  <div class="sb-scrim" id="sbScrim"></div>
+
+  <!-- ============ Sidebar ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="ម៉ឺនុយមេ · Main menu">
+    <div class="sb-inner">
+    <div class="sb-brand">
       <div class="brand-mark" style="background: linear-gradient(155deg, #3B82F6, #0B5ED7); box-shadow: var(--shadow-sm);">
         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2C9.6 2 8.4 3.1 6.9 3.1C5.2 3.1 3.8 4.6 3.8 7C3.8 9.6 4.6 11.2 5.1 13.8C5.6 16.4 6.2 21.3 7.9 21.3C9.4 21.3 9.3 17.6 9.8 15.4C10.1 14.1 10.7 13.2 12 13.2C13.3 13.2 13.9 14.1 14.2 15.4C14.7 17.6 14.6 21.3 16.1 21.3C17.8 21.3 18.4 16.4 18.9 13.8C19.4 11.2 20.2 9.6 20.2 7C20.2 4.6 18.8 3.1 17.1 3.1C15.6 3.1 14.4 2 12 2Z" fill="#ffffff"/>
         </svg>
       </div>
-      <div class="brand-text">
-        <h1 class="kh" style="background: none; padding: 0; color: var(--ink);">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</h1>
-        <div class="sub">Dental Service Record</div>
+      <div class="sb-brand-text">
+        <div class="sb-brand-title kh">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</div>
+        <div class="sb-brand-sub">Dental Service EMR KEPPH</div>
       </div>
     </div>
-    <div class="topbar-actions">
-      <button class="topbar-btn-uniform kh" id="fabAdd" style="background-color: var(--primary-dark); color: #fff; border: none; box-shadow: var(--shadow-sm);">＋ កត់ត្រាថ្មី</button>
-      <input type="text" class="search-input search-input-topbar kh" id="searchInput" placeholder="🔍 ស្វែងរក ឈ្មោះ, លេខធ្មេញ...">
-      <button class="topbar-btn-uniform btn-ghost kh" id="reportBtn" title="របាយការណ៍" style="border: 1.5px solid #0B5ED7; color: #0B5ED7;">📊 Report</button>
-      <span class="topbar-btn-uniform sync-badge" id="syncBadge" title="ចុចដើម្បីទាញទិន្នន័យពី Sheet មក App">🔄 Sync</span>
-      <!-- ប៊ូតុងព័ត៌មានគ្លីនិក (ការពារដោយ PIN) -->
-      <button class="topbar-btn-uniform btn-outline" id="settingsBtn" title="ព័ត៌មានគ្លីនិក · Settings" style="padding: 7px 10px; font-size: 16px;">⚙️</button>
+
+    <nav class="sb-nav">
+      <div class="sb-group">
+        <div class="sb-group-label kh">ការងារប្រចាំថ្ងៃ</div>
+        <button type="button" class="sb-item active" data-page="dashboard" title="ផ្ទាំងគ្រប់គ្រង · Dashboard">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          <span class="sb-label kh">ផ្ទាំងគ្រប់គ្រង<small>Dashboard</small></span>
+        </button>
+        <button type="button" class="sb-item" data-page="patients" title="អ្នកជំងឺ · Patients">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span class="sb-label kh">អ្នកជំងឺ<small>Patients</small></span><span class="sb-badge quiet" id="sbBadgePatients" hidden>0</span>
+        </button>
+        <button type="button" class="sb-item" data-page="appointments" title="ការណាត់ជួប · Appointments">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+          <span class="sb-label kh">ការណាត់ជួប<small>Appointments</small></span><span class="sb-badge" id="sbBadgeAppt" hidden>0</span>
+        </button>
+        <button type="button" class="sb-item" data-page="xray" title="X-Ray · រូបធ្មេញ">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+          <span class="sb-label kh">X-Ray (រូបធ្មេញ)<small>Dental X-ray</small></span><span class="sb-badge quiet" id="sbBadgeXray" hidden>0</span>
+        </button>
+      </div>
+      <div class="sb-group">
+        <div class="sb-group-label kh">របាយការណ៍</div>
+        <button type="button" class="sb-item" id="reportBtn" title="របាយការណ៍ · Reports">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 17v-6"/><path d="M13 17V7"/><path d="M18 17v-4"/></svg>
+          <span class="sb-label kh">របាយការណ៍<small>Reports</small></span>
+        </button>
+        <button type="button" class="sb-item" id="sbDhis2Btn" title="បញ្ជីជំងឺ DHIS2 · Disease list">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h4"/></svg>
+          <span class="sb-label kh">បញ្ជីជំងឺ DHIS2<small>Disease list</small></span>
+        </button>
+      </div>
+      <div class="sb-group">
+        <div class="sb-group-label kh">គ្រប់គ្រង</div>
+        <button type="button" class="sb-item" data-page="inventory" title="ឃ្លាំងសម្ភារៈ · Inventory">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg>
+          <span class="sb-label kh">ឃ្លាំងសម្ភារៈ<small>Inventory</small></span><span class="sb-badge warn" id="sbBadgeInv" hidden>0</span>
+        </button>
+        <button type="button" class="sb-item" id="settingsBtn" title="ព័ត៌មានគ្លីនិក · Clinic settings">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span class="sb-label kh">ព័ត៌មានគ្លីនិក<small>Clinic settings</small></span>
+        </button>
+      </div>
+    </nav>
+
+    <div class="sb-foot">
+      <div class="sb-clinic kh" id="sbClinicName">Kep Hospital-Dental Service</div>
+      <button type="button" class="sb-item" id="sbLockBtn" title="ចាក់សោកម្មវិធី · Lock">
+        <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span class="sb-label kh">ចាក់សោកម្មវិធី</span>
+      </button>
+      <button type="button" class="sb-item" id="sbSyncBtn" title="ចុចដើម្បី Sync ទិន្នន័យជាមួយ Google Sheet">
+        <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 12A9 9 0 0 1 18.5 5.8L21 8"/><path d="M21 3v5h-5"/><path d="M3 21v-5h5"/></svg><span class="sb-label kh" id="syncBadge">Sync</span>
+      </button>
+    </div>
+    </div>
+    <button type="button" class="sb-handle" id="sbCollapseBtn" title="បង្រួម / ពង្រីកម៉ឺនុយ" aria-label="បង្រួម / ពង្រីកម៉ឺនុយ" aria-pressed="false">
+      <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+    </button>
+  </aside>
+
+  <!-- ============ Main column ============ -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="tb-left">
+          <button type="button" class="tb-menu" id="sbOpen" aria-label="បើកម៉ឺនុយ" aria-controls="sidebar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div class="page-head">
+            <h1 class="kh" id="pageTitle">ផ្ទាំងគ្រប់គ្រង</h1>
+            <div class="sub" id="pageSub">Dashboard</div>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" class="search-input search-input-topbar kh" id="searchInput" placeholder="ស្វែងរក ឈ្មោះ, លេខធ្មេញ..." aria-label="ស្វែងរកអ្នកជំងឺ">
+          </div>
+          <button type="button" class="topbar-btn-uniform btn-add kh" id="fabAdd">＋ កត់ត្រាថ្មី</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap" id="pageArea">
+
+      <!-- Dashboard -->
+      <section class="page" id="page-dashboard" data-page="dashboard">
+        <div class="kpi-grid" id="dashKpis"></div>
+        <div class="appt-grid">
+          <div class="appt-panel">
+            <div class="appt-panel-head">
+              <h3 class="kh">ការណាត់ជួប · Appointments</h3>
+              <span style="display:inline-flex;align-items:center;gap:8px;">
+                <button type="button" class="link-btn kh" data-goto="appointments">មើលទាំងអស់</button>
+                <span class="count-pill" id="apptTodayCount">0</span>
+              </span>
+            </div>
+            <div id="apptTodayBody"></div>
+          </div>
+          <div class="appt-panel">
+            <div class="appt-panel-head">
+              <h3 class="kh">ការព្យាបាល · Procedures</h3>
+              <span class="count-pill" id="procTodayCount">0</span>
+            </div>
+            <div id="procTodayBody"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Patients -->
+      <section class="page" id="page-patients" data-page="patients" hidden>
+        <div class="page-tools">
+          <div class="chips kh" id="patientFilters" role="group" aria-label="តម្រងស្ថានភាព">
+            <button type="button" class="chip active" data-f="all">ទាំងអស់ <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="appt"><i class="dot amber"></i>ណាត់ជួប <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="missing"><i class="dot coral"></i>ខកខាន <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="labo"><i class="dot violet"></i>Labo <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="done"><i class="dot teal"></i>រួចរាល់ <span class="chip-n">0</span></button>
+          </div>
+          <span class="mono" id="listCount" style="font-size:12px;color:var(--ink-dim)"></span>
+        </div>
+        <div class="record-list" id="recordList"></div>
+      </section>
+
+      <!-- Appointments -->
+      <section class="page" id="page-appointments" data-page="appointments" hidden>
+        <div class="page-tools">
+          <div class="chips kh" id="apptFilters" role="group" aria-label="តម្រងការណាត់ជួប">
+            <button type="button" class="chip active" data-f="all">ទាំងអស់ <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="today"><i class="dot amber"></i>ថ្ងៃនេះ <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="missed"><i class="dot coral"></i>ហួសកំណត់ <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="upcoming"><i class="dot teal"></i>នាពេលខាងមុខ <span class="chip-n">0</span></button>
+          </div>
+        </div>
+        <div id="apptPageBody"></div>
+      </section>
+
+      <!-- X-Ray -->
+      <section class="page" id="page-xray" data-page="xray" hidden>
+        <div class="kpi-grid" id="xrayKpis"></div>
+        <div class="page-tools">
+          <div class="inv-tools">
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" class="search-input search-input-topbar kh" id="xraySearch" placeholder="ស្វែងរកឈ្មោះអ្នកជំងឺ..." aria-label="ស្វែងរកអ្នកជំងឺដែលមាន X-Ray">
+            </div>
+            <select id="xraySort" class="inv-select kh" aria-label="តម្រៀប">
+              <option value="latest">ថ្មីបំផុតមុន</option>
+              <option value="name">តាមឈ្មោះ</option>
+              <option value="count">រូបច្រើនបំផុត</option>
+            </select>
+          </div>
+          <div class="inv-tools">
+            <span class="inv-status kh" id="xrayStatusText"></span>
+            <button type="button" class="btn btn-outline btn-sm kh" id="xrayRefreshBtn">🔄 Refresh</button>
+          </div>
+        </div>
+        <div class="emr-notes-section">
+          <div class="emr-table-wrap">
+            <table class="emr-table">
+              <thead><tr>
+                <th class="kh">ឈ្មោះអ្នកជំងឺ</th><th class="kh">ភេទ · អាយុ</th><th class="kh">ទូរស័ព្ទ</th>
+                <th class="kh">ចំនួនរូប</th><th class="kh">X-Ray ចុងក្រោយ</th><th></th>
+              </tr></thead>
+              <tbody id="xrayBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inventory -->
+      <section class="page" id="page-inventory" data-page="inventory" hidden>
+        <div class="kpi-grid" id="invKpis"></div>
+        <div class="page-tools">
+          <div class="chips kh" id="invFilters" role="group" aria-label="តម្រងសម្ភារៈ">
+            <button type="button" class="chip active" data-f="all">ទាំងអស់ <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="low"><i class="dot amber"></i>ជិតអស់ស្តុក <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="expiring"><i class="dot violet"></i>ជិតផុតកំណត់ <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="expired"><i class="dot coral"></i>ផុតកំណត់ <span class="chip-n">0</span></button>
+          </div>
+          <div class="inv-tools">
+            <select id="invCategoryFilter" class="inv-select kh" aria-label="ប្រភេទ"></select>
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" class="search-input search-input-topbar kh" id="invSearch" placeholder="ស្វែងរកសម្ភារៈ..." aria-label="ស្វែងរកសម្ភារៈ">
+            </div>
+            <span class="inv-status kh" id="invSyncStatus"></span>
+            <button type="button" class="btn btn-outline btn-sm kh" id="invSyncBtn">🔄 Sync</button>
+            <button type="button" class="btn btn-primary btn-sm kh" id="invAddBtn">＋ បន្ថែមសម្ភារៈ</button>
+          </div>
+        </div>
+        <div class="emr-notes-section">
+          <div class="emr-table-wrap">
+            <table class="emr-table">
+              <thead><tr>
+                <th class="kh">សម្ភារៈ</th><th class="kh">ស្តុក</th><th class="kh">អប្បបរមា</th>
+                <th class="kh">ថ្ងៃផុតកំណត់</th><th class="kh">អ្នកផ្គត់ផ្គង់</th><th></th>
+              </tr></thead>
+              <tbody id="invBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- X-Ray lightbox -->
+<div class="overlay hidden" id="xrayLightbox">
+  <div class="xl-box">
+    <div class="xl-bar">
+      <div class="xl-title kh" id="xlTitle"></div>
+      <div class="xl-btns">
+        <a id="xlOpen" class="btn btn-outline btn-sm kh" target="_blank" rel="noopener">បើកក្នុង Drive</a>
+        <button type="button" class="x" id="xlClose" aria-label="បិទ" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">✕</button>
+      </div>
+    </div>
+    <div class="xl-stage">
+      <span class="xl-note kh" id="xlNote" hidden>មិនអាចបង្ហាញរូបនេះបានទេ សូមចុច "បើកក្នុង Drive"</span>
+      <button type="button" class="xl-nav prev" id="xlPrev" aria-label="រូបមុន">‹</button>
+      <img id="xlImg" alt="X-Ray">
+      <button type="button" class="xl-nav next" id="xlNext" aria-label="រូបបន្ទាប់">›</button>
     </div>
   </div>
 </div>
 
-<div class="wrap">
-  <div class="appt-grid">
-    <div class="appt-panel">
-      <div class="appt-panel-head">
-        <h3 class="kh">ការណាត់ជួប · Appointments</h3>
-        <span class="count-pill" id="apptTodayCount">0</span>
+<!-- Inventory item form -->
+<div class="overlay hidden" id="invFormOverlay">
+  <div class="modal narrow" style="max-width:580px;">
+    <div class="modal-head"><h2 class="kh" id="invFormTitle">បន្ថែមសម្ភារៈថ្មី · New item</h2><button class="x" id="closeInvForm" aria-label="បិទ">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>ឈ្មោះសម្ភារៈ · Item name</label><input type="text" id="inv_name" class="kh" autocomplete="off"></div>
+        <div class="inv-row-2">
+          <div class="field"><label>ប្រភេទ · Category</label><input type="text" id="inv_category" class="kh" list="invCategoryList" autocomplete="off"></div>
+          <div class="field"><label>ខ្នាត · Unit</label><input type="text" id="inv_unit" class="kh" list="invUnitList" autocomplete="off"></div>
+        </div>
+        <div class="inv-row-2">
+          <div class="field"><label>ចំនួនក្នុងស្តុក · Quantity</label><input type="number" id="inv_qty" min="0" step="any" inputmode="decimal"></div>
+          <div class="field"><label>ចំនួនអប្បបរមា · Min stock</label><input type="number" id="inv_min" min="0" step="any" inputmode="decimal"></div>
+        </div>
+        <div class="inv-row-2">
+          <div class="field"><label>ថ្ងៃផុតកំណត់ · Expiry</label><input type="date" id="inv_expiry"></div>
+          <div class="field"><label>អ្នកផ្គត់ផ្គង់ · Supplier</label><input type="text" id="inv_supplier" class="kh" autocomplete="off"></div>
+        </div>
+        <div class="field"><label>កំណត់សម្គាល់ · Note</label><textarea id="inv_note" class="kh"></textarea></div>
+        <datalist id="invCategoryList"></datalist>
+        <datalist id="invUnitList"></datalist>
       </div>
-      <div id="apptTodayBody"></div>
-    </div>
-    <div class="appt-panel">
-      <div class="appt-panel-head">
-        <h3 class="kh">ការព្យាបាល · Procedures</h3>
-        <span class="count-pill" id="procTodayCount">0</span>
+      <div id="invFormError" class="kh" style="color:var(--coral);font-size:12px;min-height:16px;margin-top:8px;"></div>
+      <div class="modal-actions">
+        <div class="left-action"><button type="button" class="btn btn-danger btn-sm kh hidden" id="invDeleteBtn">🗑 លុប</button></div>
+        <button type="button" class="btn btn-outline kh" id="invCancelBtn">បោះបង់</button>
+        <button type="button" class="btn btn-primary kh" id="invSaveBtn">រក្សាទុក Save</button>
       </div>
-      <div id="procTodayBody"></div>
     </div>
   </div>
-
-  <div class="section-title">
-    <h2 class="kh" id="listTitle">កំណត់ត្រាអ្នកជំងឺ · Patient records</h2>
-    <span class="mono" id="listCount" style="font-size:12px;color:var(--ink-dim)"></span>
-  </div>
-  <div class="record-list" id="recordList"></div>
 </div>
 
 <!-- PIN Confirmation Modal សម្រាប់ចូល Clinic Info -->
@@ -999,7 +1473,7 @@
     <div class="modal-body">
       <div id="printArea"></div>
       <div class="modal-actions">
-        <button class="btn btn-primary hidden kh" id="exportAllExcelBtn" style="flex:1;justify-content:center;background-color:#0E9384;border-color:#0E9384;">📊 Data Excel</button>
+        <button class="btn btn-primary hidden kh" id="exportAllExcelBtn" style="flex:1;justify-content:center;background-color:#1A6BDB;border-color:#1A6BDB;">📊 Data Excel</button>
         <button class="btn btn-outline" id="closePrintBtn" style="flex:1;justify-content:center;">បិទ Close</button>
         <button class="btn btn-primary" id="printBtn" style="flex:1;justify-content:center;">🖨 Print / Save PDF</button>
       </div>
@@ -1752,7 +2226,7 @@ async function flushPendingQueue(){
 
   isFlushingQueue = true;
   const badge = document.getElementById('syncBadge');
-  badge.textContent = `⏳ កំពុង Sync (${queue.length})...`;
+  badge.textContent = `កំពុង Sync (${queue.length})...`;
 
   while(queue.length > 0){
     const item = queue[0];
@@ -1763,8 +2237,10 @@ async function flushPendingQueue(){
         headers:{'Content-Type':'text/plain;charset=utf-8'},
         body: JSON.stringify(item)
       });
-      queue.shift();
-      savePendingQueue(queue);
+      const cur = getPendingQueue();
+      if(cur.length && JSON.stringify(cur[0]) === JSON.stringify(item)) cur.shift();
+      savePendingQueue(cur);
+      queue.splice(0, queue.length, ...cur);
     } catch(err){
       break;
     }
@@ -1772,7 +2248,7 @@ async function flushPendingQueue(){
 
   isFlushingQueue = false;
   badge.textContent = '✓ ស្វ័យប្រវត្តិរួចរាល់';
-  setTimeout(()=>{ badge.textContent = '🔄 Sync'; }, 2000);
+  setTimeout(()=>{ badge.textContent = 'Sync'; }, 2000);
 }
 
 function pushToSheet(action, data){
@@ -1788,7 +2264,7 @@ window.addEventListener('online', flushPendingQueue);
 async function fetchFromSheet(isSilent = false){
   if(!webAppUrl) return;
   const badge = document.getElementById('syncBadge');
-  if(!isSilent) badge.textContent = '⏳ កំពុង Sync...';
+  if(!isSilent) badge.textContent = 'កំពុង Sync...';
   try {
     const res = await fetch(webAppUrl);
     const json = await res.json();
@@ -1854,12 +2330,12 @@ async function fetchFromSheet(isSilent = false){
       saveLocalRecords();
       renderAll();
       badge.textContent = '✓ Sync ជោគជ័យ';
-      setTimeout(()=>{ badge.textContent = '🔄 Sync'; }, 2500);
+      setTimeout(()=>{ badge.textContent = 'Sync'; }, 2500);
     }
   } catch(e) {
     if(!isSilent) {
       badge.textContent = '⚠️ Sync មិនជោគជ័យ';
-      setTimeout(()=>{ badge.textContent = '🔄 Sync'; }, 2500);
+      setTimeout(()=>{ badge.textContent = 'Sync'; }, 2500);
     }
   }
 }
@@ -1973,7 +2449,7 @@ function renderProcRow(item){
         <div class="appt-name kh">${r.name}</div>
         <div class="appt-meta">${formatPhoneDisplay(r.phone)||'គ្មានលេខ'} · <span class="kh">${r.treatment||r.diagnosis||'—'}</span></div>
       </div>
-      <div class="appt-plan-badge kh" style="background:var(--primary-soft);color:var(--primary-dark);border-color:rgba(14,147,132,0.4);" title="Procedure: ${planText}">
+      <div class="appt-plan-badge kh" style="background:var(--primary-soft);color:var(--primary-dark);border-color:rgba(26,107,219,0.4);" title="Procedure: ${planText}">
         📋 ${planText}
       </div>
     </div>`;
@@ -2303,6 +2779,10 @@ function renderList(){
 
   patients.sort((a,b)=> (parseAnyDate(b.latest.timestamp)||0) - (parseAnyDate(a.latest.timestamp)||0));
 
+  const statusCounts = {all: patients.length, appt: 0, missing: 0, done: 0, labo: 0};
+  patients.forEach(p=>{ p.statusKey = getPatientStatusKey(p, startOfToday); statusCounts[p.statusKey]++; });
+  updateChipCounts('patientFilters', statusCounts);
+  if(patientStatusFilter !== 'all') patients = patients.filter(p=>p.statusKey === patientStatusFilter);
   document.getElementById('listCount').textContent = patients.length + ' patients';
   const list = document.getElementById('recordList');
   if(patients.length===0){ 
@@ -2357,7 +2837,7 @@ function renderList(){
         cardClass = ' has-active-appt';
         badgeStyle = '';
     } else {
-        badgeStyle = 'background:var(--primary-soft); color:var(--primary-dark); border-color:rgba(14,147,132,0.4);';
+        badgeStyle = 'background:var(--primary-soft); color:var(--primary-dark); border-color:rgba(26,107,219,0.4);';
     }
 
     return `
@@ -3367,6 +3847,7 @@ function renderAll(){
   renderTreatmentStats(); 
   renderAppointments(); 
   renderList(); 
+  renderShell();
 }
 
 function closePatientModal(){
@@ -3873,11 +4354,953 @@ if(storedUrl && storedUrl !== DEFAULT_WEB_APP_URL) {
     localStorage.setItem('kep_dental_webapp_url', webAppUrl);
 }
 
+
+/* ==========================================================
+   EMR SHELL — sidebar navigation, pages, dashboard, appointments
+   ========================================================== */
+const PAGE_META = {
+  dashboard:    { title: 'ផ្ទាំងគ្រប់គ្រង', sub: 'Dashboard' },
+  patients:     { title: 'អ្នកជំងឺ',        sub: 'Patients' },
+  appointments: { title: 'ការណាត់ជួប',      sub: 'Appointments' },
+  inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
+  xray:         { title: 'X-Ray · រូបធ្មេញ', sub: 'X-ray patient list' }
+};
+const PAGE_KEY = 'dental_emr_page';
+const SB_KEY = 'dental_emr_sb_collapsed';
+const MISSED_WINDOW_DAYS = 30;
+let currentPage = 'dashboard';
+let patientStatusFilter = 'all';
+let apptPageFilter = 'all';
+
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+
+function formatHeaderDate(){
+  const d = new Date();
+  try{ return d.toLocaleDateString('km-KH', {weekday:'long', day:'numeric', month:'long', year:'numeric'}); }
+  catch(e){ return d.toDateString(); }
+}
+
+/* ---------- Navigation ---------- */
+function openSidebarDrawer(){ document.body.classList.add('sb-open'); }
+function closeSidebarDrawer(){ document.body.classList.remove('sb-open'); }
+
+function showPage(name){
+  if(!PAGE_META[name]) name = 'dashboard';
+  currentPage = name;
+  document.body.dataset.page = name;
+  document.querySelectorAll('.page').forEach(p=>{ p.hidden = (p.dataset.page !== name); });
+  document.querySelectorAll('.sb-item[data-page]').forEach(b=>{
+    const on = b.dataset.page === name;
+    b.classList.toggle('active', on);
+    if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');
+  });
+  document.getElementById('pageTitle').textContent = PAGE_META[name].title;
+  document.getElementById('pageSub').textContent = name === 'dashboard'
+    ? 'Dashboard · ' + formatHeaderDate() : PAGE_META[name].sub;
+  try{ sessionStorage.setItem(PAGE_KEY, name); }catch(e){}
+  closeSidebarDrawer();
+  window.scrollTo(0,0);
+}
+
+function applySidebarCollapsed(on, persist){
+  document.body.classList.toggle('sb-collapsed', !!on);
+  document.getElementById('sbCollapseBtn').setAttribute('aria-pressed', on ? 'true' : 'false');
+  if(persist) lsSet(SB_KEY, on ? '1' : '0');
+}
+
+/* ---------- Data helpers ---------- */
+function getPatientStatusKey(p, startOfToday){
+  let missedAppt = false;
+  if(p.latest.timeLast){
+    const d = parseAnyDate(p.latest.timeLast);
+    if(d && d < startOfToday) missedAppt = true;
+  }
+  const st = p.latest.status === 'Doing' ? 'Appt' : (p.latest.status || 'Missing');
+  if(missedAppt || st === 'Missing') return 'missing';
+  if(p.hasActiveAppt || st === 'Appt') return 'appt';
+  if(st === 'Labo') return 'labo';
+  return 'done';
+}
+
+function setChipActive(groupId, f){
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(c=> c.classList.toggle('active', c.dataset.f === f));
+}
+
+function updateChipCounts(groupId, counts){
+  document.querySelectorAll('#' + groupId + ' .chip').forEach(c=>{
+    const n = c.querySelector('.chip-n');
+    if(n) n.textContent = counts[c.dataset.f] ?? 0;
+  });
+}
+
+function computeApptBuckets(){
+  const now = new Date();
+  const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endToday = new Date(startToday.getTime() + 86400000 - 1);
+  const missedFrom = new Date(startToday.getTime() - MISSED_WINDOW_DAYS * 86400000);
+
+  const groups = new Map();
+  allRecords.forEach(r=>{
+    if(!cleanStr(r.name)) return;
+    const k = patientKey(r);
+    if(!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(r);
+  });
+
+  const missed = [], today = [], upcoming = [];
+  groups.forEach(list=>{
+    const latest = list.slice().sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0))[0];
+    if(!latest || !latest.timeLast) return;
+    const st = latest.status === 'Doing' ? 'Appt' : latest.status;
+    if(st === 'Done') return;
+    const d = parseAnyDate(latest.timeLast);
+    if(!d) return;
+    const item = {r: latest, d};
+    if(d < startToday){ if(d >= missedFrom) missed.push(item); }
+    else if(d <= endToday) today.push(item);
+    else upcoming.push(item);
+  });
+  missed.sort((a,b)=> b.d - a.d);
+  today.sort((a,b)=> a.d - b.d);
+  upcoming.sort((a,b)=> a.d - b.d);
+  return {missed, today, upcoming};
+}
+
+function countTodayVisits(){
+  const now = new Date();
+  const key = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate();
+  return allRecords.filter(r=>{
+    const d = parseAnyDate(r.doingDateTime || r.timestamp);
+    return d && (d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate()) === key;
+  }).length;
+}
+
+/* ---------- Renderers ---------- */
+function setBadge(id, n, tone){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = n;
+  el.hidden = !n;
+  el.classList.remove('amber','warn');
+  if(tone) el.classList.add(tone);
+}
+
+function kpiCard(tone, iconPath, value, label, goto){
+  return `<button type="button" class="kpi ${tone}" data-goto="${goto.page}" data-f="${goto.f||''}">
+    <span class="kpi-ico"><svg viewBox="0 0 24 24" aria-hidden="true">${iconPath}</svg></span>
+    <span class="kpi-txt"><span class="kpi-val">${value}</span><span class="kpi-lbl kh">${label}</span></span>
+  </button>`;
+}
+
+function renderApptPage(b){
+  const counts = {all: b.missed.length + b.today.length + b.upcoming.length,
+                  missed: b.missed.length, today: b.today.length, upcoming: b.upcoming.length};
+  updateChipCounts('apptFilters', counts);
+  setChipActive('apptFilters', apptPageFilter);
+
+  const groups = [
+    {key:'today',    title:'ថ្ងៃនេះ · Today',            dot:'amber', items:b.today,    cls:'appt-today'},
+    {key:'missed',   title:'ហួសកំណត់ · Overdue',         dot:'coral', items:b.missed,   cls:'appt-missed', hint:'ក្នុង ' + MISSED_WINDOW_DAYS + ' ថ្ងៃចុងក្រោយ'},
+    {key:'upcoming', title:'នាពេលខាងមុខ · Upcoming',     dot:'teal',  items:b.upcoming, cls:'appt-upcoming'}
+  ].filter(g => (apptPageFilter === 'all' || apptPageFilter === g.key) && g.items.length);
+
+  const body = document.getElementById('apptPageBody');
+  body.innerHTML = groups.length ? groups.map(g => `
+    <div class="appt-group-head kh"><i class="dot ${g.dot}"></i>${g.title}<span class="count-pill">${g.items.length}</span>${g.hint ? `<span class="appt-hint">${g.hint}</span>` : ''}</div>
+    <div class="appt-list">${g.items.map(it => renderApptRow(it).replace('class="appt-row"', 'class="appt-row ' + g.cls + '"')).join('')}</div>`).join('')
+    : `<div class="empty-state kh">មិនមានការណាត់ជួបក្នុងតម្រងនេះទេ<br><span style="opacity:.7">No appointments in this view</span></div>`;
+
+  body.querySelectorAll('.appt-row').forEach(el=>{
+    el.addEventListener('click', ()=> openPatientRecord(decodeURIComponent(el.dataset.name)));
+  });
+}
+
+function renderShell(){
+  const b = computeApptBuckets();
+  const names = new Set();
+  allRecords.forEach(r=>{ if(cleanStr(r.name)) names.add(patientKey(r)); });
+
+  setBadge('sbBadgePatients', names.size, '');
+  const attention = b.today.length + b.missed.length;
+  setBadge('sbBadgeAppt', attention, b.missed.length ? 'warn' : 'amber');
+  const apptBtn = document.querySelector('.sb-item[data-page="appointments"]');
+  if(apptBtn) apptBtn.title = `ការណាត់ជួប · ថ្ងៃនេះ ${b.today.length} · ហួសកំណត់ ${b.missed.length}`;
+
+  document.getElementById('dashKpis').innerHTML =
+    kpiCard('',      '<path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', names.size, 'អ្នកជំងឺសរុប', {page:'patients'}) +
+    kpiCard('blue',  '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>', countTodayVisits(), 'ព្យាបាលថ្ងៃនេះ', {page:'patients'}) +
+    kpiCard('amber', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/>', b.today.length, 'ណាត់ជួបថ្ងៃនេះ', {page:'appointments', f:'today'}) +
+    kpiCard('coral', '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>', b.missed.length, 'ហួសកំណត់ណាត់ជួប', {page:'appointments', f:'missed'});
+
+  renderApptPage(b);
+  renderShellMeta();
+}
+
+function renderShellMeta(){
+  const el = document.getElementById('sbClinicName');
+  if(el && clinicInfo && clinicInfo.name) el.textContent = clinicInfo.name;
+}
+
+/* ---------- Wiring ---------- */
+(function initShell(){
+  document.querySelectorAll('.sb-item[data-page]').forEach(b=> b.addEventListener('click', ()=> showPage(b.dataset.page)));
+
+  // shortcuts: KPI cards and "view all" links
+  document.getElementById('pageArea').addEventListener('click', (e)=>{
+    const t = e.target.closest('[data-goto]');
+    if(!t) return;
+    const page = t.dataset.goto;
+    if(page === 'appointments' && t.dataset.f){ apptPageFilter = t.dataset.f; }
+    else if(page === 'appointments'){ apptPageFilter = 'all'; }
+    if(page === 'patients'){ patientStatusFilter = 'all'; setChipActive('patientFilters','all'); renderList(); }
+    renderShell();
+    showPage(page);
+  });
+
+  document.getElementById('patientFilters').addEventListener('click', (e)=>{
+    const c = e.target.closest('.chip'); if(!c) return;
+    patientStatusFilter = c.dataset.f;
+    setChipActive('patientFilters', patientStatusFilter);
+    renderList();
+  });
+  document.getElementById('apptFilters').addEventListener('click', (e)=>{
+    const c = e.target.closest('.chip'); if(!c) return;
+    apptPageFilter = c.dataset.f;
+    renderApptPage(computeApptBuckets());
+  });
+
+  // modal-style items (Reports / DHIS2 / Clinic settings) just close the drawer on phones
+  document.getElementById('sbDhis2Btn').addEventListener('click', ()=>{ closeSidebarDrawer(); openDiseaseListModal(); });
+  ['reportBtn','settingsBtn'].forEach(id=> document.getElementById(id).addEventListener('click', closeSidebarDrawer));
+
+  // search always lands on the Patients page
+  document.getElementById('searchInput').addEventListener('input', (e)=>{
+    if(currentPage !== 'patients' && e.target.value.trim()) showPage('patients');
+  });
+
+  // drawer
+  document.getElementById('sbOpen').addEventListener('click', openSidebarDrawer);
+  document.getElementById('sbScrim').addEventListener('click', closeSidebarDrawer);
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeSidebarDrawer(); });
+
+  // collapse / lock
+  document.getElementById('sbCollapseBtn').addEventListener('click', ()=>{
+    applySidebarCollapsed(!document.body.classList.contains('sb-collapsed'), true);
+  });
+  document.getElementById('sbLockBtn').addEventListener('click', ()=> lockApp(false));
+
+  // Sync button in the sidebar: clicking anywhere on it behaves like clicking the label (which owns the sync handlers)
+  const syncLabel = document.getElementById('syncBadge');
+  const syncBtn = document.getElementById('sbSyncBtn');
+  syncBtn.addEventListener('click', (e)=>{ if(e.target !== syncLabel) syncLabel.click(); });
+  new MutationObserver(()=>{
+    const t = syncLabel.textContent;
+    syncBtn.classList.toggle('syncing', t.indexOf('កំពុង') >= 0);
+    syncBtn.classList.toggle('sync-err', t.indexOf('⚠️') >= 0);
+  }).observe(syncLabel, {childList: true, characterData: true, subtree: true});
+
+  // clinic name refresh after saving settings
+  document.getElementById('saveSettingsBtn').addEventListener('click', ()=> setTimeout(renderShellMeta, 0));
+
+  // restore last state
+  applySidebarCollapsed(lsGet(SB_KEY) === '1', false);
+  let saved = null;
+  try{ saved = sessionStorage.getItem(PAGE_KEY); }catch(e){}
+  showPage(saved && PAGE_META[saved] ? saved : 'dashboard');
+  renderShell();
+})();
+
+
+/* ==========================================================
+   INVENTORY (ឃ្លាំងសម្ភារៈ) — synced with the "Inventory" tab
+   ========================================================== */
+const INV_KEY = 'kep_dental_inventory_v1';
+const INV_DEL_KEY = 'kep_dental_inventory_deleted_v1';
+const EXPIRY_WARN_DAYS = 90;
+const INV_DEFAULT_CATEGORIES = ['ថ្នាំ', 'សម្ភារៈប្រើប្រាស់', 'សម្ភារៈបំពេញធ្មេញ', 'ឧបករណ៍', 'សម្ភារៈអនាម័យ', 'ផ្សេងៗ'];
+const INV_DEFAULT_UNITS = ['ដប', 'ប្រអប់', 'កញ្ចប់', 'គ្រាប់', 'បំពង់', 'ដុំ', 'ថង់', 'គូ'];
+
+let inventoryItems = [];
+let invDeleted = new Set();
+let invFilter = 'all';
+let invCategory = '';
+let invSearchTerm = '';
+let invEditingId = null;
+let invStatusTimer = null;
+
+function esc(v){
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function loadInventory(){
+  try{ const a = JSON.parse(localStorage.getItem(INV_KEY)); if(Array.isArray(a)) inventoryItems = a; }catch(e){}
+  try{ const d = JSON.parse(localStorage.getItem(INV_DEL_KEY)); if(Array.isArray(d)) invDeleted = new Set(d); }catch(e){}
+}
+function saveInventory(){ try{ localStorage.setItem(INV_KEY, JSON.stringify(inventoryItems)); }catch(e){} }
+function saveInvDeleted(){ try{ localStorage.setItem(INV_DEL_KEY, JSON.stringify([...invDeleted])); }catch(e){} }
+
+function genInvId(){ return 'INV' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
+
+function normalizeExpiry(v){
+  const t = cleanStr(v);
+  if(!t) return '';
+  const m = t.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(m) return m[1] + '-' + m[2] + '-' + m[3];
+  const d = parseAnyDate(t);
+  if(!d) return '';
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+
+function normalizeInvItem(r){
+  const g = (...keys) => { for(const k of keys){ if(r[k] !== undefined && r[k] !== null && r[k] !== '') return r[k]; } return ''; };
+  return {
+    id: cleanStr(g('id','ID','Id')),
+    name: cleanStr(g('name','Name')),
+    category: cleanStr(g('category','Category')),
+    unit: cleanStr(g('unit','Unit')),
+    qty: Number(g('qty','Qty','quantity')) || 0,
+    minQty: Number(g('minQty','minqty','MinQty','min')) || 0,
+    expiry: normalizeExpiry(g('expiry','Expiry')),
+    supplier: cleanStr(g('supplier','Supplier')),
+    note: cleanStr(g('note','Note')),
+    updated: cleanStr(g('updated','Updated'))
+  };
+}
+
+function invDaysToExpiry(it){
+  if(!it.expiry) return null;
+  const d = parseAnyDate(it.expiry);
+  if(!d) return null;
+  const t = new Date();
+  const start = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  return Math.round((d - start) / 86400000);
+}
+function invStockState(it){
+  if(it.qty <= 0) return 'out';
+  if(it.minQty > 0 && it.qty <= it.minQty) return 'low';
+  return 'ok';
+}
+function invExpiryState(it){
+  const n = invDaysToExpiry(it);
+  if(n === null) return 'none';
+  if(n < 0) return 'expired';
+  if(n <= EXPIRY_WARN_DAYS) return 'expiring';
+  return 'ok';
+}
+function fmtExpiry(v){ return v ? v.replace(/-/g, '/') : '—'; }
+function fmtQty(n){ return Number.isInteger(n) ? String(n) : String(+n.toFixed(2)); }
+
+function setInvStatus(text, tone, autoClear){
+  const el = document.getElementById('invSyncStatus');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'inv-status kh' + (tone ? ' ' + tone : '');
+  clearTimeout(invStatusTimer);
+  if(autoClear) invStatusTimer = setTimeout(()=>{ el.textContent = ''; el.className = 'inv-status kh'; }, 3000);
+}
+
+function invMatches(it){
+  if(invFilter === 'low' && invStockState(it) === 'ok') return false;
+  if(invFilter === 'expiring' && invExpiryState(it) !== 'expiring') return false;
+  if(invFilter === 'expired' && invExpiryState(it) !== 'expired') return false;
+  if(invCategory && it.category !== invCategory) return false;
+  if(invSearchTerm){
+    const hay = [it.name, it.category, it.supplier, it.note].join(' ').toLowerCase();
+    if(!hay.includes(invSearchTerm.toLowerCase())) return false;
+  }
+  return true;
+}
+
+function renderInventory(){
+  const items = inventoryItems;
+  const low = items.filter(i => invStockState(i) !== 'ok').length;
+  const expiring = items.filter(i => invExpiryState(i) === 'expiring').length;
+  const expired = items.filter(i => invExpiryState(i) === 'expired').length;
+
+  updateChipCounts('invFilters', {all: items.length, low, expiring, expired});
+  setChipActive('invFilters', invFilter);
+
+  const attention = items.filter(i => invStockState(i) !== 'ok' || invExpiryState(i) === 'expired').length;
+  setBadge('sbBadgeInv', attention, 'warn');
+
+  document.getElementById('invKpis').innerHTML =
+    kpiCard('',      '<path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/>', items.length, 'សម្ភារៈសរុប', {page:'inventory'}).replace('data-goto="inventory"', 'data-invf="all"') +
+    kpiCard('amber', '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>', low, 'ជិតអស់ / អស់ស្តុក', {page:'inventory'}).replace('data-goto="inventory"', 'data-invf="low"') +
+    kpiCard('blue',  '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', expiring, 'ជិតផុតកំណត់ (≤' + EXPIRY_WARN_DAYS + ' ថ្ងៃ)', {page:'inventory'}).replace('data-goto="inventory"', 'data-invf="expiring"') +
+    kpiCard('coral', '<circle cx="12" cy="12" r="9"/><path d="m15 9-6 6M9 9l6 6"/>', expired, 'ផុតកំណត់ហើយ', {page:'inventory'}).replace('data-goto="inventory"', 'data-invf="expired"');
+
+  // category filter
+  const cats = [...new Set(items.map(i => i.category).filter(Boolean))].sort((a,b)=> a.localeCompare(b));
+  if(invCategory && !cats.includes(invCategory)) invCategory = '';
+  const sel = document.getElementById('invCategoryFilter');
+  sel.innerHTML = '<option value="">ប្រភេទទាំងអស់</option>' + cats.map(c => `<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  sel.value = invCategory;
+
+  // table
+  const rows = items.filter(invMatches).sort((a,b)=> a.name.localeCompare(b.name));
+  const body = document.getElementById('invBody');
+  if(!rows.length){
+    body.innerHTML = `<tr><td colspan="6" style="padding:0;"><div class="empty-state kh" style="border:none;">${
+      items.length ? 'មិនមានសម្ភារៈត្រូវនឹងតម្រងនេះទេ<br><span style="opacity:.7">No items match this filter</span>'
+                   : 'មិនទាន់មានសម្ភារៈក្នុងឃ្លាំងទេ · ចុច ＋ បន្ថែមសម្ភារៈ<br><span style="opacity:.7">The inventory is empty</span>'}</div></td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(it => {
+    const ss = invStockState(it), es = invExpiryState(it);
+    const stockPill = ss === 'out' ? '<span class="inv-pill out kh">អស់ស្តុក</span>' : ss === 'low' ? '<span class="inv-pill low kh">ជិតអស់</span>' : '';
+    const days = invDaysToExpiry(it);
+    const expPill = es === 'expired' ? '<span class="inv-pill expired kh">ផុតកំណត់</span>'
+                  : es === 'expiring' ? `<span class="inv-pill expiring kh">${days} ថ្ងៃ</span>` : '';
+    return `<tr class="emr-tr" data-id="${esc(it.id)}">
+      <td data-label="សម្ភារៈ"><div class="inv-name kh">${esc(it.name)}</div><div class="inv-cat kh">${esc(it.category) || '—'}</div></td>
+      <td data-label="ស្តុក"><span class="inv-qty mono">${fmtQty(it.qty)}</span> <span class="kh">${esc(it.unit)}</span>${stockPill}</td>
+      <td data-label="អប្បបរមា" class="mono">${it.minQty ? fmtQty(it.minQty) : '—'}</td>
+      <td data-label="ថ្ងៃផុតកំណត់"><span class="mono">${fmtExpiry(it.expiry)}</span>${expPill}</td>
+      <td data-label="អ្នកផ្គត់ផ្គង់" class="kh">${esc(it.supplier) || '—'}</td>
+      <td class="inv-actions">
+        <button type="button" class="inv-btn" data-act="dec" title="ដកចេញ 1" aria-label="ដកចេញ 1">−</button><button type="button" class="inv-btn" data-act="inc" title="បន្ថែម 1" aria-label="បន្ថែម 1">+</button><button type="button" class="inv-btn" data-act="edit" title="កែសម្រួល" aria-label="កែសម្រួល">✎</button><button type="button" class="inv-btn del" data-act="del" title="លុប" aria-label="លុប">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ---------- Sync ---------- */
+function pushInventory(action, item){
+  const data = action === 'inventoryDelete'
+    ? {sheet: 'Inventory', id: item.id}
+    : {sheet: 'Inventory', id: item.id, name: item.name, category: item.category, unit: item.unit,
+       qty: item.qty, minQty: item.minQty, expiry: item.expiry, supplier: item.supplier, note: item.note, updated: item.updated};
+  pushToSheet(action, data);
+}
+
+let invFetching = false;
+async function fetchInventory(silent){
+  if(!webAppUrl || invFetching) return;
+  invFetching = true;
+  if(!silent) setInvStatus('⏳ កំពុង Sync...', '');
+  try{
+    await flushPendingQueue();
+    const url = webAppUrl + (webAppUrl.includes('?') ? '&' : '?') + 'sheet=Inventory&_=' + Date.now();
+    const res = await fetch(url);
+    const json = await res.json();
+    if(!(json && json.status === 'success' && json.sheet === 'Inventory' && Array.isArray(json.data))){
+      setInvStatus('⚠️ Apps Script មិនទាន់គាំទ្រ Inventory (សូមដាក់ Inventory.gs)', 'warn');
+      return;
+    }
+    const pendingIds = new Set(getPendingQueue()
+      .filter(q => q && String(q.action || '').indexOf('inventory') === 0 && q.data)
+      .map(q => q.data.id));
+    const server = json.data.map(normalizeInvItem).filter(x => x.id && x.name);
+    const serverIds = new Set(server.map(x => x.id));
+
+    const merged = server.filter(x => !invDeleted.has(x.id) && !pendingIds.has(x.id));
+    inventoryItems.forEach(x => { if(pendingIds.has(x.id)) merged.push(x); });   // local edits not yet on the Sheet
+    inventoryItems = merged;
+
+    [...invDeleted].forEach(id => { if(!serverIds.has(id)) invDeleted.delete(id); });  // deletion confirmed by the Sheet
+    saveInvDeleted(); saveInventory(); renderInventory();
+    setInvStatus('✓ Sync ជោគជ័យ', 'ok', true);
+  }catch(e){
+    if(!silent) setInvStatus('⚠️ Sync មិនជោគជ័យ', 'warn', true);
+  }finally{
+    invFetching = false;
+  }
+}
+
+/* ---------- Actions ---------- */
+function findInvItem(id){ return inventoryItems.find(x => x.id === id); }
+
+function adjustInvQty(id, delta){
+  const it = findInvItem(id); if(!it) return;
+  it.qty = Math.max(0, +(it.qty + delta).toFixed(2));
+  it.updated = new Date().toISOString();
+  saveInventory(); renderInventory();
+  pushInventory('inventoryUpdate', it);
+}
+
+function deleteInvItem(id){
+  const it = findInvItem(id); if(!it) return;
+  showConfirm(`លុបសម្ភារៈ "${esc(it.name)}" ចេញពីឃ្លាំង?`, ()=>{
+    inventoryItems = inventoryItems.filter(x => x.id !== id);
+    invDeleted.add(id);
+    saveInvDeleted(); saveInventory(); renderInventory();
+    pushInventory('inventoryDelete', {id});
+    closeInvForm();
+  });
+}
+
+function openInvForm(id){
+  invEditingId = id || null;
+  const it = id ? findInvItem(id) : null;
+  document.getElementById('invFormTitle').textContent = it ? 'កែសម្រួលសម្ភារៈ · Edit item' : 'បន្ថែមសម្ភារៈថ្មី · New item';
+  document.getElementById('inv_name').value = it ? it.name : '';
+  document.getElementById('inv_category').value = it ? it.category : '';
+  document.getElementById('inv_unit').value = it ? it.unit : '';
+  document.getElementById('inv_qty').value = it ? it.qty : '';
+  document.getElementById('inv_min').value = it ? it.minQty : '';
+  document.getElementById('inv_expiry').value = it ? it.expiry : '';
+  document.getElementById('inv_supplier').value = it ? it.supplier : '';
+  document.getElementById('inv_note').value = it ? it.note : '';
+  document.getElementById('invFormError').textContent = '';
+  document.getElementById('invDeleteBtn').classList.toggle('hidden', !it);
+
+  const cats = [...new Set([...INV_DEFAULT_CATEGORIES, ...inventoryItems.map(i => i.category).filter(Boolean)])];
+  const units = [...new Set([...INV_DEFAULT_UNITS, ...inventoryItems.map(i => i.unit).filter(Boolean)])];
+  document.getElementById('invCategoryList').innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
+  document.getElementById('invUnitList').innerHTML = units.map(u => `<option value="${esc(u)}">`).join('');
+
+  history.pushState({ modal: 'invForm' }, '', '#invForm');
+  document.getElementById('invFormOverlay').classList.remove('hidden');
+  setTimeout(()=> document.getElementById('inv_name').focus(), 60);
+}
+
+function closeInvForm(){
+  document.getElementById('invFormOverlay').classList.add('hidden');
+  if(window.location.hash === '#invForm') history.replaceState(null, null, window.location.pathname);
+  invEditingId = null;
+}
+
+function saveInvForm(){
+  const name = cleanStr(document.getElementById('inv_name').value);
+  const err = document.getElementById('invFormError');
+  if(!name){ err.textContent = '⚠️ សូមបញ្ចូលឈ្មោះសម្ភារៈ'; document.getElementById('inv_name').focus(); return; }
+  const qty = Number(document.getElementById('inv_qty').value);
+  const minQty = Number(document.getElementById('inv_min').value);
+  if(qty < 0 || minQty < 0){ err.textContent = '⚠️ ចំនួនមិនអាចតិចជាង 0 ទេ'; return; }
+
+  const fields = {
+    name,
+    category: cleanStr(document.getElementById('inv_category').value) || 'ផ្សេងៗ',
+    unit: cleanStr(document.getElementById('inv_unit').value),
+    qty: qty || 0,
+    minQty: minQty || 0,
+    expiry: normalizeExpiry(document.getElementById('inv_expiry').value),
+    supplier: cleanStr(document.getElementById('inv_supplier').value),
+    note: cleanStr(document.getElementById('inv_note').value),
+    updated: new Date().toISOString()
+  };
+  let item, action;
+  if(invEditingId && findInvItem(invEditingId)){
+    item = Object.assign(findInvItem(invEditingId), fields);
+    action = 'inventoryUpdate';
+  }else{
+    item = Object.assign({id: genInvId()}, fields);
+    inventoryItems.push(item);
+    action = 'inventoryAdd';
+  }
+  saveInventory(); renderInventory();
+  pushInventory(action, item);
+  closeInvForm();
+}
+
+/* ---------- Wiring ---------- */
+(function initInventory(){
+  loadInventory();
+  renderInventory();
+
+  document.getElementById('invFilters').addEventListener('click', (e)=>{
+    const c = e.target.closest('.chip'); if(!c) return;
+    invFilter = c.dataset.f; renderInventory();
+  });
+  document.getElementById('invKpis').addEventListener('click', (e)=>{
+    const k = e.target.closest('[data-invf]'); if(!k) return;
+    invFilter = k.dataset.invf; renderInventory();
+  });
+  document.getElementById('invCategoryFilter').addEventListener('change', (e)=>{ invCategory = e.target.value; renderInventory(); });
+  document.getElementById('invSearch').addEventListener('input', (e)=>{ invSearchTerm = e.target.value; renderInventory(); });
+  document.getElementById('invAddBtn').addEventListener('click', ()=> openInvForm(null));
+  document.getElementById('invSyncBtn').addEventListener('click', ()=> fetchInventory(false));
+
+  document.getElementById('invBody').addEventListener('click', (e)=>{
+    const tr = e.target.closest('tr[data-id]'); if(!tr) return;
+    const id = tr.dataset.id;
+    const btn = e.target.closest('[data-act]');
+    if(!btn){ openInvForm(id); return; }
+    const act = btn.dataset.act;
+    if(act === 'inc') adjustInvQty(id, 1);
+    else if(act === 'dec') adjustInvQty(id, -1);
+    else if(act === 'edit') openInvForm(id);
+    else if(act === 'del') deleteInvItem(id);
+  });
+
+  document.getElementById('closeInvForm').addEventListener('click', closeInvForm);
+  document.getElementById('invCancelBtn').addEventListener('click', closeInvForm);
+  document.getElementById('invSaveBtn').addEventListener('click', saveInvForm);
+  document.getElementById('invDeleteBtn').addEventListener('click', ()=>{ if(invEditingId) deleteInvItem(invEditingId); });
+  document.getElementById('invFormOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'invFormOverlay') closeInvForm(); });
+  document.getElementById('invFormOverlay').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' && e.target.tagName === 'INPUT'){ e.preventDefault(); saveInvForm(); }
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && !document.getElementById('invFormOverlay').classList.contains('hidden')) closeInvForm();
+  });
+
+  // refresh expiry states when opening the page; the main Sync button also syncs Inventory
+  document.querySelector('.sb-item[data-page="inventory"]').addEventListener('click', renderInventory);
+  document.getElementById('syncBadge').addEventListener('click', ()=> fetchInventory(true));
+})();
+
+
+/* ==========================================================
+   X-RAY (រូបធ្មេញ) — every patient who has X-ray images
+   ========================================================== */
+const XRAY_INDEX_KEY = 'kep_dental_xray_index_v1';
+const XRAY_STALE_MS = 60 * 1000;
+let xrayIndex = { files: [], fetchedAt: 0 };
+let xrayFetching = false;
+let xraySearchTerm = '';
+let xraySort = 'latest';
+
+function xrayNormKey(name){
+  return cleanStr(name).normalize('NFC').replace(/\s+/g, ' ').toLowerCase();
+}
+function xrayFileId(f){
+  if(f.id) return f.id;
+  const m = String(f.url || '').match(/[-\w]{25,}/);
+  return m ? m[0] : '';
+}
+function xrayThumb(f){
+  const id = xrayFileId(f);
+  return id ? `https://drive.google.com/thumbnail?id=${id}&sz=w400` : (f.thumbnail || '');
+}
+/* File names are  <patient>[_<recordCode>]_XRAY_<timestamp>.<ext> */
+function xrayPatientFromFile(name){
+  let base = String(name || '').normalize('NFC');
+  const cut = base.indexOf('_XRAY');
+  if(cut >= 0) base = base.slice(0, cut);
+  base = base.replace(/_ID[0-9a-z]{6,}$/i, '');
+  return cleanStr(base);
+}
+function xrayFileDate(f){ return parseAnyDate(f.date) || new Date(0); }
+
+function loadXrayIndex(){
+  try{
+    const o = JSON.parse(localStorage.getItem(XRAY_INDEX_KEY));
+    if(o && Array.isArray(o.files)) xrayIndex = o;
+  }catch(e){}
+}
+function saveXrayIndex(){ try{ localStorage.setItem(XRAY_INDEX_KEY, JSON.stringify(xrayIndex)); }catch(e){} }
+
+function setXrayStatus(text, tone, autoClear){
+  const el = document.getElementById('xrayStatusText');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'inv-status kh' + (tone ? ' ' + tone : '');
+  clearTimeout(setXrayStatus._t);
+  if(autoClear) setXrayStatus._t = setTimeout(()=>{ el.textContent = ''; el.className = 'inv-status kh'; }, 3000);
+}
+
+function buildXrayGroups(){
+  const profiles = new Map();
+  allRecords.forEach(r=>{
+    const n = cleanStr(r.name); if(!n) return;
+    const k = xrayNormKey(n);
+    const cur = profiles.get(k);
+    if(!cur || (parseAnyDate(r.timestamp)||0) > (parseAnyDate(cur.timestamp)||0)) profiles.set(k, r);
+  });
+
+  const groups = new Map();
+  xrayIndex.files.forEach(f=>{
+    if(String(f.name || '').indexOf('_XRAY') < 0) return;
+    const parsed = xrayPatientFromFile(f.name);
+    if(!parsed) return;
+    const k = xrayNormKey(parsed);
+    if(!groups.has(k)) groups.set(k, {key:k, name:parsed, profile: profiles.get(k) || null, files: []});
+    groups.get(k).files.push(f);
+  });
+  groups.forEach(g=>{
+    g.files.sort((a,b)=> xrayFileDate(b) - xrayFileDate(a));
+    g.latest = xrayFileDate(g.files[0]);
+    if(g.profile) g.name = cleanStr(g.profile.name);
+  });
+  return [...groups.values()];
+}
+
+function renderXray(){
+  const groups = buildXrayGroups();
+  const now = new Date();
+  const totalImgs = xrayIndex.files.length;
+  const monthImgs = xrayIndex.files.filter(f=>{ const d = xrayFileDate(f); return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth(); }).length;
+  const todayImgs = xrayIndex.files.filter(f=>{ const d = xrayFileDate(f); return d.toDateString() === now.toDateString(); }).length;
+
+  setBadge('sbBadgeXray', groups.length, '');
+
+  document.getElementById('xrayKpis').innerHTML =
+    kpiCard('',      '<path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', groups.length, 'អ្នកជំងឺដែលមាន X-Ray', {page:'xray'}).replace('data-goto="xray"', 'data-noop="1"') +
+    kpiCard('blue',  '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>', totalImgs, 'រូប X-Ray សរុប', {page:'xray'}).replace('data-goto="xray"', 'data-noop="1"') +
+    kpiCard('amber', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', monthImgs, 'រូបក្នុងខែនេះ', {page:'xray'}).replace('data-goto="xray"', 'data-noop="1"') +
+    kpiCard('coral', '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', todayImgs, 'រូបថ្ងៃនេះ', {page:'xray'}).replace('data-goto="xray"', 'data-noop="1"');
+
+  let list = groups;
+  if(xraySearchTerm){
+    const t = xrayNormKey(xraySearchTerm);
+    list = list.filter(g => xrayNormKey(g.name).includes(t));
+  }
+  list = list.slice().sort((a,b)=>{
+    if(xraySort === 'name') return a.name.localeCompare(b.name);
+    if(xraySort === 'count') return b.files.length - a.files.length || (b.latest - a.latest);
+    return b.latest - a.latest;
+  });
+
+  const body = document.getElementById('xrayBody');
+  if(!list.length){
+    body.innerHTML = `<tr><td colspan="6" style="padding:0;"><div class="empty-state kh" style="border:none;">${
+      groups.length ? 'រកមិនឃើញអ្នកជំងឺដែលត្រូវនឹងការស្វែងរកទេ<br><span style="opacity:.7">No patients match this search</span>'
+      : (xrayIndex.fetchedAt ? 'មិនទាន់មានឯកសារ X-Ray ក្នុង Drive ទេ<br><span style="opacity:.7">No X-ray files found</span>'
+                            : 'កំពុងរង់ចាំទិន្នន័យ X-Ray...<br><span style="opacity:.7">Press Refresh to load</span>')}</div></td></tr>`;
+    return;
+  }
+
+  body.innerHTML = list.map(g=>{
+    let sexAge = '—', phone = '—';
+    if(g.profile){
+      const p = g.profile;
+      sexAge = (String(p.sex || '').toUpperCase() === 'M' ? 'ប្រុស' : 'ស្រី') + (p.age ? ' · ' + p.age + ' ឆ្នាំ' : '');
+      phone = formatPhoneDisplay(p.phone) || '—';
+    }
+    const d = g.latest;
+    const dStr = d.getTime() ? `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}` : '—';
+    return `<tr class="emr-tr" data-key="${encodeURIComponent(g.key)}" data-has="${g.profile ? 1 : 0}" tabindex="0">
+      <td data-label="ឈ្មោះអ្នកជំងឺ"><span class="xr-name kh">${esc(g.name)}</span>${g.profile ? '' : '<span class="xr-orphan kh">គ្មានកំណត់ត្រា</span>'}</td>
+      <td data-label="ភេទ · អាយុ" class="kh">${esc(sexAge)}</td>
+      <td data-label="ទូរស័ព្ទ" class="mono">${esc(phone)}</td>
+      <td data-label="ចំនួនរូប"><span class="inv-pill ok mono" style="margin-left:0;">${g.files.length} រូប</span></td>
+      <td data-label="X-Ray ចុងក្រោយ" class="mono">${dStr}</td>
+      <td class="xr-act"><button type="button" class="btn btn-outline btn-sm kh" data-act="record"${g.profile ? '' : ' disabled'}>កំណត់ត្រា</button></td>
+    </tr>`;
+  }).join('');
+}
+
+/* ---------- Viewer: all X-ray images of one patient ---------- */
+let xvFiles = [];
+let xvIndex = 0;
+
+function xrayDateLabel(f){
+  const d = xrayFileDate(f);
+  if(!d.getTime()) return '—';
+  return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+
+function openXrayViewer(key){
+  const g = buildXrayGroups().find(x => x.key === key);
+  if(!g) return;
+  xvFiles = g.files;
+  history.pushState({ modal: 'xrayGallery' }, '', '#xrayGallery');
+  document.getElementById('xrayGalleryTitle').textContent = '📷 X-Ray៖ ' + g.name;
+  const body = document.getElementById('xrayGalleryBody');
+  body.innerHTML = `
+    <div class="xv-head">
+      <span class="kh" style="font-size:12.5px;color:var(--ink-soft);">រូប X-Ray សរុប <b class="mono">${g.files.length}</b> · ចុចលើរូបដើម្បីមើលធំ</span>
+      <button type="button" class="btn btn-primary btn-sm kh" id="xvUpload">＋ Upload រូបថ្មី</button>
+    </div>
+    <div class="xray-gallery-grid">${g.files.map((f,i)=>`
+      <div class="xray-item xv-item" role="button" tabindex="0" data-i="${i}">
+        <img src="${esc(xrayThumb(f))}" alt="X-Ray ${i+1}" loading="lazy" onerror="this.style.visibility='hidden'">
+        <div class="xray-info"><div class="xray-date">${xrayDateLabel(f)}</div></div>
+      </div>`).join('')}
+    </div>`;
+  body.querySelector('#xvUpload').addEventListener('click', ()=>{
+    document.getElementById('xrayGalleryOverlay').classList.add('hidden');
+    document.getElementById('f_name').value = g.name;
+    openXrayModal();
+  });
+  const open = (el)=> openXrayLightbox(Number(el.dataset.i));
+  body.querySelectorAll('.xv-item').forEach(el=>{
+    el.addEventListener('click', ()=> open(el));
+    el.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(el); } });
+  });
+  document.getElementById('xrayGalleryOverlay').classList.remove('hidden');
+}
+
+function openXrayLightbox(i){
+  if(!xvFiles.length) return;
+  xvIndex = Math.max(0, Math.min(xvFiles.length - 1, i));
+  const f = xvFiles[xvIndex];
+  const id = xrayFileId(f);
+  const img = document.getElementById('xlImg');
+  const note = document.getElementById('xlNote');
+  note.hidden = true;
+  img.style.visibility = 'visible';
+  img.onerror = ()=>{ img.style.visibility = 'hidden'; note.hidden = false; };
+  img.src = id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1600` : '';
+  document.getElementById('xlTitle').textContent = `${xvIndex + 1} / ${xvFiles.length} · ${xrayDateLabel(f)}`;
+  document.getElementById('xlOpen').href = f.url || '#';
+  document.getElementById('xlPrev').disabled = xvIndex === 0;
+  document.getElementById('xlNext').disabled = xvIndex === xvFiles.length - 1;
+  document.getElementById('xrayLightbox').classList.remove('hidden');
+}
+function closeXrayLightbox(){
+  document.getElementById('xrayLightbox').classList.add('hidden');
+  document.getElementById('xlImg').src = '';
+}
+
+async function loadXrayFiles(){
+  const sep = webAppUrl.includes('?') ? '&' : '?';
+
+  // 1) dedicated action from Xray.gs (lists the whole folder)
+  try{
+    const res = await fetch(`${webAppUrl}${sep}action=getAllXrays&folderId=${encodeURIComponent(XRAY_FOLDER_ID)}&t=${Date.now()}`);
+    const j = await res.json();
+    if(j && j.kind === 'xrays'){
+      if(j.status === 'success' && Array.isArray(j.data)) return { files: j.data };
+      return { error: String(j.message || 'unknown error').slice(0, 90) };
+    }
+  }catch(e){ /* fall through to the fallback */ }
+
+  // 2) fallback: the per-patient action that already powers the gallery, asking for every file whose name has _XRAY
+  try{
+    const res = await fetch(`${webAppUrl}${sep}action=getXrays&patientName=${encodeURIComponent('_XRAY')}&t=${Date.now()}`);
+    const j = await res.json();
+    if(j && j.status === 'success' && Array.isArray(j.data) && j.data.length && j.data.every(x => x && x.name && x.url)){
+      return { files: j.data, legacy: true };
+    }
+  }catch(e){}
+
+  return { unsupported: true };
+}
+
+async function fetchXrayIndex(silent){
+  if(!webAppUrl || xrayFetching) return;
+  xrayFetching = true;
+  if(!silent) setXrayStatus('⏳ កំពុងទាញរូប X-Ray...', '');
+  try{
+    const r = await loadXrayFiles();
+    if(r.error){ setXrayStatus('⚠️ Apps Script រាយការណ៍កំហុស៖ ' + r.error, 'warn'); return; }
+    if(r.unsupported){
+      setXrayStatus('⚠️ Apps Script មិនឆ្លើយតបបញ្ជី X-Ray (សូមដាក់ Xray.gs ហើយ Deploy Version ថ្មី)', 'warn');
+      return;
+    }
+    xrayIndex = {
+      files: r.files
+        .map(f => ({ id: f.id || '', name: f.name || '', url: f.url || '', date: f.date || '' }))
+        .filter(f => f.name.indexOf('_XRAY') >= 0),
+      fetchedAt: Date.now()
+    };
+    saveXrayIndex();
+    renderXray();
+    setXrayStatus(r.legacy ? '✓ ទាញរួចរាល់ (តាមវិធីចាស់)' : '✓ ទាញរួចរាល់', 'ok', true);
+  }catch(e){
+    setXrayStatus('⚠️ ទាញមិនបាន សូមពិនិត្យអ៊ីនធឺណិត', 'warn', true);
+  }finally{
+    xrayFetching = false;
+  }
+}
+
+function maybeFetchXray(){
+  if(Date.now() - (xrayIndex.fetchedAt || 0) > XRAY_STALE_MS) fetchXrayIndex(!!xrayIndex.fetchedAt);
+}
+
+(function initXray(){
+  loadXrayIndex();
+  renderXray();
+
+  document.getElementById('xraySearch').addEventListener('input', (e)=>{ xraySearchTerm = e.target.value; renderXray(); });
+  document.getElementById('xraySort').addEventListener('change', (e)=>{ xraySort = e.target.value; renderXray(); });
+  document.getElementById('xrayRefreshBtn').addEventListener('click', ()=> fetchXrayIndex(false));
+
+  const tbody = document.getElementById('xrayBody');
+  tbody.addEventListener('click', (e)=>{
+    const tr = e.target.closest('tr[data-key]'); if(!tr) return;
+    const key = decodeURIComponent(tr.dataset.key);
+    if(e.target.closest('[data-act="record"]')){
+      const g = buildXrayGroups().find(x => x.key === key);
+      if(g && g.profile) openPatientRecord(g.name);
+      return;
+    }
+    openXrayViewer(key);
+  });
+  tbody.addEventListener('keydown', (e)=>{
+    if((e.key === 'Enter' || e.key === ' ') && e.target.matches('tr[data-key]')){
+      e.preventDefault(); openXrayViewer(decodeURIComponent(e.target.dataset.key));
+    }
+  });
+
+  // lightbox controls
+  document.getElementById('xlClose').addEventListener('click', closeXrayLightbox);
+  document.getElementById('xrayLightbox').addEventListener('click', (e)=>{ if(e.target.id === 'xrayLightbox') closeXrayLightbox(); });
+  document.getElementById('xlPrev').addEventListener('click', ()=> openXrayLightbox(xvIndex - 1));
+  document.getElementById('xlNext').addEventListener('click', ()=> openXrayLightbox(xvIndex + 1));
+  document.addEventListener('keydown', (e)=>{
+    if(document.getElementById('xrayLightbox').classList.contains('hidden')) return;
+    if(e.key === 'Escape') closeXrayLightbox();
+    else if(e.key === 'ArrowLeft') openXrayLightbox(xvIndex - 1);
+    else if(e.key === 'ArrowRight') openXrayLightbox(xvIndex + 1);
+  });
+
+  // after an upload finishes, refresh the list so the new image appears
+  const baseCloseXray = closeXrayModal;
+  closeXrayModal = function(){ baseCloseXray(); setTimeout(()=>{ if(currentPage === 'xray') fetchXrayIndex(true); }, 1500); };
+
+  document.querySelector('.sb-item[data-page="xray"]').addEventListener('click', ()=>{ renderXray(); maybeFetchXray(); });
+  // keep patient details on the cards fresh when the records reload (e.g. after Sync)
+  const baseRenderAll = renderAll;
+  renderAll = function(){ baseRenderAll.apply(this, arguments); if(currentPage === 'xray') renderXray(); };
+  if(currentPage === 'xray') maybeFetchXray();
+})();
+
+
+/* ==========================================================
+   AUTO-LOCK — lock the app after 20 minutes without activity
+   ========================================================== */
+const IDLE_LOCK_MS = 20 * 60 * 1000;
+const ACTIVITY_KEY = 'dental_last_activity';
+let lastActivity = Date.now();
+let lastActivitySaved = 0;
+
+function isAppLocked(){ return !appLockOverlay.classList.contains('hidden'); }
+
+function lockApp(auto){
+  try{ sessionStorage.removeItem('dental_app_unlocked'); }catch(e){}
+  closeSidebarDrawer();
+  appLockInput.value = '';
+  appLockError.textContent = '';
+  document.getElementById('appLockNote').classList.toggle('hidden', !auto);
+  appLockOverlay.classList.remove('hidden');
+  setTimeout(()=> appLockInput.focus(), 50);
+}
+
+function markActivity(){
+  if(isAppLocked()) return;
+  const now = Date.now();
+  lastActivity = now;
+  if(now - lastActivitySaved > 5000){
+    lastActivitySaved = now;
+    try{ sessionStorage.setItem(ACTIVITY_KEY, String(now)); }catch(e){}
+  }
+}
+
+function checkIdleLock(){
+  if(isAppLocked()) return;
+  if(Date.now() - lastActivity >= IDLE_LOCK_MS) lockApp(true);
+}
+
+(function initAutoLock(){
+  ['pointerdown','keydown','keyup','wheel','touchstart','mousemove'].forEach(ev =>
+    document.addEventListener(ev, markActivity, {passive: true, capture: true}));
+  window.addEventListener('scroll', markActivity, {passive: true, capture: true});
+
+  // unlocking counts as activity (otherwise the timer would lock again straight away)
+  new MutationObserver(()=>{ if(!isAppLocked()){ lastActivitySaved = 0; markActivity(); } })
+    .observe(appLockOverlay, {attributes: true, attributeFilter: ['class']});
+
+  setInterval(checkIdleLock, 10000);
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) checkIdleLock(); });
+  window.addEventListener('focus', checkIdleLock);
+
+  // page reloaded / device woke up after a long idle time
+  let saved = 0;
+  try{ saved = Number(sessionStorage.getItem(ACTIVITY_KEY)) || 0; }catch(e){}
+  if(saved){ lastActivity = saved; }
+  if(!isAppLocked()) checkIdleLock();
+})();
+
 // ចាប់ផ្តើមដំណើរការ
 populateAllSelectDropdowns();
 loadLocalRecords();
 flushPendingQueue();
 fetchFromSheet(true);
+fetchInventory(true);
 </script>
 </body>
 </html>
