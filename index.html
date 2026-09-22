@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ផ្នែកសេវាជំងឺមាត់ធ្មេញ · Dental Service EMR KEPPH</title>
+<title>ផ្នែកសេវាជំងឺមាត់ធ្មេញ · Dental Service EMR</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Khmer:wght@400;500;600;700&family=Noto+Serif+Khmer:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#EAF2FC; --surface:#FFFFFF; --surface-2:#F3F8FE;
@@ -54,6 +54,17 @@
     margin: 16px 0 8px; outline: none; transition: 0.2s;
   }
   .lock-box input:focus { border-color: var(--primary); }
+  .lock-sep{display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:var(--ink-dim);font-size:11.5px;}
+  .lock-sep::before,.lock-sep::after{content:"";flex:1;height:1px;background:var(--border-soft);}
+  .lock-hint{font-size:11px;color:var(--ink-dim);margin:8px 0 0;}
+  #lockStudyBtn{display:flex;align-items:center;justify-content:center;gap:8px;}
+
+  /* study-only preview reached straight from the lock screen: hide everything except the library */
+  body.study-only .sidebar .sb-nav{display:none;}
+  body.study-only #sbSyncBtn{display:none;}
+  body.study-only #sbLockBtn .sb-label{ }
+  body.study-only #sbLockBtn .sb-label::after{content:" (ត្រឡប់)";}
+
 
   /* topbar */
   .topbar{background:var(--surface);border-bottom:1px solid var(--border-soft);padding:14px 22px;position:sticky;top:0;z-index:40;box-shadow:0 2px 16px -10px rgba(11,42,74,0.12);}
@@ -522,8 +533,9 @@
 
   @media print {
       body.printing-panel { background: #fff !important; padding: 0 !important; margin: 0 !important; }
-      body.printing-panel > *:not(#reportOverlay) { display: none !important; }
-      body.printing-panel #reportOverlay { position: static; display: block !important; padding: 0; background: none; }
+      body.printing-panel * { visibility: hidden !important; }
+      body.printing-panel #reportOverlay, body.printing-panel #reportOverlay * { visibility: visible !important; }
+      body.printing-panel #reportOverlay { position: absolute !important; left: 0; top: 0; width: 100%; display: block !important; padding: 0; background: none; }
       body.printing-panel #reportOverlay .modal { max-width: 100%; border: none; box-shadow: none; margin: 0; }
       body.printing-panel #reportOverlay .modal-head, 
       body.printing-panel #reportOverlay .modal-actions { display: none !important; }
@@ -555,9 +567,10 @@
       body.printing-disease-list .dl-table td { padding: 4px; border: 1px solid #000; white-space: normal; word-break: break-all; }
 
       body.printing-full-report { background: #fff !important; padding: 0 !important; margin: 0 !important; }
-      body.printing-full-report > *:not(#reportOverlay) { display: none !important; }
+      body.printing-full-report * { visibility: hidden !important; }
+      body.printing-full-report #reportOverlay, body.printing-full-report #reportOverlay * { visibility: visible !important; }
       body.printing-full-report #printOverlay { display: none !important; }
-      body.printing-full-report #reportOverlay { position: static; display: block !important; padding: 0; background: none; overflow: visible; }
+      body.printing-full-report #reportOverlay { position: absolute !important; left: 0; top: 0; width: 100%; display: block !important; padding: 0; background: none; overflow: visible; }
       body.printing-full-report #reportOverlay .modal { max-width: 100%; border: none; box-shadow: none; margin: 0; overflow: visible; }
       body.printing-full-report #reportOverlay .modal-head { display: none !important; }
       body.printing-full-report #reportOverlay .modal-body { padding: 0; overflow: visible; max-height: none; }
@@ -776,7 +789,8 @@
   body[data-page="inventory"] .topbar .search-wrap,
   body[data-page="inventory"] #fabAdd,
   body[data-page="xray"] .topbar .search-wrap,
-  body[data-page="xray"] #fabAdd{display:none;}
+  body[data-page="xray"] #fabAdd,
+  body[data-page="study"] .topbar .search-wrap, body[data-page="study"] #fabAdd{display:none;}
   @media (max-width:640px){
     .inv-row-2{grid-template-columns:1fr;}
     .emr-table td.inv-actions{text-align:left;}
@@ -828,7 +842,152 @@
   #sbSyncBtn.syncing .sb-ico{animation:sbspin .9s linear infinite;}
   #sbSyncBtn.sync-err{color:#FFB4AB;}
   @media (prefers-reduced-motion:reduce){ #sbSyncBtn.syncing .sb-ico{animation:none;} }
+
+  /* ==========================================================
+     STUDY LIBRARY
+     ========================================================== */
+  .sb-feature{background:rgba(255,255,255,.07);color:#fff;font-weight:600;margin-bottom:4px;}
+  .sb-feature:hover{background:rgba(255,255,255,.14);}
+  .sb-feature.active{background:rgba(255,255,255,.16);}
+
+  .lib-hero{position:relative;overflow:hidden;border-radius:20px;padding:24px 28px;margin-bottom:18px;color:#fff;
+    background:linear-gradient(118deg,#0A2A57 0%,#0C3B7C 46%,#1A6BDB 100%);box-shadow:var(--shadow);}
+  .lib-hero-text{position:relative;z-index:1;max-width:560px;}
+  .lib-hero h2{margin:0;font-family:'Noto Serif Khmer',Georgia,serif;font-size:25px;line-height:1.45;font-weight:700;}
+  .lib-hero p{margin:6px 0 0;font-size:13px;color:#C6D9F5;}
+  .lib-deco{position:absolute;right:12px;bottom:0;height:118%;width:auto;pointer-events:none;}
+
+  .lib-tabs{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;margin-bottom:16px;border-radius:14px;background:var(--primary-soft);}
+  .lib-tab{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:none;border-radius:10px;background:none;cursor:pointer;
+    font-family:'Inter','Noto Sans Khmer',sans-serif;font-size:13.5px;font-weight:600;color:var(--primary-dark);}
+  .lib-tab svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;}
+  .lib-tab .n{font-size:11px;opacity:.7;}
+  .lib-tab.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-sm);}
+  .lib-tab:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
+  .lib-panel[hidden]{display:none;}
+
+  /* ---------- bookshelf ---------- */
+  .shelf-wrap{padding:6px 22px 8px;border-radius:20px;border:1px solid var(--border-soft);
+    background:linear-gradient(180deg,#F5F9FF 0%,#E8F0FB 100%);box-shadow:inset 0 2px 10px rgba(11,42,74,.06);}
+  .shelf-head{display:flex;align-items:center;gap:10px;margin:18px 0 4px;font-family:'Noto Serif Khmer',Georgia,serif;font-size:15px;font-weight:700;color:var(--ink);}
+  .shelf-head::after{content:"";flex:1;height:1px;background:var(--border);}
+  .shelf-head .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;color:var(--ink-dim);order:2;}
+  .shelf{--gap:28px;display:grid;grid-template-columns:repeat(auto-fill,minmax(136px,1fr));column-gap:var(--gap);padding:0 calc(var(--gap) / 2);}
+  .bk{position:relative;display:flex;flex-direction:column;padding-top:22px;min-width:0;}
+  .bk-open{display:block;position:relative;z-index:1;text-decoration:none;color:inherit;cursor:pointer;border-radius:3px 7px 7px 3px;}
+  .bk-open:focus-visible{outline:2px solid var(--amber);outline-offset:3px;}
+  .bk-cover{position:relative;aspect-ratio:2 / 3;border-radius:3px 7px 7px 3px;overflow:hidden;background:#12284A;
+    box-shadow:3px 5px 12px rgba(11,42,74,.38);transform-origin:bottom left;transition:transform .2s ease, box-shadow .2s ease;}
+  .bk-cover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:9px;z-index:3;
+    background:linear-gradient(90deg,rgba(0,0,0,.32),rgba(255,255,255,.20) 55%,rgba(0,0,0,.08));}
+  .bk-ph{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:16px 12px 12px 20px;color:#fff;}
+  .bk-ph-mark{width:26px;height:26px;opacity:.28;align-self:flex-end;}
+  .bk-ph-title{font-family:'Noto Serif Khmer',Georgia,serif;font-weight:700;font-size:14.5px;line-height:1.5;
+    display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;}
+  .bk-ph-author{margin-top:8px;font-size:10.5px;opacity:.85;line-height:1.35;}
+  .bk-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:2;background:#12284A;}
+  .bk:hover .bk-cover,.bk-open:focus-visible .bk-cover{transform:translateY(-8px) rotate(-1.6deg);box-shadow:6px 14px 20px rgba(11,42,74,.42);}
+  .bk-stand{position:relative;z-index:0;height:13px;margin:0 calc(var(--gap) / -2);
+    background:linear-gradient(180deg,#DCE6F5 0,#B9CAE5 42%,#94AACF 100%);box-shadow:0 10px 12px -8px rgba(11,42,74,.5);}
+  .bk-cap{padding:12px 2px 18px;}
+  .bk-title{font-family:'Noto Serif Khmer',Georgia,serif;font-size:13.5px;font-weight:600;line-height:1.5;color:var(--ink);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .bk-author{margin-top:2px;font-size:11.5px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .bk-edit{position:absolute;top:30px;right:8px;z-index:4;width:28px;height:28px;border:none;border-radius:50%;cursor:pointer;
+    background:rgba(255,255,255,.94);color:var(--ink);font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.25);opacity:0;transition:opacity .13s ease;}
+  .bk:hover .bk-edit,.bk-edit:focus-visible{opacity:1;}
+  @media (hover:none){ .bk-edit{opacity:.95;} }
+
+  /* ---------- lessons ---------- */
+  .nt-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+  .nt-card{position:relative;display:flex;flex-direction:column;gap:6px;padding:16px 18px 14px 22px;cursor:pointer;overflow:hidden;
+    background:var(--surface);border:1px solid var(--border-soft);border-radius:16px;box-shadow:var(--shadow-sm);
+    transition:border-color .13s ease, box-shadow .13s ease;}
+  .nt-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:var(--accent,var(--primary));}
+  .nt-card:hover{border-color:var(--accent,var(--primary));box-shadow:var(--shadow);}
+  .nt-card:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+  .nt-top{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11.5px;}
+  .nt-topic{font-weight:700;color:var(--accent,var(--primary-dark));}
+  .nt-date{color:var(--ink-dim);font-size:11px;}
+  .nt-title{margin:0;font-family:'Noto Serif Khmer',Georgia,serif;font-size:17px;line-height:1.5;font-weight:700;color:var(--ink);}
+  .nt-snip{margin:0;font-size:12.5px;line-height:1.7;color:var(--ink-soft);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .nt-foot{margin-top:2px;font-size:11.5px;color:var(--ink-dim);}
+
+  #noteReader{z-index:92 !important;background:rgba(8,28,56,.55) !important;}
+  .nr-sheet{width:min(780px,100%);margin:0 auto 40px;padding:26px 44px 30px;border-radius:20px;background:#FCFDFF;
+    border:1px solid var(--border);box-shadow:0 30px 70px -20px rgba(11,42,74,.45);}
+  .nr-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+  .nr-topic{font-size:12px;font-weight:700;color:var(--primary-dark);background:var(--primary-soft);padding:3px 12px;border-radius:999px;}
+  .nr-actions{display:flex;align-items:center;gap:8px;}
+  .nr-x{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;}
+  .nr-title{margin:6px 0 8px;font-family:'Noto Serif Khmer',Georgia,serif;font-size:28px;line-height:1.5;font-weight:700;color:var(--ink);}
+  .nr-meta{display:flex;flex-wrap:wrap;gap:6px 16px;padding-bottom:16px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--ink-dim);}
+  .nr-body{padding-top:18px;font-family:'Noto Serif Khmer','Noto Sans Khmer',Georgia,serif;font-size:16.5px;line-height:2;color:var(--ink);}
+  .nr-body p{margin:0 0 14px;}
+  .nr-body h3{margin:24px 0 8px;font-family:'Noto Serif Khmer',Georgia,serif;font-size:20px;line-height:1.5;color:var(--primary-dark);}
+  .nr-body h4{margin:18px 0 6px;font-family:'Noto Serif Khmer',Georgia,serif;font-size:17px;line-height:1.5;color:var(--ink);}
+  .nr-body ul{margin:0 0 14px;padding-left:22px;}
+  .nr-body li{margin-bottom:4px;}
+  .nr-ref{margin-top:18px;padding-top:14px;border-top:1px dashed var(--border);font-size:12.5px;color:var(--ink-soft);}
+  .nr-ref:empty{display:none;}
+  .nr-pager{display:flex;justify-content:space-between;gap:10px;margin-top:22px;}
+  .nr-pager .btn[disabled]{opacity:.35;cursor:default;}
+
+  /* ---------- practitioners ---------- */
+  .st-list{overflow:hidden;background:var(--surface);border:1px solid var(--border-soft);border-radius:18px;box-shadow:var(--shadow-sm);}
+  .st-head,.st-row{display:grid;grid-template-columns:70px minmax(0,2fr) minmax(0,1.1fr) minmax(0,.9fr) minmax(0,.9fr) 78px;gap:12px;align-items:center;padding:12px 18px;}
+  .st-head{background:var(--surface-2);border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--ink-dim);}
+  .st-row{border-bottom:1px solid var(--border-soft);cursor:pointer;transition:background .12s ease;}
+  .st-row:last-child{border-bottom:none;}
+  .st-row:hover{background:var(--primary-softer);}
+  .st-row:focus-visible{outline:2px solid var(--amber);outline-offset:-2px;}
+  .st-avatar{width:54px;height:54px;border-radius:16px;object-fit:cover;display:flex;align-items:center;justify-content:center;
+    font-family:'Noto Serif Khmer',Georgia,serif;font-size:20px;font-weight:700;color:#fff;box-shadow:0 3px 8px -3px rgba(11,42,74,.45);}
+  .st-name{font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.4;}
+  .st-sub{margin-top:2px;font-size:11.5px;color:var(--ink-dim);line-height:1.4;}
+  .st-cell{font-size:13px;color:var(--ink);min-width:0;}
+  .st-cell .lbl{display:none;}
+  .st-act{text-align:right;white-space:nowrap;}
+
+  /* ---------- form: image field ---------- */
+  .col-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .col-grid .col-full{grid-column:1 / -1;}
+  .col-count{font-size:12px;color:var(--ink-dim);}
+  #colFormOverlay{z-index:90 !important;}
+  .cfi{display:flex;gap:14px;align-items:flex-start;}
+  .cfi-prev{flex:none;background:var(--primary-softer) center / cover no-repeat;border:1.5px dashed var(--border);border-radius:12px;}
+  .cfi-prev.cover{width:84px;height:120px;border-radius:3px 8px 8px 3px;}
+  .cfi-prev.photo{width:96px;height:96px;border-radius:20px;}
+  .cfi-ctl{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;}
+  .cfi-btns{display:flex;gap:8px;flex-wrap:wrap;}
+  .cfi-hint{font-size:11.5px;color:var(--ink-dim);}
+
+  @media (max-width:900px){ .nt-list{grid-template-columns:1fr;} .lib-deco{opacity:.55;} }
+  @media (max-width:720px){
+    .lib-hero{padding:18px 18px;border-radius:16px;}
+    .lib-hero h2{font-size:20px;}
+    .shelf-wrap{padding:2px 12px 4px;}
+    .shelf{--gap:20px;grid-template-columns:repeat(2,minmax(0,1fr));}
+    .nr-sheet{padding:20px 20px 24px;border-radius:16px;}
+    .nr-title{font-size:23px;}
+    .nr-body{font-size:15.5px;}
+    .st-head{display:none;}
+    .st-row{grid-template-columns:58px minmax(0,1fr) auto;grid-template-areas:"av name act" "av phone act" "av dates dates";row-gap:4px;padding:12px 14px;}
+    .st-row .st-avatar{grid-area:av;align-self:start;}
+    .st-row .c-name{grid-area:name;} .st-row .c-phone{grid-area:phone;} .st-row .c-act{grid-area:act;}
+    .st-row .c-start,.st-row .c-end{grid-area:dates;}
+    .st-row .c-end{display:none;}
+    .st-row .c-start .lbl{display:inline;color:var(--ink-dim);}
+    .col-grid{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion:reduce){ .bk-cover{transition:none;} .bk:hover .bk-cover{transform:none;} }
   .appt-panel{min-width:0;}
+  .dash-report-head{margin:22px 0 10px;padding-top:6px;border-top:1px solid var(--border-soft);}
+  .dash-report-head h3{margin:0;font-size:15px;color:var(--ink);}
+  #reportOverlay.report-embedded{position:static;inset:auto;background:none;backdrop-filter:none;z-index:auto;display:block;padding:0;overflow:visible;}
+  #reportOverlay.report-embedded .modal{max-width:none;width:auto;box-shadow:none;border-radius:14px;margin:0;background:var(--surface);}
+  #reportOverlay.report-embedded .modal-head{display:none;}
+  #reportOverlay.report-embedded .modal-body{padding:0;max-height:none;overflow:visible;}
   @media (max-width:1024px){ .appt-grid{grid-template-columns:1fr;} }
 
   @media print{ .app-shell{display:none !important;} }
@@ -893,6 +1052,9 @@
     <input type="password" id="appLockInput" class="mono" maxlength="8" placeholder="••••••" autofocus>
     <div id="appLockError" class="kh" style="color: var(--coral); font-size: 12px; min-height: 18px; margin-bottom: 12px;"></div>
     <button class="btn btn-primary btn-block kh" id="appLockBtn">ចូលប្រើប្រាស់ · Unlock</button>
+    <div class="lock-sep kh">ឬ</div>
+    <button type="button" class="btn btn-outline btn-block kh" id="lockStudyBtn">📚 មាតិកាសិក្សា · Study Library</button>
+    <p class="lock-hint kh">សៀវភៅ មេរៀន និងសិស្សហ្វឹកហាត់ — គ្មានត្រូវការ PIN ទេ</p>
   </div>
 </div>
 
@@ -910,16 +1072,16 @@
       </div>
       <div class="sb-brand-text">
         <div class="sb-brand-title kh">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</div>
-        <div class="sb-brand-sub">Dental Service EMR KEPPH</div>
+        <div class="sb-brand-sub">Dental Service EMR</div>
       </div>
     </div>
 
     <nav class="sb-nav">
       <div class="sb-group">
         <div class="sb-group-label kh">ការងារប្រចាំថ្ងៃ</div>
-        <button type="button" class="sb-item active" data-page="dashboard" title="ផ្ទាំងគ្រប់គ្រង · Dashboard">
+        <button type="button" class="sb-item active" data-page="dashboard" title="ផ្ទាំងសរុប · Dashboard">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
-          <span class="sb-label kh">ផ្ទាំងគ្រប់គ្រង<small>Dashboard</small></span>
+          <span class="sb-label kh">ផ្ទាំងសរុប<small>Dashboard</small></span>
         </button>
         <button type="button" class="sb-item" data-page="patients" title="អ្នកជំងឺ · Patients">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
@@ -933,16 +1095,16 @@
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
           <span class="sb-label kh">X-Ray (រូបធ្មេញ)<small>Dental X-ray</small></span><span class="sb-badge quiet" id="sbBadgeXray" hidden>0</span>
         </button>
-      </div>
-      <div class="sb-group">
-        <div class="sb-group-label kh">របាយការណ៍</div>
-        <button type="button" class="sb-item" id="reportBtn" title="របាយការណ៍ · Reports">
-          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M8 17v-6"/><path d="M13 17V7"/><path d="M18 17v-4"/></svg>
-          <span class="sb-label kh">របាយការណ៍<small>Reports</small></span>
-        </button>
         <button type="button" class="sb-item" id="sbDhis2Btn" title="បញ្ជីជំងឺ DHIS2 · Disease list">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h4"/></svg>
           <span class="sb-label kh">បញ្ជីជំងឺ DHIS2<small>Disease list</small></span>
+        </button>
+      </div>
+      <div class="sb-group">
+        <div class="sb-group-label kh">ការសិក្សា</div>
+        <button type="button" class="sb-item" data-page="study" title="ការសិក្សា · Study library">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <span class="sb-label kh">មាតិកាសិក្សា<small>Study Library</small></span>
         </button>
       </div>
       <div class="sb-group">
@@ -982,7 +1144,7 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
           </button>
           <div class="page-head">
-            <h1 class="kh" id="pageTitle">ផ្ទាំងគ្រប់គ្រង</h1>
+            <h1 class="kh" id="pageTitle">ផ្ទាំងសរុប</h1>
             <div class="sub" id="pageSub">Dashboard</div>
           </div>
         </div>
@@ -1020,6 +1182,74 @@
             <div id="procTodayBody"></div>
           </div>
         </div>
+
+        <div class="dash-report-head">
+          <h3 class="kh">របាយការណ៍ · Report</h3>
+        </div>
+        <div class="report-embedded" id="reportOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h2 class="kh">របាយការណ៍ · Report</h2>
+      <button class="x" id="closeReport">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="reportTopActions" style="text-align: right; margin-bottom: 15px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
+        <button class="btn btn-primary btn-sm kh" onclick="openDiseaseListModal()" style="background-color: var(--amber-dark); border-color: var(--amber-dark);">📋 បញ្ជីជំងឺ (DHIS2)</button>
+        <button class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="ទិន្នន័យជំងឺ" style="background-color: var(--coral); border-color: var(--coral);">📄 ទិន្នន័យជំងឺ</button>
+        <button class="btn btn-outline btn-sm kh" id="printFullReportBtn" title="Print Report" onclick="printFullReport()">🖨️ Print</button>
+      </div>
+      
+      <!-- 1. Today Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">របាយការណ៍ថ្ងៃនេះ · Today's Report</h4>
+          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+        </div>
+        <div id="todayStatsRow"></div>
+      </div>
+
+      <!-- 2. This Month Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">របាយការណ៍ប្រចាំខែនេះ · This Month's Report</h4>
+          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+        </div>
+        <div id="thisMonthStatsRow"></div>
+      </div>
+
+      <!-- 3. Demographics Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">ស្ថិតិអ្នកជំងឺសរុប · Overall Demographics</h4>
+          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+        </div>
+        <div class="stats2" id="demoStatsRow" style="margin-bottom:0;"></div>
+      </div>
+
+      <!-- 4. Registration Card Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">Registration Card</h4>
+          <div>
+            <span id="clearTypeFilterBtn" class="mono kh" style="font-size:11px;color:var(--primary);cursor:pointer;font-weight:700;display:none;margin-right:10px;" onclick="filterByType('all')">✕ មើលទាំងអស់ (View All)</span>
+            <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+          </div>
+        </div>
+        <div class="card-type-stats-grid" id="cardTypeStatsRow"></div>
+      </div>
+
+      <!-- 5. Treatment Stats -->
+      <div class="card-type-stats-panel" style="margin-top: 15px;">
+        <div class="card-type-stats-head">
+          <h4 class="kh">ស្ថិតិការព្យាបាលសរុប · Total Treatment Statistics</h4>
+          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+        </div>
+        <div class="treatment-stats-grid" id="treatmentStatsRow"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
       </section>
 
       <!-- Patients -->
@@ -1048,6 +1278,94 @@
           </div>
         </div>
         <div id="apptPageBody"></div>
+      </section>
+
+      <!-- Study library -->
+      <section class="page" id="page-study" data-page="study" hidden>
+        <header class="lib-hero">
+          <div class="lib-hero-text">
+            <h2 class="kh">បណ្ណាល័យសិក្សា ផ្នែកមាត់ធ្មេញ</h2>
+            <p class="kh">សៀវភៅ មេរៀន និងសិស្សហ្វឹកហាត់ ក្នុងកន្លែងតែមួយ · Dental Study Library</p>
+          </div>
+          <svg class="lib-deco" viewBox="0 0 340 150" aria-hidden="true" preserveAspectRatio="xMaxYMax meet">
+      <g fill="#fff">
+        <rect x="24"  y="52" width="24" height="86" rx="3" opacity=".22"/>
+        <rect x="52"  y="30" width="20" height="108" rx="3" opacity=".34"/>
+        <rect x="76"  y="60" width="28" height="78" rx="3" opacity=".18"/>
+        <rect x="108" y="38" width="22" height="100" rx="3" opacity=".30"/>
+        <rect x="134" y="18" width="26" height="120" rx="3" opacity=".24"/>
+        <rect x="164" y="56" width="20" height="82" rx="3" opacity=".36"/>
+        <g transform="rotate(14 207 138)"><rect x="196" y="44" width="22" height="94" rx="3" opacity=".28"/></g>
+        <rect x="246" y="34" width="26" height="104" rx="3" opacity=".20"/>
+        <rect x="276" y="64" width="22" height="74" rx="3" opacity=".32"/>
+        <rect x="14" y="138" width="312" height="7" rx="2" opacity=".42"/>
+      </g>
+    </svg>
+        </header>
+
+        <div class="lib-tabs kh" role="tablist" aria-label="មាតិកាសិក្សា">
+          <button type="button" class="lib-tab active" role="tab" data-tab="books"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>សៀវភៅ <span class="n mono" id="tabn-books">0</span></button>
+          <button type="button" class="lib-tab" role="tab" data-tab="notes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h6"/></svg>មេរៀន <span class="n mono" id="tabn-notes">0</span></button>
+          <button type="button" class="lib-tab" role="tab" data-tab="students"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 10-10-5L2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/><path d="M22 10v6"/></svg>សិស្ស <span class="n mono" id="tabn-students">0</span></button>
+        </div>
+
+      <div class="lib-panel" id="lib-books" data-tab="books">
+        <div class="page-tools">
+          <div class="inv-tools">
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" class="search-input search-input-topbar kh" id="col-books-search" placeholder="ស្វែងរកសៀវភៅ ឬអ្នកនិពន្ធ..." aria-label="ស្វែងរកសៀវភៅ ឬអ្នកនិពន្ធ...">
+            </div>
+            <select id="col-books-filter" class="inv-select kh" aria-label="តម្រង"></select>
+            <span class="col-count mono" id="col-books-count"></span>
+          </div>
+          <div class="inv-tools">
+            <a class="btn btn-outline btn-sm kh" href="https://drive.google.com/drive/folders/1MT6NRXclClJFWOxfFQTsOjGnJYoL5g4o?usp=sharing" target="_blank" rel="noopener">🗄️ ឃ្លាំងសៀវភៅ Drive</a>
+            <span class="inv-status kh" id="col-books-status"></span>
+            <button type="button" class="btn btn-outline btn-sm kh" id="col-books-sync">🔄 Sync</button>
+            <button type="button" class="btn btn-primary btn-sm kh" id="col-books-add">＋ បន្ថែមសៀវភៅ</button>
+          </div>
+        </div>
+        <div id="col-books-view"></div>
+      </div>
+
+      <div class="lib-panel" id="lib-notes" data-tab="notes" hidden>
+        <div class="page-tools">
+          <div class="inv-tools">
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" class="search-input search-input-topbar kh" id="col-notes-search" placeholder="ស្វែងរកមេរៀន..." aria-label="ស្វែងរកមេរៀន...">
+            </div>
+            <select id="col-notes-filter" class="inv-select kh" aria-label="តម្រង"></select>
+            <span class="col-count mono" id="col-notes-count"></span>
+          </div>
+          <div class="inv-tools">
+            <span class="inv-status kh" id="col-notes-status"></span>
+            <button type="button" class="btn btn-outline btn-sm kh" id="col-notes-sync">🔄 Sync</button>
+            <button type="button" class="btn btn-primary btn-sm kh" id="col-notes-add">＋ បន្ថែមមេរៀន</button>
+          </div>
+        </div>
+        <div id="col-notes-view"></div>
+      </div>
+
+      <div class="lib-panel" id="lib-students" data-tab="students" hidden>
+        <div class="page-tools">
+          <div class="inv-tools">
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" class="search-input search-input-topbar kh" id="col-students-search" placeholder="ស្វែងរកឈ្មោះសិស្ស ឬលេខទូរស័ព្ទ..." aria-label="ស្វែងរកឈ្មោះសិស្ស ឬលេខទូរស័ព្ទ...">
+            </div>
+            <select id="col-students-filter" class="inv-select kh" aria-label="តម្រង"></select>
+            <span class="col-count mono" id="col-students-count"></span>
+          </div>
+          <div class="inv-tools">
+            <span class="inv-status kh" id="col-students-status"></span>
+            <button type="button" class="btn btn-outline btn-sm kh" id="col-students-sync">🔄 Sync</button>
+            <button type="button" class="btn btn-primary btn-sm kh" id="col-students-add">＋ បន្ថែមសិស្ស</button>
+          </div>
+        </div>
+        <div id="col-students-view"></div>
+      </div>
       </section>
 
       <!-- X-Ray -->
@@ -1138,6 +1456,43 @@
       <button type="button" class="xl-nav next" id="xlNext" aria-label="រូបបន្ទាប់">›</button>
     </div>
   </div>
+</div>
+
+<!-- Study library: add / edit form -->
+<div class="overlay hidden" id="colFormOverlay">
+  <div class="modal narrow" style="max-width:640px;">
+    <div class="modal-head"><h2 class="kh" id="colFormTitle"></h2><button class="x" id="closeColForm" aria-label="បិទ">✕</button></div>
+    <div class="modal-body">
+      <div class="col-grid" id="colFormFields"></div>
+      <div id="colFormError" class="kh" style="color:var(--coral);font-size:12px;min-height:16px;margin-top:8px;"></div>
+      <div class="modal-actions">
+        <div class="left-action"><button type="button" class="btn btn-danger btn-sm kh hidden" id="colDeleteBtn">🗑 លុប</button></div>
+        <button type="button" class="btn btn-outline kh" id="colCancelBtn">បោះបង់</button>
+        <button type="button" class="btn btn-primary kh" id="colSaveBtn">រក្សាទុក Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Study library: note reader -->
+<div class="overlay hidden" id="noteReader">
+  <article class="nr-sheet" aria-labelledby="nrTitle">
+    <div class="nr-bar">
+      <span class="nr-topic kh" id="nrTopic"></span>
+      <div class="nr-actions">
+        <button type="button" class="btn btn-outline btn-sm kh" id="nrEdit">✎ កែ</button>
+        <button type="button" class="x nr-x" id="nrClose" aria-label="បិទ">✕</button>
+      </div>
+    </div>
+    <h2 class="nr-title" id="nrTitle"></h2>
+    <div class="nr-meta kh" id="nrMeta"></div>
+    <div class="nr-body kh" id="nrBody"></div>
+    <div class="nr-ref kh" id="nrRef"></div>
+    <div class="nr-pager">
+      <button type="button" class="btn btn-ghost btn-sm kh" id="nrPrev">‹ មេរៀនមុន</button>
+      <button type="button" class="btn btn-ghost btn-sm kh" id="nrNext">មេរៀនបន្ទាប់ ›</button>
+    </div>
+  </article>
 </div>
 
 <!-- Inventory item form -->
@@ -1506,70 +1861,7 @@
 </div>
 
 <!-- Report Page Modal -->
-<div class="overlay hidden" id="reportOverlay">
-  <div class="modal">
-    <div class="modal-head">
-      <h2 class="kh">របាយការណ៍ · Report</h2>
-      <button class="x" id="closeReport">✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="reportTopActions" style="text-align: right; margin-bottom: 15px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
-        <button class="btn btn-primary btn-sm kh" onclick="openDiseaseListModal()" style="background-color: var(--amber-dark); border-color: var(--amber-dark);">📋 បញ្ជីជំងឺ (DHIS2)</button>
-        <button class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="ទិន្នន័យជំងឺ" style="background-color: var(--coral); border-color: var(--coral);">📄 ទិន្នន័យជំងឺ</button>
-        <button class="btn btn-outline btn-sm kh" id="printFullReportBtn" title="Print Report" onclick="printFullReport()">🖨️ Print</button>
-      </div>
-      
-      <!-- 1. Today Stats -->
-      <div class="card-type-stats-panel" style="margin-top: 15px;">
-        <div class="card-type-stats-head">
-          <h4 class="kh">របាយការណ៍ថ្ងៃនេះ · Today's Report</h4>
-          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
-        </div>
-        <div id="todayStatsRow"></div>
-      </div>
 
-      <!-- 2. This Month Stats -->
-      <div class="card-type-stats-panel" style="margin-top: 15px;">
-        <div class="card-type-stats-head">
-          <h4 class="kh">របាយការណ៍ប្រចាំខែនេះ · This Month's Report</h4>
-          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
-        </div>
-        <div id="thisMonthStatsRow"></div>
-      </div>
-
-      <!-- 3. Demographics Stats -->
-      <div class="card-type-stats-panel" style="margin-top: 15px;">
-        <div class="card-type-stats-head">
-          <h4 class="kh">ស្ថិតិអ្នកជំងឺសរុប · Overall Demographics</h4>
-          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
-        </div>
-        <div class="stats2" id="demoStatsRow" style="margin-bottom:0;"></div>
-      </div>
-
-      <!-- 4. Registration Card Stats -->
-      <div class="card-type-stats-panel" style="margin-top: 15px;">
-        <div class="card-type-stats-head">
-          <h4 class="kh">Registration Card</h4>
-          <div>
-            <span id="clearTypeFilterBtn" class="mono kh" style="font-size:11px;color:var(--primary);cursor:pointer;font-weight:700;display:none;margin-right:10px;" onclick="filterByType('all')">✕ មើលទាំងអស់ (View All)</span>
-            <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
-          </div>
-        </div>
-        <div class="card-type-stats-grid" id="cardTypeStatsRow"></div>
-      </div>
-
-      <!-- 5. Treatment Stats -->
-      <div class="card-type-stats-panel" style="margin-top: 15px;">
-        <div class="card-type-stats-head">
-          <h4 class="kh">ស្ថិតិការព្យាបាលសរុប · Total Treatment Statistics</h4>
-          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
-        </div>
-        <div class="treatment-stats-grid" id="treatmentStatsRow"></div>
-      </div>
-
-    </div>
-  </div>
-</div>
 
 <!-- Disease List Modal (DHIS2) -->
 <div class="overlay hidden" id="diseaseListOverlay" style="z-index: 105;">
@@ -1640,6 +1932,7 @@ const appLockError = document.getElementById('appLockError');
 
 function checkAppUnlock() {
   if (isValidPin(appLockInput.value)) {
+    document.body.classList.remove('study-only');
     appLockOverlay.classList.add('hidden');
     sessionStorage.setItem('dental_app_unlocked', 'true');
   } else {
@@ -1651,6 +1944,13 @@ function checkAppUnlock() {
 
 appLockBtn.addEventListener('click', checkAppUnlock);
 appLockInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') checkAppUnlock(); });
+
+document.getElementById('lockStudyBtn').addEventListener('click', ()=>{
+  appLockOverlay.classList.add('hidden');
+  document.body.classList.add('study-only');
+  showPage('study');
+  COL_NAMES.forEach(n => colMaybeFetch(n));
+});
 
 if (sessionStorage.getItem('dental_app_unlocked') === 'true') {
   appLockOverlay.classList.add('hidden');
@@ -3318,7 +3618,6 @@ function setPrintMode(mode){
 
 function exportAllToPdf() {
   if(allRecords.length===0){ alert('មិនទាន់មានកំណត់ត្រាសម្រាប់នាំចេញទេ'); return; }
-  document.getElementById('reportOverlay').classList.add('hidden');
   setPrintMode('landscape');
   document.getElementById('printOverlayTitle').textContent = 'ទិន្នន័យជំងឺ (All Data)';
   document.getElementById('exportAllExcelBtn').classList.remove('hidden');
@@ -4118,21 +4417,6 @@ async function uploadXrayImage(){
   }
 }
 
-// ស្គ្រីបសម្រាប់ Report Modal 
-document.getElementById('reportBtn').addEventListener('click', () => {
-    history.pushState({ modal: 'report' }, '', '#report');
-    document.getElementById('reportOverlay').classList.remove('hidden');
-});
-document.getElementById('closeReport').addEventListener('click', () => {
-    document.getElementById('reportOverlay').classList.add('hidden');
-    if (window.location.hash === '#report') history.replaceState(null, null, window.location.pathname);
-});
-document.getElementById('reportOverlay').addEventListener('click', (e) => { 
-    if(e.target.id === 'reportOverlay') {
-        document.getElementById('reportOverlay').classList.add('hidden');
-        if (window.location.hash === '#report') history.replaceState(null, null, window.location.pathname);
-    }
-});
 
 /* =========================================
    មុខងារសម្រាប់បញ្ជីជំងឺ (Disease List)
@@ -4150,7 +4434,6 @@ document.getElementById('diseaseListOverlay').addEventListener('click', (e) => {
 
 function openDiseaseListModal() {
     history.pushState({ modal: 'diseaseList' }, '', '#diseaseList');
-    document.getElementById('reportOverlay').classList.add('hidden');
     populateDiseaseListYearOptions();
     document.getElementById('dlFilterMonth').value = '';
     document.getElementById('dlFilterYear').value = '';
@@ -4359,11 +4642,12 @@ if(storedUrl && storedUrl !== DEFAULT_WEB_APP_URL) {
    EMR SHELL — sidebar navigation, pages, dashboard, appointments
    ========================================================== */
 const PAGE_META = {
-  dashboard:    { title: 'ផ្ទាំងគ្រប់គ្រង', sub: 'Dashboard' },
+  dashboard:    { title: 'ផ្ទាំងសរុប', sub: 'Dashboard' },
   patients:     { title: 'អ្នកជំងឺ',        sub: 'Patients' },
   appointments: { title: 'ការណាត់ជួប',      sub: 'Appointments' },
   inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
-  xray:         { title: 'X-Ray · រូបធ្មេញ', sub: 'X-ray patient list' }
+  xray:         { title: 'X-Ray · រូបធ្មេញ', sub: 'X-ray patient list' },
+  study:        { title: 'មាតិកាសិក្សា', sub: 'Study library' }
 };
 const PAGE_KEY = 'dental_emr_page';
 const SB_KEY = 'dental_emr_sb_collapsed';
@@ -4572,7 +4856,7 @@ function renderShellMeta(){
 
   // modal-style items (Reports / DHIS2 / Clinic settings) just close the drawer on phones
   document.getElementById('sbDhis2Btn').addEventListener('click', ()=>{ closeSidebarDrawer(); openDiseaseListModal(); });
-  ['reportBtn','settingsBtn'].forEach(id=> document.getElementById(id).addEventListener('click', closeSidebarDrawer));
+  ['settingsBtn'].forEach(id=> document.getElementById(id).addEventListener('click', closeSidebarDrawer));
 
   // search always lands on the Patients page
   document.getElementById('searchInput').addEventListener('input', (e)=>{
@@ -5252,6 +5536,9 @@ function isAppLocked(){ return !appLockOverlay.classList.contains('hidden'); }
 
 function lockApp(auto){
   try{ sessionStorage.removeItem('dental_app_unlocked'); }catch(e){}
+  const wasStudyOnly = document.body.classList.contains('study-only');
+  document.body.classList.remove('study-only');
+  if(wasStudyOnly){ try{ sessionStorage.setItem(PAGE_KEY, 'dashboard'); }catch(e){} showPage('dashboard'); }
   closeSidebarDrawer();
   appLockInput.value = '';
   appLockError.textContent = '';
@@ -5293,6 +5580,563 @@ function checkIdleLock(){
   try{ saved = Number(sessionStorage.getItem(ACTIVITY_KEY)) || 0; }catch(e){}
   if(saved){ lastActivity = saved; }
   if(!isAppLocked()) checkIdleLock();
+})();
+
+
+/* ==========================================================
+   STUDY LIBRARY — សៀវភៅ (Books) · មេរៀន (Notes) · សិស្ស (Practitioners)
+   Stored locally, synced with the Sheet tabs Books / Notes / Students
+   ========================================================== */
+const STUDENT_STATUS = { active: 'កំពុងហ្វឹកហាត់', done: 'បញ្ចប់', paused: 'ផ្អាក' };
+const COL_MAX_CHARS = 45000;                       // one Sheet cell holds 50,000 characters
+const COVER_PALETTES = [['#1A6BDB','#0B3B7C'], ['#3D5AD8','#1B2A6B'], ['#0F7C9D','#0A3F58'], ['#5B6CC9','#2A2F73'], ['#2F80ED','#173F8F'], ['#0B8A83','#0B4550'], ['#6B5BD2','#2E2570']];
+const TOPIC_COLORS = ['#1A6BDB', '#5B6CC9', '#0F7C9D', '#0B8A83', '#B7791F', '#6B5BD2', '#C0504D'];
+
+const COLS = {
+  books: {
+    sheet: 'Books', singular: 'សៀវភៅ', primary: 'title', filterKey: 'category', filterAll: 'ប្រភេទទាំងអស់',
+    fields: [
+      {k:'title',    l:'ចំណងជើង · Title', t:'text', req:true, full:true},
+      {k:'author',   l:'អ្នកនិពន្ធ · Author', t:'text'},
+      {k:'category', l:'ប្រភេទ (ធ្នើ) · Category', t:'text', def:'ផ្សេងៗ', list:['ធ្មេញទូទៅ','វះកាត់មាត់','ព្យាបាលឫសធ្មេញ','ធ្មេញកុមារ','វិទ្យុសាស្ត្រ','ថ្នាំ','ផ្សេងៗ']},
+      {k:'link',     l:'តំណភ្ជាប់ឃ្លាំងសៀវភៅ / Drive · Link', t:'text', full:true},
+      {k:'cover',    l:'រូបក្រប · Cover', t:'image', shape:'cover', full:true, hint:'រូបបញ្ឈរ (ដូចក្របសៀវភៅ) ។ បើមិនដាក់ទេ ប្រព័ន្ធសម្គាល់ក្របពី Drive ឬបង្កើតក្របស្អាតឲ្យ'},
+      {k:'year',     l:'ឆ្នាំបោះពុម្ព · Year', t:'text'},
+      {k:'location', l:'ទីតាំង · Location', t:'text'},
+      {k:'note',     l:'កំណត់សម្គាល់ · Note', t:'textarea', full:true}
+    ],
+    sort: (a,b) => a.title.localeCompare(b.title)
+  },
+  notes: {
+    sheet: 'Notes', singular: 'មេរៀន', primary: 'title', filterKey: 'topic', filterAll: 'ប្រធានបទទាំងអស់',
+    fields: [
+      {k:'title',   l:'ចំណងជើងមេរៀន · Title', t:'text', req:true, full:true},
+      {k:'topic',   l:'ប្រធានបទ · Topic', t:'text', def:'ផ្សេងៗ', list:['ធ្មេញទូទៅ','វះកាត់មាត់','ព្យាបាលឫសធ្មេញ','ធ្មេញកុមារ','វិទ្យុសាស្ត្រ','ការត្រួតពិនិត្យការឆ្លង','ផ្សេងៗ']},
+      {k:'date',    l:'ថ្ងៃខែ · Date', t:'date', defToday:true},
+      {k:'author',  l:'អ្នកសរសេរ / អ្នកបង្រៀន · Author', t:'text'},
+      {k:'source',  l:'សៀវភៅយោង · Reference book', t:'text'},
+      {k:'link',    l:'តំណភ្ជាប់ · Link', t:'text', full:true},
+      {k:'content', l:'ខ្លឹមសារមេរៀន · Content', t:'textarea', full:true, rows:12, max:COL_MAX_CHARS,
+        hint:'គន្លឹះ៖ ចាប់ផ្តើមបន្ទាត់ដោយ  #  សម្រាប់ចំណងជើងធំ,  ##  សម្រាប់ចំណងជើងតូច,  -  សម្រាប់បញ្ជីចំណុច ។ ទុកបន្ទាត់ទទេ ដើម្បីចែកកថាខណ្ឌ'}
+    ],
+    sort: (a,b) => (b.date || '').localeCompare(a.date || '') || a.title.localeCompare(b.title)
+  },
+  students: {
+    sheet: 'Students', singular: 'សិស្ស', primary: 'name', filterKey: 'status', filterAll: 'ស្ថានភាពទាំងអស់',
+    filterPreset: Object.values(STUDENT_STATUS),
+    fields: [
+      {k:'photo',      l:'រូបថត · Photo', t:'image', shape:'photo', full:true, hint:'រូបថតមុខ (កាត់ជាការ៉េដោយស្វ័យប្រវត្តិ)'},
+      {k:'name',       l:'ឈ្មោះសិស្ស · Name', t:'text', req:true, full:true},
+      {k:'sex',        l:'ភេទ · Sex', t:'select', opts:['ស្រី','ប្រុស'], def:'ស្រី'},
+      {k:'phone',      l:'ទូរស័ព្ទ · Phone', t:'text'},
+      {k:'start',      l:'ថ្ងៃចូល · Start date', t:'date'},
+      {k:'end',        l:'ថ្ងៃចប់ · End date', t:'date'},
+      {k:'school',     l:'សាលា / សាកលវិទ្យាល័យ · School', t:'text', full:true},
+      {k:'level',      l:'ឆ្នាំសិក្សា / កម្រិត · Level', t:'text'},
+      {k:'supervisor', l:'គ្រូឧបត្ថម្ភ · Supervisor', t:'text'},
+      {k:'status',     l:'ស្ថានភាព · Status', t:'select', opts:Object.values(STUDENT_STATUS), def:STUDENT_STATUS.active, full:true},
+      {k:'note',       l:'កំណត់សម្គាល់ · Note', t:'textarea', full:true}
+    ],
+    sort: (a,b) => (a.status === STUDENT_STATUS.active ? 0 : 1) - (b.status === STUDENT_STATUS.active ? 0 : 1) || a.name.localeCompare(b.name)
+  }
+};
+const COL_NAMES = Object.keys(COLS);
+const colData = {}, colDeleted = {}, colFilterVal = {}, colSearchVal = {}, colFetching = {}, colFetchedAt = {};
+COL_NAMES.forEach(n => { colData[n] = []; colDeleted[n] = new Set(); colFilterVal[n] = ''; colSearchVal[n] = ''; colFetching[n] = false; colFetchedAt[n] = 0; });
+let colEditing = { n: null, id: null, fromReader: false };
+let studyTab = 'books';
+let nrCurrent = null, nrOrder = [];
+const COL_STALE_MS = 60 * 1000;
+const STUDY_TAB_KEY = 'dental_study_tab';
+
+/* ---------- helpers ---------- */
+function colHash(str){ let h = 0; const t = String(str || ''); for(let i = 0; i < t.length; i++){ h = (h * 31 + t.charCodeAt(i)) >>> 0; } return h; }
+function colDate(v){ return v ? String(v).replace(/-/g, '/') : '—'; }
+function colNormalizeUrl(v){
+  const t = cleanStr(v);
+  if(!t) return '';
+  return /^[a-z][a-z0-9+.-]*:/i.test(t) ? t : 'https://' + t;
+}
+function colIsWeb(u){ return /^https?:\/\//i.test(u || ''); }
+function driveCover(link){
+  const m = String(link || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([-\w]{20,})/i);
+  return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400` : '';
+}
+function colLoad(n){
+  try{ const a = JSON.parse(localStorage.getItem('kep_dental_col_' + n + '_v1')); if(Array.isArray(a)) colData[n] = a; }catch(e){}
+  try{ const d = JSON.parse(localStorage.getItem('kep_dental_col_' + n + '_deleted_v1')); if(Array.isArray(d)) colDeleted[n] = new Set(d); }catch(e){}
+}
+function colSave(n){
+  try{ localStorage.setItem('kep_dental_col_' + n + '_v1', JSON.stringify(colData[n])); return true; }
+  catch(e){ colSetStatus(n, '⚠️ ទំហំផ្ទុកក្នុងម៉ាស៊ីនពេញ (សូមប្រើរូបតូចជាងនេះ)', 'warn'); return false; }
+}
+function colSaveDeleted(n){ try{ localStorage.setItem('kep_dental_col_' + n + '_deleted_v1', JSON.stringify([...colDeleted[n]])); }catch(e){} }
+function colFind(n, id){ return colData[n].find(x => x.id === id); }
+function colGenId(n){ return ({books:'BK', notes:'NT', students:'ST'})[n] + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
+function colSetStatus(n, text, tone, autoClear){
+  const el = document.getElementById('col-' + n + '-status');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'inv-status kh' + (tone ? ' ' + tone : '');
+  clearTimeout(colSetStatus['t' + n]);
+  if(autoClear) colSetStatus['t' + n] = setTimeout(()=>{ el.textContent = ''; el.className = 'inv-status kh'; }, 3000);
+}
+function colNormalizeItem(n, r){
+  const o = { id: cleanStr(r.id !== undefined ? r.id : (r.ID || '')) };
+  COLS[n].fields.forEach(f=>{
+    let v = r[f.k];
+    if(v === undefined || v === null) v = r[f.k.toLowerCase()];
+    if(v === undefined || v === null) v = '';
+    o[f.k] = f.t === 'date' ? normalizeExpiry(v) : (f.t === 'textarea' || f.t === 'image' ? String(v).trim() : cleanStr(v));
+  });
+  o.updated = cleanStr(r.updated || r.Updated || '');
+  return o;
+}
+function colFilteredRows(n){
+  const cfg = COLS[n];
+  const term = colSearchVal[n].trim().toLowerCase();
+  const textFields = cfg.fields.filter(f => f.t !== 'image');
+  return colData[n].filter(it =>
+    (!colFilterVal[n] || it[cfg.filterKey] === colFilterVal[n]) &&
+    (!term || textFields.map(f => it[f.k]).join(' ').toLowerCase().includes(term))
+  ).sort(cfg.sort);
+}
+function colEmpty(has){
+  return `<div class="empty-state kh">${has ? 'មិនមានលទ្ធផលត្រូវនឹងតម្រងនេះទេ<br><span style="opacity:.7">No matches</span>'
+    : 'មិនទាន់មានទិន្នន័យទេ · ចុចប៊ូតុង ＋ ខាងលើដើម្បីបន្ថែម<br><span style="opacity:.7">Nothing here yet</span>'}</div>`;
+}
+
+/* ---------- Books: the shelf ---------- */
+const TOOTH_MARK = '<svg class="bk-ph-mark" viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 2C9.6 2 8.4 3.1 6.9 3.1C5.2 3.1 3.8 4.6 3.8 7C3.8 9.6 4.6 11.2 5.1 13.8C5.6 16.4 6.2 21.3 7.9 21.3C9.4 21.3 9.3 17.6 9.8 15.4C10.1 14.1 10.7 13.2 12 13.2C13.3 13.2 13.9 14.1 14.2 15.4C14.7 17.6 14.6 21.3 16.1 21.3C17.8 21.3 18.4 16.4 18.9 13.8C19.4 11.2 20.2 9.6 20.2 7C20.2 4.6 18.8 3.1 17.1 3.1C15.6 3.1 14.4 2 12 2Z"/></svg>';
+
+function bookHTML(it){
+  const pal = COVER_PALETTES[colHash(it.title) % COVER_PALETTES.length];
+  const cover = it.cover || driveCover(it.link);
+  const face = `<div class="bk-cover">
+      <div class="bk-ph" style="background:linear-gradient(155deg,${pal[0]},${pal[1]});">${TOOTH_MARK}
+        <div><div class="bk-ph-title kh">${esc(it.title)}</div>${it.author ? `<div class="bk-ph-author kh">${esc(it.author)}</div>` : ''}</div>
+      </div>${cover ? `<img class="bk-img" src="${esc(cover)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</div>`;
+  const link = colNormalizeUrl(it.link);
+  const open = colIsWeb(link)
+    ? `<a class="bk-open" href="${esc(link)}" target="_blank" rel="noopener" aria-label="បើក ${esc(it.title)}">${face}</a>`
+    : `<div class="bk-open" role="button" tabindex="0" data-act="edit" aria-label="កែ ${esc(it.title)}">${face}</div>`;
+  return `<div class="bk" data-id="${esc(it.id)}">
+    ${open}
+    <button type="button" class="bk-edit" data-act="edit" title="កែសម្រួល" aria-label="កែសម្រួល">✎</button>
+    <div class="bk-stand"></div>
+    <div class="bk-cap"><div class="bk-title kh">${esc(it.title)}</div><div class="bk-author kh">${esc(it.author) || '&nbsp;'}</div></div>
+  </div>`;
+}
+
+function renderBooks(){
+  const rows = colFilteredRows('books');
+  const host = document.getElementById('col-books-view');
+  if(!rows.length){ host.innerHTML = colEmpty(colData.books.length); return; }
+  const groups = new Map();
+  rows.forEach(it => { const k = it.category || 'ផ្សេងៗ'; if(!groups.has(k)) groups.set(k, []); groups.get(k).push(it); });
+  const cats = [...groups.keys()].sort((a,b)=> a.localeCompare(b));
+  host.innerHTML = '<div class="shelf-wrap">' + cats.map(c =>
+    `<div class="shelf-head kh">${esc(c)}<span class="mono">${groups.get(c).length}</span></div><div class="shelf">${groups.get(c).map(bookHTML).join('')}</div>`
+  ).join('') + '</div>';
+}
+
+/* ---------- Notes: titles -> full reader ---------- */
+function renderNotes(){
+  const rows = colFilteredRows('notes');
+  nrOrder = rows.map(r => r.id);
+  const host = document.getElementById('col-notes-view');
+  if(!rows.length){ host.innerHTML = colEmpty(colData.notes.length); return; }
+  host.innerHTML = '<div class="nt-list">' + rows.map(it => {
+    const accent = TOPIC_COLORS[colHash(it.topic) % TOPIC_COLORS.length];
+    const snip = it.content ? esc(it.content.replace(/[#*\-]+\s/g, '').replace(/\s+/g, ' ').slice(0, 160)) : '';
+    return `<article class="nt-card" tabindex="0" data-id="${esc(it.id)}" style="--accent:${accent};">
+      <div class="nt-top"><span class="nt-topic kh">${esc(it.topic) || '—'}</span><span class="nt-date mono">${colDate(it.date)}</span></div>
+      <h3 class="nt-title">${esc(it.title)}</h3>
+      ${snip ? `<p class="nt-snip kh">${snip}</p>` : ''}
+      ${it.author ? `<div class="nt-foot kh">✍ ${esc(it.author)}</div>` : ''}
+    </article>`;
+  }).join('') + '</div>';
+}
+
+function noteBodyHTML(text){
+  const lines = String(text || '').replace(/\r/g, '').split('\n');
+  let html = '', para = [], list = [], m;
+  const flushP = ()=>{ if(para.length){ html += '<p>' + para.map(esc).join('<br>') + '</p>'; para = []; } };
+  const flushL = ()=>{ if(list.length){ html += '<ul>' + list.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>'; list = []; } };
+  for(const raw of lines){
+    const l = raw.trimEnd();
+    if(!l.trim()){ flushP(); flushL(); continue; }
+    if((m = l.match(/^##\s+(.*)/))){ flushP(); flushL(); html += '<h4>' + esc(m[1]) + '</h4>'; }
+    else if((m = l.match(/^#\s+(.*)/))){ flushP(); flushL(); html += '<h3>' + esc(m[1]) + '</h3>'; }
+    else if((m = l.match(/^[-•*]\s+(.*)/))){ flushP(); list.push(m[1]); }
+    else { flushL(); para.push(l); }
+  }
+  flushP(); flushL();
+  return html || '<p style="color:var(--ink-dim)">មិនទាន់មានខ្លឹមសារ</p>';
+}
+
+function openNoteReader(id){
+  const it = colFind('notes', id); if(!it) return;
+  nrCurrent = id;
+  document.getElementById('nrTopic').textContent = it.topic || 'មេរៀន';
+  document.getElementById('nrTitle').textContent = it.title;
+  document.getElementById('nrMeta').innerHTML =
+    (it.date ? `<span>📅 ${colDate(it.date)}</span>` : '') + (it.author ? `<span>✍ ${esc(it.author)}</span>` : '');
+  document.getElementById('nrBody').innerHTML = noteBodyHTML(it.content);
+  const link = colNormalizeUrl(it.link);
+  document.getElementById('nrRef').innerHTML =
+    (it.source ? `📖 សៀវភៅយោង៖ <b>${esc(it.source)}</b>` : '') +
+    (colIsWeb(link) ? `${it.source ? ' · ' : ''}<a href="${esc(link)}" target="_blank" rel="noopener">បើកតំណភ្ជាប់</a>` : '');
+  const i = nrOrder.indexOf(id);
+  document.getElementById('nrPrev').disabled = i <= 0;
+  document.getElementById('nrNext').disabled = i < 0 || i >= nrOrder.length - 1;
+  const ov = document.getElementById('noteReader');
+  if(ov.classList.contains('hidden')) history.pushState({ modal: 'noteReader' }, '', '#noteReader');
+  ov.classList.remove('hidden');
+  ov.scrollTop = 0;
+}
+function closeNoteReader(){
+  document.getElementById('noteReader').classList.add('hidden');
+  if(window.location.hash === '#noteReader') history.replaceState(null, null, window.location.pathname);
+}
+function stepNote(d){
+  const i = nrOrder.indexOf(nrCurrent);
+  const j = i + d;
+  if(i >= 0 && j >= 0 && j < nrOrder.length) openNoteReader(nrOrder[j]);
+}
+
+/* ---------- Practitioners: photo · name · phone · start · end ---------- */
+function studentAvatar(it){
+  if(it.photo) return `<img class="st-avatar" src="${esc(it.photo)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`;
+  const bg = COVER_PALETTES[colHash(it.name) % COVER_PALETTES.length];
+  const ch = Array.from(it.name || '?')[0];
+  return `<div class="st-avatar" style="background:linear-gradient(155deg,${bg[0]},${bg[1]});">${esc(ch)}</div>`;
+}
+function studentStatusPill(st){
+  const cls = st === STUDENT_STATUS.done ? 'muted' : st === STUDENT_STATUS.paused ? 'low' : 'ok';
+  return st ? `<span class="inv-pill ${cls} kh" style="margin-left:0;">${esc(st)}</span>` : '';
+}
+function renderStudents(){
+  const rows = colFilteredRows('students');
+  const host = document.getElementById('col-students-view');
+  if(!rows.length){ host.innerHTML = colEmpty(colData.students.length); return; }
+  host.innerHTML = `<div class="st-list">
+    <div class="st-head kh"><span></span><span>ឈ្មោះ</span><span>លេខទូរស័ព្ទ</span><span>ថ្ងៃចូល</span><span>ថ្ងៃចប់</span><span></span></div>
+    ${rows.map(it => `<div class="st-row" tabindex="0" data-id="${esc(it.id)}">
+      ${studentAvatar(it)}
+      <div class="st-cell c-name"><div class="st-name kh">${esc(it.name)}</div><div class="st-sub kh">${esc([it.school, it.level].filter(Boolean).join(' · '))} ${studentStatusPill(it.status)}</div></div>
+      <div class="st-cell c-phone mono">${esc(it.phone) || '—'}</div>
+      <div class="st-cell c-start mono"><span class="lbl kh">ថ្ងៃចូល៖ </span>${colDate(it.start)}<span class="lbl kh"> → ${colDate(it.end)}</span></div>
+      <div class="st-cell c-end mono">${colDate(it.end)}</div>
+      <div class="st-cell c-act st-act"><button type="button" class="inv-btn" data-act="edit" title="កែសម្រួល" aria-label="កែសម្រួល">✎</button><button type="button" class="inv-btn del" data-act="del" title="លុប" aria-label="លុប">🗑</button></div>
+    </div>`).join('')}
+  </div>`;
+}
+
+const RENDER = { books: renderBooks, notes: renderNotes, students: renderStudents };
+
+function colRender(n){
+  const cfg = COLS[n], items = colData[n];
+  const vals = [...new Set([...(cfg.filterPreset || []), ...items.map(i => i[cfg.filterKey]).filter(Boolean)])].sort((a,b)=> a.localeCompare(b));
+  if(colFilterVal[n] && !vals.includes(colFilterVal[n])) colFilterVal[n] = '';
+  const sel = document.getElementById('col-' + n + '-filter');
+  sel.innerHTML = `<option value="">${cfg.filterAll}</option>` + vals.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+  sel.value = colFilterVal[n];
+  document.getElementById('tabn-' + n).textContent = items.length;
+  const shown = colFilteredRows(n).length;
+  document.getElementById('col-' + n + '-count').textContent = shown === items.length ? items.length + ' items' : shown + ' / ' + items.length;
+  RENDER[n]();
+}
+
+/* ---------- sync ---------- */
+function colPush(n, action, item){
+  const cfg = COLS[n];
+  const data = { sheet: cfg.sheet, id: item.id };
+  if(action === 'collectionUpsert'){
+    cfg.fields.forEach(f => { data[f.k] = item[f.k] || ''; });
+    data.updated = item.updated;
+  }
+  pushToSheet(action, data);
+}
+
+async function colFetch(n, silent){
+  const cfg = COLS[n];
+  if(!webAppUrl || colFetching[n]) return;
+  colFetching[n] = true;
+  if(!silent) colSetStatus(n, 'កំពុង Sync...', '');
+  try{
+    await flushPendingQueue();
+    const sep = webAppUrl.includes('?') ? '&' : '?';
+    const res = await fetch(`${webAppUrl}${sep}sheet=${cfg.sheet}&_=${Date.now()}`);
+    const json = await res.json();
+    if(!(json && json.status === 'success' && json.sheet === cfg.sheet && Array.isArray(json.data))){
+      colSetStatus(n, '⚠️ Apps Script មិនទាន់គាំទ្រ ' + cfg.sheet + ' (សូមដាក់កូដថ្មីក្នុង Code.gs)', 'warn');
+      return;
+    }
+    const pendingIds = new Set(getPendingQueue()
+      .filter(q => q && String(q.action || '').indexOf('collection') === 0 && q.data && q.data.sheet === cfg.sheet)
+      .map(q => q.data.id));
+    const server = json.data.map(r => colNormalizeItem(n, r)).filter(x => x.id && x[cfg.primary]);
+    const serverIds = new Set(server.map(x => x.id));
+    const merged = server.filter(x => !colDeleted[n].has(x.id) && !pendingIds.has(x.id));
+    colData[n].forEach(x => { if(pendingIds.has(x.id)) merged.push(x); });
+    colData[n] = merged;
+    [...colDeleted[n]].forEach(id => { if(!serverIds.has(id)) colDeleted[n].delete(id); });
+    colFetchedAt[n] = Date.now();
+    colSaveDeleted(n); colSave(n); colRender(n);
+    colSetStatus(n, '✓ Sync ជោគជ័យ', 'ok', true);
+  }catch(e){
+    if(!silent) colSetStatus(n, '⚠️ Sync មិនជោគជ័យ', 'warn', true);
+  }finally{
+    colFetching[n] = false;
+  }
+}
+function colMaybeFetch(n){ if(Date.now() - colFetchedAt[n] > COL_STALE_MS) colFetch(n, true); }
+
+/* ---------- images: resize in the browser so they fit in a Sheet cell ---------- */
+function colCompressImage(file, shape){
+  return new Promise((resolve, reject)=>{
+    const fr = new FileReader();
+    fr.onerror = reject;
+    fr.onload = ()=>{
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = ()=>{
+        let W, H, sx = 0, sy = 0, sw = img.width, sh = img.height;
+        if(shape === 'photo'){
+          const side = Math.min(img.width, img.height);
+          sx = (img.width - side) / 2; sy = (img.height - side) / 2; sw = sh = side; W = H = 220;
+        }else{
+          const r = Math.min(280 / img.width, 400 / img.height, 1);
+          W = Math.round(img.width * r); H = Math.round(img.height * r);
+        }
+        let q = 0.8, scale = 1, out = '';
+        for(let i = 0; i < 8; i++){
+          const c = document.createElement('canvas');
+          c.width = Math.max(40, Math.round(W * scale)); c.height = Math.max(40, Math.round(H * scale));
+          const ctx = c.getContext('2d');
+          ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, c.width, c.height);
+          out = c.toDataURL('image/jpeg', q);
+          if(out.length <= 42000) break;
+          q = Math.max(0.45, q - 0.1); scale *= 0.88;
+        }
+        out.length <= COL_MAX_CHARS ? resolve(out) : reject(new Error('too big'));
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+function colSetPreview(k){
+  const v = document.getElementById('cf_' + k).value;
+  const box = document.getElementById('cfi_prev_' + k);
+  box.style.backgroundImage = v ? 'url("' + v.replace(/"/g, '%22') + '")' : '';
+}
+
+function colBindImageFields(cfg){
+  cfg.fields.filter(f => f.t === 'image').forEach(f=>{
+    const k = f.k;
+    const hidden = document.getElementById('cf_' + k);
+    const url = document.getElementById('cfi_url_' + k);
+    const file = document.getElementById('cfi_file_' + k);
+    const err = document.getElementById('colFormError');
+    colSetPreview(k);
+    document.querySelector(`[data-cfi-pick="${k}"]`).addEventListener('click', ()=> file.click());
+    document.querySelector(`[data-cfi-clear="${k}"]`).addEventListener('click', ()=>{ hidden.value = ''; url.value = ''; file.value = ''; colSetPreview(k); });
+    url.addEventListener('input', ()=>{ hidden.value = colNormalizeUrl(url.value); colSetPreview(k); });
+    file.addEventListener('change', async ()=>{
+      const fl = file.files && file.files[0]; if(!fl) return;
+      if(!fl.type.startsWith('image/')){ err.textContent = '⚠️ សូមជ្រើសរើសឯកសាររូបភាព'; return; }
+      err.textContent = '⏳ កំពុងរៀបចំរូប...';
+      try{
+        hidden.value = await colCompressImage(fl, f.shape);
+        url.value = '';
+        colSetPreview(k);
+        err.textContent = '';
+      }catch(e){ err.textContent = '⚠️ រូបនេះធំពេក ឬបើកមិនបាន សូមជ្រើសរូបផ្សេង'; }
+    });
+  });
+}
+
+/* ---------- form ---------- */
+function colFieldHTML(n, f, value){
+  const id = 'cf_' + f.k;
+  const cls = 'field' + (f.full || f.t === 'textarea' || f.t === 'image' ? ' col-full' : '');
+  if(f.t === 'image'){
+    const isData = /^data:/i.test(value);
+    return `<div class="${cls}"><label>${f.l}</label><div class="cfi">
+      <div class="cfi-prev ${f.shape}" id="cfi_prev_${f.k}"></div>
+      <div class="cfi-ctl">
+        <input type="hidden" id="${id}" value="${esc(value)}">
+        <input type="file" accept="image/*" id="cfi_file_${f.k}" hidden>
+        <div class="cfi-btns"><button type="button" class="btn btn-outline btn-sm kh" data-cfi-pick="${f.k}">📷 ជ្រើសរូបពីម៉ាស៊ីន</button><button type="button" class="btn btn-ghost btn-sm kh" data-cfi-clear="${f.k}">លុបរូប</button></div>
+        <input type="text" class="kh" id="cfi_url_${f.k}" placeholder="ឬបិទភ្ជាប់តំណរូប (https://...)" value="${isData ? '' : esc(value)}" autocomplete="off">
+        <div class="cfi-hint kh">${f.hint || ''}</div>
+      </div></div></div>`;
+  }
+  let input;
+  if(f.t === 'textarea'){
+    input = `<textarea id="${id}" class="kh" style="min-height:${(f.rows || 3) * 26 + 20}px;"${f.max ? ` maxlength="${f.max}"` : ''}>${esc(value)}</textarea>`;
+  }else if(f.t === 'select'){
+    input = `<select id="${id}" class="kh">${f.opts.map(o => `<option value="${esc(o)}"${o === value ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+  }else if(f.t === 'date'){
+    input = `<input type="date" id="${id}" value="${esc(value)}">`;
+  }else{
+    input = `<input type="text" id="${id}" class="kh" value="${esc(value)}" autocomplete="off"${f.list ? ` list="dl_${n}_${f.k}"` : ''}>`;
+  }
+  let dl = '';
+  if(f.list){
+    const opts = [...new Set([...f.list, ...colData[n].map(i => i[f.k]).filter(Boolean)])];
+    dl = `<datalist id="dl_${n}_${f.k}">${opts.map(o => `<option value="${esc(o)}">`).join('')}</datalist>`;
+  }
+  return `<div class="${cls}"><label>${f.l}</label>${input}${dl}${f.hint && f.t === 'textarea' ? `<div class="cfi-hint kh" style="margin-top:6px;">${f.hint}</div>` : ''}</div>`;
+}
+
+function colOpenForm(n, id, fromReader){
+  const cfg = COLS[n];
+  const it = id ? colFind(n, id) : null;
+  colEditing = { n, id: it ? it.id : null, fromReader: !!fromReader };
+  const d = new Date();
+  const todayStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  document.getElementById('colFormTitle').textContent = (it ? 'កែសម្រួល' : 'បន្ថែម') + cfg.singular + (it ? ' · Edit' : ' · New');
+  document.getElementById('colFormFields').innerHTML = cfg.fields.map(f =>
+    colFieldHTML(n, f, it ? (it[f.k] || '') : (f.defToday ? todayStr : (f.def || '')))).join('');
+  colBindImageFields(cfg);
+  document.getElementById('colFormError').textContent = '';
+  document.getElementById('colDeleteBtn').classList.toggle('hidden', !it);
+  history.pushState({ modal: 'colForm' }, '', '#colForm');
+  document.getElementById('colFormOverlay').classList.remove('hidden');
+  setTimeout(()=>{ const first = document.querySelector('#colFormFields input[type="text"], #colFormFields textarea'); if(first) first.focus(); }, 60);
+}
+
+function colCloseForm(){
+  document.getElementById('colFormOverlay').classList.add('hidden');
+  if(window.location.hash === '#colForm') history.replaceState(null, null, window.location.pathname);
+  const back = colEditing.fromReader && colEditing.id && colEditing.n === 'notes' && colFind('notes', colEditing.id);
+  const id = colEditing.id;
+  colEditing = { n: null, id: null, fromReader: false };
+  if(back) openNoteReader(id);
+}
+
+function colSaveForm(){
+  const n = colEditing.n; if(!n) return;
+  const cfg = COLS[n];
+  const err = document.getElementById('colFormError');
+  const vals = {};
+  for(const f of cfg.fields){
+    const el = document.getElementById('cf_' + f.k);
+    let v = el.value;
+    v = (f.t === 'textarea' || f.t === 'image') ? v.trim() : cleanStr(v);
+    if(f.k === 'link') v = colNormalizeUrl(v);
+    if(f.req && !v){ err.textContent = '⚠️ សូមបញ្ចូល ' + f.l.split(' · ')[0]; el.focus(); return; }
+    if(v.length > COL_MAX_CHARS){ err.textContent = '⚠️ ' + f.l.split(' · ')[0] + ' វែង ឬធំពេក'; return; }
+    vals[f.k] = v;
+  }
+  vals.updated = new Date().toISOString();
+  let item;
+  if(colEditing.id && colFind(n, colEditing.id)){
+    item = Object.assign(colFind(n, colEditing.id), vals);
+  }else{
+    item = Object.assign({ id: colGenId(n) }, vals);
+    colData[n].push(item);
+  }
+  colSave(n); colRender(n);
+  colPush(n, 'collectionUpsert', item);
+  colEditing.id = item.id;
+  colCloseForm();
+}
+
+function colDelete(n, id){
+  const it = colFind(n, id); if(!it) return;
+  showConfirm(`លុប "${esc(it[COLS[n].primary])}" ចេញ?`, ()=>{
+    colData[n] = colData[n].filter(x => x.id !== id);
+    colDeleted[n].add(id);
+    colSaveDeleted(n); colSave(n); colRender(n);
+    colPush(n, 'collectionDelete', { id });
+    colEditing.fromReader = false;
+    closeNoteReader();
+    if(!document.getElementById('colFormOverlay').classList.contains('hidden')) colCloseForm();
+  });
+}
+
+/* ---------- tabs + wiring ---------- */
+function switchStudyTab(t, skipFetch){
+  if(!COLS[t]) t = 'books';
+  studyTab = t;
+  document.querySelectorAll('.lib-tab').forEach(b => { const on = b.dataset.tab === t; b.classList.toggle('active', on); b.setAttribute('aria-selected', on ? 'true' : 'false'); });
+  document.querySelectorAll('.lib-panel').forEach(p => { p.hidden = p.dataset.tab !== t; });
+  try{ sessionStorage.setItem(STUDY_TAB_KEY, t); }catch(e){}
+  colRender(t);
+  if(!skipFetch) colMaybeFetch(t);
+}
+
+(function initStudyLibrary(){
+  COL_NAMES.forEach(n=>{
+    colLoad(n);
+    colRender(n);
+    document.getElementById('col-' + n + '-search').addEventListener('input', (e)=>{ colSearchVal[n] = e.target.value; colRender(n); });
+    document.getElementById('col-' + n + '-filter').addEventListener('change', (e)=>{ colFilterVal[n] = e.target.value; colRender(n); });
+    document.getElementById('col-' + n + '-add').addEventListener('click', ()=> colOpenForm(n, null));
+    document.getElementById('col-' + n + '-sync').addEventListener('click', ()=> colFetch(n, false));
+  });
+
+  document.querySelectorAll('.lib-tab').forEach(b => b.addEventListener('click', ()=> switchStudyTab(b.dataset.tab)));
+  document.querySelector('.sb-item[data-page="study"]').addEventListener('click', ()=> COL_NAMES.forEach(n => colMaybeFetch(n)));
+
+  // Books: edit pencil / cover without a link
+  document.getElementById('col-books-view').addEventListener('click', (e)=>{
+    const t = e.target.closest('[data-act="edit"]'); if(!t) return;
+    const bk = t.closest('.bk'); if(bk) colOpenForm('books', bk.dataset.id);
+  });
+  document.getElementById('col-books-view').addEventListener('keydown', (e)=>{
+    if((e.key === 'Enter' || e.key === ' ') && e.target.matches('.bk-open[data-act="edit"]')){ e.preventDefault(); colOpenForm('books', e.target.closest('.bk').dataset.id); }
+  });
+
+  // Notes: title list -> reader
+  const notesView = document.getElementById('col-notes-view');
+  notesView.addEventListener('click', (e)=>{ const c = e.target.closest('.nt-card'); if(c) openNoteReader(c.dataset.id); });
+  notesView.addEventListener('keydown', (e)=>{ if((e.key === 'Enter' || e.key === ' ') && e.target.matches('.nt-card')){ e.preventDefault(); openNoteReader(e.target.dataset.id); } });
+  document.getElementById('nrClose').addEventListener('click', closeNoteReader);
+  document.getElementById('noteReader').addEventListener('click', (e)=>{ if(e.target.id === 'noteReader') closeNoteReader(); });
+  document.getElementById('nrPrev').addEventListener('click', ()=> stepNote(-1));
+  document.getElementById('nrNext').addEventListener('click', ()=> stepNote(1));
+  document.getElementById('nrEdit').addEventListener('click', ()=>{ const id = nrCurrent; closeNoteReader(); colOpenForm('notes', id, true); });
+
+  // Practitioners
+  document.getElementById('col-students-view').addEventListener('click', (e)=>{
+    const row = e.target.closest('.st-row'); if(!row) return;
+    if(e.target.closest('[data-act="del"]')) colDelete('students', row.dataset.id);
+    else colOpenForm('students', row.dataset.id);
+  });
+  document.getElementById('col-students-view').addEventListener('keydown', (e)=>{
+    if((e.key === 'Enter' || e.key === ' ') && e.target.matches('.st-row')){ e.preventDefault(); colOpenForm('students', e.target.dataset.id); }
+  });
+
+  // form
+  document.getElementById('closeColForm').addEventListener('click', colCloseForm);
+  document.getElementById('colCancelBtn').addEventListener('click', colCloseForm);
+  document.getElementById('colSaveBtn').addEventListener('click', colSaveForm);
+  document.getElementById('colDeleteBtn').addEventListener('click', ()=>{ if(colEditing.id) colDelete(colEditing.n, colEditing.id); });
+  document.getElementById('colFormOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'colFormOverlay') colCloseForm(); });
+  document.getElementById('colFormOverlay').addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file'){ e.preventDefault(); colSaveForm(); }
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key !== 'Escape') return;
+    if(!document.getElementById('colFormOverlay').classList.contains('hidden')) colCloseForm();
+    else if(!document.getElementById('noteReader').classList.contains('hidden')) closeNoteReader();
+  });
+
+  // the main Sync button refreshes the library too
+  document.getElementById('syncBadge').addEventListener('click', ()=> COL_NAMES.forEach(n => colFetch(n, true)));
+
+  let savedTab = 'books';
+  try{ savedTab = sessionStorage.getItem(STUDY_TAB_KEY) || 'books'; }catch(e){}
+  studyTab = COLS[savedTab] ? savedTab : 'books';
+  switchStudyTab(studyTab, true);
+  if(currentPage === 'study') colMaybeFetch(studyTab);
 })();
 
 // ចាប់ផ្តើមដំណើរការ
