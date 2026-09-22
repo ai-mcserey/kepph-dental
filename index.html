@@ -59,11 +59,12 @@
   .lock-hint{font-size:11px;color:var(--ink-dim);margin:8px 0 0;}
   #lockStudyBtn{display:flex;align-items:center;justify-content:center;gap:8px;}
 
-  /* study-only preview reached straight from the lock screen: hide everything except the library */
-  body.study-only .sidebar .sb-nav{display:none;}
-  body.study-only #sbSyncBtn{display:none;}
-  body.study-only #sbLockBtn .sb-label{ }
-  body.study-only #sbLockBtn .sb-label::after{content:" (ត្រឡប់)";}
+  /* lock-preview: reached straight from the lock screen (Study Library / Org Structure) — hide everything else */
+  body.lock-preview .sidebar .sb-nav{display:none;}
+  body.lock-preview #sbSyncBtn{display:none;}
+  body.lock-preview #sbLockBtn .sb-label{ }
+  body.lock-preview #sbLockBtn .sb-label::after{content:" (ត្រឡប់)";}
+  body.lock-preview .org-edit-btn{display:none;}
 
 
   /* topbar */
@@ -786,6 +787,7 @@
   .inv-btn:focus-visible{outline:2px solid var(--amber);outline-offset:1px;}
   .inv-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   #invFormOverlay{z-index:90 !important;}
+  body[data-page="org"] .topbar .search-wrap, body[data-page="org"] #fabAdd,
   body[data-page="inventory"] .topbar .search-wrap,
   body[data-page="inventory"] #fabAdd,
   body[data-page="xray"] .topbar .search-wrap,
@@ -981,6 +983,32 @@
     .col-grid{grid-template-columns:1fr;}
   }
   @media (prefers-reduced-motion:reduce){ .bk-cover{transition:none;} .bk:hover .bk-cover{transform:none;} }
+
+  /* ---------- Organization structure ---------- */
+  .org-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .org-team-head{margin:26px 0 12px;padding-top:8px;border-top:1px solid var(--border-soft);font-size:14px;font-weight:700;color:var(--ink);}
+  .org-grid-team{grid-template-columns:repeat(3,1fr);}
+  .org-member-name{font-size:15px;font-weight:700;color:var(--ink);margin-top:10px;}
+  .org-title{font-size:12px;font-weight:600;color:var(--primary-dark);margin-top:2px;}
+  @media (max-width:900px){ .org-grid-team{grid-template-columns:1fr 1fr;} }
+  @media (max-width:680px){ .org-grid-team{grid-template-columns:1fr;} }
+  .org-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:18px;box-shadow:var(--shadow-sm);
+    padding:26px 22px 22px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+  .org-photo-wrap{margin-bottom:14px;}
+  .org-photo{width:168px;height:168px;border-radius:20px;overflow:hidden;background:var(--primary-soft);color:var(--primary-dark);
+    display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px -8px rgba(11,42,74,.35);}
+  .org-photo svg{width:72px;height:72px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+  .org-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+  .org-role{font-size:15px;font-weight:700;color:var(--ink);}
+  .org-role small{display:block;font-family:'Inter',sans-serif;font-size:11.5px;font-weight:500;color:var(--ink-dim);margin-top:1px;}
+  .org-name{font-size:13.5px;font-weight:600;color:var(--primary-dark);margin-top:8px;}
+  .org-desc-label{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--ink-dim);text-transform:uppercase;margin-top:16px;}
+  .org-desc{font-size:12.5px;line-height:1.7;color:var(--ink-soft);margin-top:6px;white-space:pre-line;text-align:left;min-height:44px;}
+  .org-edit-btn{margin-top:18px;}
+  @media (max-width:680px){ .org-grid{grid-template-columns:1fr;} }
+
+  /* small password prompt (shared look with showConfirm) */
+  .pin-prompt input{width:100%;margin:12px 0 6px;text-align:center;letter-spacing:.3em;font-size:18px;}
   .appt-panel{min-width:0;}
   .dash-report-head{margin:22px 0 10px;padding-top:6px;border-top:1px solid var(--border-soft);}
   .dash-report-head h3{margin:0;font-size:15px;color:var(--ink);}
@@ -1055,6 +1083,8 @@
     <div class="lock-sep kh">ឬ</div>
     <button type="button" class="btn btn-outline btn-block kh" id="lockStudyBtn">📚 មាតិកាសិក្សា · Study Library</button>
     <p class="lock-hint kh">សៀវភៅ មេរៀន និងសិស្សហ្វឹកហាត់ — គ្មានត្រូវការ PIN ទេ</p>
+    <button type="button" class="btn btn-outline btn-block kh" id="lockOrgBtn" style="margin-top:10px;">🏢 រចនាសម្ព័ន្ធ · Organization Structure</button>
+    <p class="lock-hint kh">សម្រាប់មើលតែប៉ុណ្ណោះ — គ្មានត្រូវការ PIN ទេ</p>
   </div>
 </div>
 
@@ -1109,6 +1139,10 @@
       </div>
       <div class="sb-group">
         <div class="sb-group-label kh">គ្រប់គ្រង</div>
+        <button type="button" class="sb-item" data-page="org" title="រចនាសម្ព័ន្ធ · Organization structure">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.5"/><path d="M12 7.5V12M12 12H6M12 12h6M6 12v3M18 12v3"/><circle cx="6" cy="17.5" r="2.5"/><circle cx="18" cy="17.5" r="2.5"/></svg>
+          <span class="sb-label kh">រចនាសម្ព័ន្ធ<small>Structure</small></span>
+        </button>
         <button type="button" class="sb-item" data-page="inventory" title="ឃ្លាំងសម្ភារៈ · Inventory">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg>
           <span class="sb-label kh">ឃ្លាំងសម្ភារៈ<small>Inventory</small></span><span class="sb-badge warn" id="sbBadgeInv" hidden>0</span>
@@ -1401,6 +1435,58 @@
         </div>
       </section>
 
+      <!-- Organization Structure -->
+      <section class="page" id="page-org" data-page="org" hidden>
+        <div class="org-grid" id="orgGrid">
+          <article class="org-card" data-id="head">
+            <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-head"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-role kh">ប្រធានផ្នែក<small>Department Head</small></div>
+            <div class="org-name kh" id="orgName-head">មិនទាន់បំពេញ</div>
+            <div class="org-desc-label kh">Job Description</div>
+            <div class="org-desc kh" id="orgDesc-head">មិនទាន់មានការពិពណ៌នា</div>
+            <button type="button" class="btn btn-outline btn-sm kh org-edit-btn" data-id="head">✎ កែសម្រួល</button>
+          </article>
+          <article class="org-card" data-id="director">
+            <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-director"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-role kh">នាយសាល<small>Director</small></div>
+            <div class="org-name kh" id="orgName-director">មិនទាន់បំពេញ</div>
+            <div class="org-desc-label kh">Job Description</div>
+            <div class="org-desc kh" id="orgDesc-director">មិនទាន់មានការពិពណ៌នា</div>
+            <button type="button" class="btn btn-outline btn-sm kh org-edit-btn" data-id="director">✎ កែសម្រួល</button>
+          </article>
+        </div>
+
+        <div class="org-team-head kh">សមាជិកក្រុម · Team members</div>
+        <div class="org-grid org-grid-team" id="orgGridTeam">
+          <article class="org-card org-member-card" data-id="member1">
+            <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-member1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-member-name kh" id="orgName-member1">មិនទាន់បំពេញ</div>
+            <div class="org-title kh" id="orgTitle-member1">មិនទាន់កំណត់តួនាទី</div>
+            <div class="org-desc-label kh">Job Description</div>
+            <div class="org-desc kh" id="orgDesc-member1">មិនទាន់មានការពិពណ៌នា</div>
+            <button type="button" class="btn btn-outline btn-sm kh org-edit-btn" data-id="member1">✎ កែសម្រួល</button>
+          </article>
+          <article class="org-card org-member-card" data-id="member2">
+            <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-member2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-member-name kh" id="orgName-member2">មិនទាន់បំពេញ</div>
+            <div class="org-title kh" id="orgTitle-member2">មិនទាន់កំណត់តួនាទី</div>
+            <div class="org-desc-label kh">Job Description</div>
+            <div class="org-desc kh" id="orgDesc-member2">មិនទាន់មានការពិពណ៌នា</div>
+            <button type="button" class="btn btn-outline btn-sm kh org-edit-btn" data-id="member2">✎ កែសម្រួល</button>
+          </article>
+          <article class="org-card org-member-card" data-id="member3">
+            <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-member3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-member-name kh" id="orgName-member3">មិនទាន់បំពេញ</div>
+            <div class="org-title kh" id="orgTitle-member3">មិនទាន់កំណត់តួនាទី</div>
+            <div class="org-desc-label kh">Job Description</div>
+            <div class="org-desc kh" id="orgDesc-member3">មិនទាន់មានការពិពណ៌នា</div>
+            <button type="button" class="btn btn-outline btn-sm kh org-edit-btn" data-id="member3">✎ កែសម្រួល</button>
+          </article>
+        </div>
+
+        <div class="inv-status kh" id="orgSyncStatus" style="margin-top:10px;"></div>
+      </section>
+
       <!-- Inventory -->
       <section class="page" id="page-inventory" data-page="inventory" hidden>
         <div class="kpi-grid" id="invKpis"></div>
@@ -1493,6 +1579,26 @@
       <button type="button" class="btn btn-ghost btn-sm kh" id="nrNext">មេរៀនបន្ទាប់ ›</button>
     </div>
   </article>
+</div>
+
+<!-- Organization Structure form -->
+<div class="overlay hidden" id="orgFormOverlay">
+  <div class="modal narrow" style="max-width:520px;">
+    <div class="modal-head"><h2 class="kh" id="orgFormTitle">កែសម្រួល</h2><button class="x" id="closeOrgForm" aria-label="បិទ">✕</button></div>
+    <div class="modal-body">
+      <div class="col-grid">
+        <div class="field col-full"><label>រូបថត (Drive link) · Photo link</label><input type="text" id="org_photo" autocomplete="off" placeholder="https://drive.google.com/file/d/..."></div>
+        <div class="field col-full"><label>ឈ្មោះ · Name</label><input type="text" id="org_name" class="kh" autocomplete="off"></div>
+        <div class="field col-full hidden" id="org_title_field"><label>តួនាទី · Position / Title</label><input type="text" id="org_title" class="kh" autocomplete="off"></div>
+        <div class="field col-full"><label>Job Description</label><textarea id="org_desc" class="kh" style="min-height:160px;"></textarea></div>
+      </div>
+      <div id="orgFormError" class="kh" style="color:var(--coral);font-size:12px;min-height:16px;margin-top:8px;"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline kh" id="orgCancelBtn">បោះបង់</button>
+        <button type="button" class="btn btn-primary kh" id="orgSaveBtn">រក្សាទុក Save</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Inventory item form -->
@@ -1932,7 +2038,7 @@ const appLockError = document.getElementById('appLockError');
 
 function checkAppUnlock() {
   if (isValidPin(appLockInput.value)) {
-    document.body.classList.remove('study-only');
+    document.body.classList.remove('lock-preview');
     appLockOverlay.classList.add('hidden');
     sessionStorage.setItem('dental_app_unlocked', 'true');
   } else {
@@ -1947,9 +2053,16 @@ appLockInput.addEventListener('keyup', (e) => { if (e.key === 'Enter') checkAppU
 
 document.getElementById('lockStudyBtn').addEventListener('click', ()=>{
   appLockOverlay.classList.add('hidden');
-  document.body.classList.add('study-only');
+  document.body.classList.add('lock-preview');
   showPage('study');
   COL_NAMES.forEach(n => colMaybeFetch(n));
+});
+
+document.getElementById('lockOrgBtn').addEventListener('click', ()=>{
+  appLockOverlay.classList.add('hidden');
+  document.body.classList.add('lock-preview');
+  showPage('org');
+  orgMaybeFetch();
 });
 
 if (sessionStorage.getItem('dental_app_unlocked') === 'true') {
@@ -4647,6 +4760,7 @@ const PAGE_META = {
   appointments: { title: 'ការណាត់ជួប',      sub: 'Appointments' },
   inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
   xray:         { title: 'បញ្ចីថតធ្មេញ', sub: 'X-ray patient list' },
+  org:          { title: 'រចនាសម្ព័ន្ធ', sub: 'Organization structure' },
   study:        { title: 'មាតិកាសិក្សា', sub: 'Study library' }
 };
 const PAGE_KEY = 'dental_emr_page';
@@ -5536,8 +5650,8 @@ function isAppLocked(){ return !appLockOverlay.classList.contains('hidden'); }
 
 function lockApp(auto){
   try{ sessionStorage.removeItem('dental_app_unlocked'); }catch(e){}
-  const wasStudyOnly = document.body.classList.contains('study-only');
-  document.body.classList.remove('study-only');
+  const wasStudyOnly = document.body.classList.contains('lock-preview');
+  document.body.classList.remove('lock-preview');
   if(wasStudyOnly){ try{ sessionStorage.setItem(PAGE_KEY, 'dashboard'); }catch(e){} showPage('dashboard'); }
   closeSidebarDrawer();
   appLockInput.value = '';
@@ -6137,6 +6251,190 @@ function switchStudyTab(t, skipFetch){
   studyTab = COLS[savedTab] ? savedTab : 'books';
   switchStudyTab(studyTab, true);
   if(currentPage === 'study') colMaybeFetch(studyTab);
+})();
+
+
+/* ==========================================================
+   ORGANIZATION STRUCTURE (រចនាសម្ព័ន្ធ) — two fixed positions,
+   editing gated behind the app PIN. Synced with the "OrgChart" sheet tab.
+   ========================================================== */
+const ORG_ROLES = { head: 'ប្រធានផ្នែក', director: 'នាយសាល' };
+const ORG_MEMBER_IDS = ['member1', 'member2', 'member3'];
+const ORG_IDS = [...Object.keys(ORG_ROLES), ...ORG_MEMBER_IDS];
+let orgData = { head: null, director: null };
+let orgFetchedAt = 0, orgFetching = false, orgEditingId = null;
+
+function orgLoad(){
+  try{
+    const o = JSON.parse(localStorage.getItem('kep_dental_org_v1'));
+    if(o && typeof o === 'object') orgData = Object.assign({head:null, director:null, member1:null, member2:null, member3:null}, o);
+  }catch(e){}
+}
+function orgSave(){ try{ localStorage.setItem('kep_dental_org_v1', JSON.stringify(orgData)); }catch(e){} }
+
+function orgPhotoSrc(link){
+  const t = colNormalizeUrl(link);
+  if(!t) return '';
+  return driveCover(t) || t;
+}
+
+const ORG_PLACEHOLDER_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+function orgPhotoFallback(imgEl){ if(imgEl && imgEl.parentElement) imgEl.parentElement.innerHTML = ORG_PLACEHOLDER_SVG; }
+
+function renderOrgChart(){
+  ORG_IDS.forEach(id=>{
+    const it = orgData[id];
+    const photoEl = document.getElementById('orgPhoto-' + id);
+    const src = it && it.photo ? orgPhotoSrc(it.photo) : '';
+    photoEl.innerHTML = src
+      ? `<img src="${esc(src)}" alt="" loading="lazy" onerror="orgPhotoFallback(this)">`
+      : ORG_PLACEHOLDER_SVG;
+    document.getElementById('orgName-' + id).textContent = (it && it.name) ? it.name : 'មិនទាន់បំពេញ';
+    document.getElementById('orgDesc-' + id).textContent = (it && it.description) ? it.description : 'មិនទាន់មានការពិពណ៌នា';
+    if(!ORG_ROLES[id]){
+      const titleEl = document.getElementById('orgTitle-' + id);
+      if(titleEl) titleEl.textContent = (it && it.role) ? it.role : 'មិនទាន់កំណត់តួនាទី';
+    }
+  });
+}
+
+function orgSetStatus(text, tone, autoClear){
+  const el = document.getElementById('orgSyncStatus');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'inv-status kh' + (tone ? ' ' + tone : '');
+  clearTimeout(orgSetStatus._t);
+  if(autoClear) orgSetStatus._t = setTimeout(()=>{ el.textContent = ''; el.className = 'inv-status kh'; }, 3000);
+}
+
+async function fetchOrgChart(silent){
+  if(!webAppUrl || orgFetching) return;
+  orgFetching = true;
+  if(!silent) orgSetStatus('កំពុង Sync...', '');
+  try{
+    await flushPendingQueue();
+    const sep = webAppUrl.includes('?') ? '&' : '?';
+    const res = await fetch(`${webAppUrl}${sep}sheet=OrgChart&_=${Date.now()}`);
+    const json = await res.json();
+    if(!(json && json.status === 'success' && json.sheet === 'OrgChart' && Array.isArray(json.data))){
+      orgSetStatus('⚠️ Apps Script មិនទាន់គាំទ្រ OrgChart (សូមដាក់កូដថ្មីក្នុង Code.gs)', 'warn');
+      return;
+    }
+    const pendingIds = new Set(getPendingQueue()
+      .filter(q => q && q.action === 'collectionUpsert' && q.data && q.data.sheet === 'OrgChart')
+      .map(q => q.data.id));
+    json.data.forEach(r=>{
+      if(!ORG_IDS.includes(r.id) || pendingIds.has(r.id)) return;
+      orgData[r.id] = { name: cleanStr(r.name), photo: cleanStr(r.photo), description: String(r.description || '').trim(), role: cleanStr(r.role), updated: cleanStr(r.updated) };
+    });
+    orgFetchedAt = Date.now();
+    orgSave(); renderOrgChart();
+    orgSetStatus('✓ Sync ជោគជ័យ', 'ok', true);
+  }catch(e){
+    if(!silent) orgSetStatus('⚠️ Sync មិនជោគជ័យ', 'warn', true);
+  }finally{
+    orgFetching = false;
+  }
+}
+function orgMaybeFetch(){ if(Date.now() - orgFetchedAt > COL_STALE_MS) fetchOrgChart(true); }
+
+function pushOrgChart(id){
+  const it = orgData[id] || {};
+  pushToSheet('collectionUpsert', {
+    sheet: 'OrgChart', id, role: ORG_ROLES[id] || it.role || '',
+    name: it.name || '', photo: it.photo || '', description: it.description || '', updated: it.updated || ''
+  });
+}
+
+/* ---------- password gate (reuses the app's own PIN) ---------- */
+function promptForPin(message, onSuccess){
+  const ov = document.createElement('div');
+  ov.className = 'overlay';
+  ov.style.zIndex = '999';
+  ov.innerHTML = `<div class="modal narrow pin-prompt" style="max-width:340px;">
+      <div class="modal-body" style="padding:24px 22px;text-align:center;">
+        <div class="kh" style="font-size:13.5px;color:var(--ink);margin-bottom:4px;line-height:1.6;">${message}</div>
+        <input type="password" class="mono" id="pinPromptInput" maxlength="8" placeholder="••••••">
+        <div class="kh" id="pinPromptError" style="color:var(--coral);font-size:12px;min-height:16px;margin-bottom:10px;"></div>
+        <div style="display:flex;gap:8px;justify-content:center;">
+          <button class="btn btn-outline kh" id="pinPromptCancel">បោះបង់</button>
+          <button class="btn btn-primary kh" id="pinPromptOk">បញ្ជាក់ Confirm</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(ov);
+  const input = ov.querySelector('#pinPromptInput');
+  const err = ov.querySelector('#pinPromptError');
+  const close = ()=> document.body.contains(ov) && document.body.removeChild(ov);
+  const tryConfirm = ()=>{
+    if(isValidPin(input.value)){ close(); onSuccess(); }
+    else{ err.textContent = '⚠️ PIN មិនត្រឹមត្រូវទេ'; input.value=''; input.focus(); }
+  };
+  ov.querySelector('#pinPromptCancel').addEventListener('click', close);
+  ov.querySelector('#pinPromptOk').addEventListener('click', tryConfirm);
+  input.addEventListener('keyup', (e)=>{ if(e.key === 'Enter') tryConfirm(); });
+  setTimeout(()=> input.focus(), 60);
+}
+
+/* ---------- edit form ---------- */
+function openOrgForm(id){
+  orgEditingId = id;
+  const it = orgData[id] || {};
+  const isMember = !ORG_ROLES[id];
+  document.getElementById('orgFormTitle').textContent = 'កែសម្រួល · ' + (ORG_ROLES[id] || (it.role || 'សមាជិកក្រុម'));
+  document.getElementById('org_photo').value = it.photo || '';
+  document.getElementById('org_name').value = it.name || '';
+  document.getElementById('org_title_field').classList.toggle('hidden', !isMember);
+  document.getElementById('org_title').value = isMember ? (it.role || '') : '';
+  document.getElementById('org_desc').value = it.description || '';
+  document.getElementById('orgFormError').textContent = '';
+  history.pushState({ modal: 'orgForm' }, '', '#orgForm');
+  document.getElementById('orgFormOverlay').classList.remove('hidden');
+  setTimeout(()=> document.getElementById('org_name').focus(), 60);
+}
+function closeOrgForm(){
+  document.getElementById('orgFormOverlay').classList.add('hidden');
+  if(window.location.hash === '#orgForm') history.replaceState(null, null, window.location.pathname);
+  orgEditingId = null;
+}
+function saveOrgForm(){
+  const id = orgEditingId; if(!id) return;
+  const name = cleanStr(document.getElementById('org_name').value);
+  const err = document.getElementById('orgFormError');
+  if(!name){ err.textContent = '⚠️ សូមបញ្ចូលឈ្មោះ'; document.getElementById('org_name').focus(); return; }
+  orgData[id] = {
+    name,
+    photo: colNormalizeUrl(document.getElementById('org_photo').value),
+    role: ORG_ROLES[id] ? '' : cleanStr(document.getElementById('org_title').value),
+    description: document.getElementById('org_desc').value.trim(),
+    updated: new Date().toISOString()
+  };
+  orgSave(); renderOrgChart();
+  pushOrgChart(id);
+  closeOrgForm();
+}
+
+(function initOrgChart(){
+  orgLoad();
+  renderOrgChart();
+
+  const orgEditHandler = (e)=>{
+    const btn = e.target.closest('.org-edit-btn'); if(!btn) return;
+    const id = btn.dataset.id;
+    const label = ORG_ROLES[id] || (orgData[id] && orgData[id].role) || 'សមាជិកក្រុម';
+    promptForPin('សូមបញ្ចូល PIN ដើម្បីកែសម្រួល · ' + label, ()=> openOrgForm(id));
+  };
+  document.getElementById('orgGrid').addEventListener('click', orgEditHandler);
+  document.getElementById('orgGridTeam').addEventListener('click', orgEditHandler);
+  document.getElementById('closeOrgForm').addEventListener('click', closeOrgForm);
+  document.getElementById('orgCancelBtn').addEventListener('click', closeOrgForm);
+  document.getElementById('orgSaveBtn').addEventListener('click', saveOrgForm);
+  document.getElementById('orgFormOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'orgFormOverlay') closeOrgForm(); });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && !document.getElementById('orgFormOverlay').classList.contains('hidden')) closeOrgForm();
+  });
+
+  document.querySelector('.sb-item[data-page="org"]').addEventListener('click', ()=>{ renderOrgChart(); orgMaybeFetch(); });
 })();
 
 // ចាប់ផ្តើមដំណើរការ
