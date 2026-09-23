@@ -813,6 +813,15 @@
   .xv-item img{background:#0A1A33;}
   #xrayLightbox{z-index:97 !important;background:rgba(4,14,32,.86) !important;align-items:center;padding:12px;}
   .xl-box{width:min(1000px,100%);background:#0A1A33;border-radius:16px;overflow:hidden;box-shadow:0 30px 70px -20px rgba(0,0,0,.6);}
+  #bookViewerOverlay{z-index:97 !important;background:rgba(4,14,32,.86) !important;align-items:center;padding:12px;}
+  .bv-stage{min-height:50vh;max-height:80vh;background:#050F22;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .bv-stage iframe{width:100%;height:80vh;border:0;display:block;background:#fff;}
+  .bv-stage img{max-width:100%;max-height:80vh;object-fit:contain;display:block;}
+  .bv-ph{width:100%;min-height:50vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#fff;text-align:center;padding:30px;}
+  .bv-ph svg{width:64px;height:64px;}
+  .bv-ph-title{font-size:19px;font-weight:700;}
+  .bv-ph-author{font-size:13px;opacity:.85;margin-top:-6px;}
+  @media (max-width:640px){ .bv-stage iframe, .bv-stage img{height:70vh;} .bv-ph{min-height:40vh;} }
   .xl-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;color:#DCE8FA;}
   .xl-title{font-size:13px;font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .xl-btns{display:flex;align-items:center;gap:8px;flex:none;}
@@ -1356,6 +1365,7 @@
           <div class="inv-tools">
             <a class="btn btn-outline btn-sm kh" href="https://drive.google.com/drive/folders/1MT6NRXclClJFWOxfFQTsOjGnJYoL5g4o?usp=sharing" target="_blank" rel="noopener">🗄️ ឃ្លាំងសៀវភៅ Drive</a>
             <span class="inv-status kh" id="col-books-status"></span>
+            <span class="inv-status kh" id="bookFilesStatus"></span>
             <button type="button" class="btn btn-outline btn-sm kh" id="col-books-sync">🔄 Sync</button>
             <button type="button" class="btn btn-primary btn-sm kh" id="col-books-add">＋ បន្ថែមសៀវភៅ</button>
           </div>
@@ -1526,6 +1536,24 @@
 </div>
 
 <!-- X-Ray lightbox -->
+<!-- Book viewer: cover / read in-app, no leaving the app -->
+<div class="overlay hidden" id="bookViewerOverlay">
+  <div class="xl-box" style="width:min(880px,100%);">
+    <div class="xl-bar">
+      <div style="min-width:0;">
+        <div class="xl-title kh" id="bvTitle"></div>
+        <div class="kh" id="bvMeta" style="font-size:11.5px;color:#9DBAE3;margin-top:2px;"></div>
+      </div>
+      <div class="xl-btns">
+        <button type="button" class="btn btn-outline btn-sm kh" id="bvEdit">✎ កែសម្រួល</button>
+        <a id="bvOpen" class="btn btn-outline btn-sm kh hidden" target="_blank" rel="noopener">បើកក្នុង Drive</a>
+        <button type="button" class="x" id="bvClose" aria-label="បិទ" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">✕</button>
+      </div>
+    </div>
+    <div class="bv-stage" id="bvStage"></div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="xrayLightbox">
   <div class="xl-box">
     <div class="xl-bar">
@@ -2056,6 +2084,7 @@ document.getElementById('lockStudyBtn').addEventListener('click', ()=>{
   document.body.classList.add('lock-preview');
   showPage('study');
   COL_NAMES.forEach(n => colMaybeFetch(n));
+  bookFilesMaybeFetch();
 });
 
 document.getElementById('lockOrgBtn').addEventListener('click', ()=>{
@@ -5830,16 +5859,52 @@ function bookHTML(it){
       <div class="bk-ph" style="background:linear-gradient(155deg,${pal[0]},${pal[1]});">${TOOTH_MARK}
         <div><div class="bk-ph-title kh">${esc(it.title)}</div>${it.author ? `<div class="bk-ph-author kh">${esc(it.author)}</div>` : ''}</div>
       </div>${cover ? `<img class="bk-img" src="${esc(cover)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</div>`;
-  const link = colNormalizeUrl(it.link);
-  const open = colIsWeb(link)
-    ? `<a class="bk-open" href="${esc(link)}" target="_blank" rel="noopener" aria-label="បើក ${esc(it.title)}">${face}</a>`
-    : `<div class="bk-open" role="button" tabindex="0" data-act="edit" aria-label="កែ ${esc(it.title)}">${face}</div>`;
   return `<div class="bk" data-id="${esc(it.id)}">
-    ${open}
+    <div class="bk-open" role="button" tabindex="0" aria-label="មើលក្របសៀវភៅ ${esc(it.title)}">${face}</div>
     <button type="button" class="bk-edit" data-act="edit" title="កែសម្រួល" aria-label="កែសម្រួល">✎</button>
     <div class="bk-stand"></div>
     <div class="bk-cap"><div class="bk-title kh">${esc(it.title)}</div><div class="bk-author kh">${esc(it.author) || '&nbsp;'}</div></div>
   </div>`;
+}
+
+function driveFileId(link){
+  const m = String(link || '').match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=)([-\w]{20,})/i);
+  return m ? m[1] : '';
+}
+
+let bookViewerId = null;
+function openBookViewer(id){
+  const it = colFind('books', id); if(!it) return;
+  bookViewerId = id;
+  const fid = driveFileId(it.link);
+  const cover = it.cover || driveCover(it.link);
+  history.pushState({ modal: 'bookViewer' }, '', '#bookViewer');
+  document.getElementById('bvTitle').textContent = it.title;
+  document.getElementById('bvMeta').textContent = [it.author, it.category, it.year].filter(Boolean).join(' · ');
+  const stage = document.getElementById('bvStage');
+  if(fid){
+    stage.innerHTML = `<iframe src="https://drive.google.com/file/d/${esc(fid)}/preview" loading="lazy" allow="autoplay"></iframe>`;
+  }else if(cover){
+    stage.innerHTML = `<img src="${esc(cover)}" alt="" onerror="this.parentElement.innerHTML=window.__bvPlaceholder(${JSON.stringify(it.title)},${JSON.stringify(it.author||'')})">`;
+  }else{
+    stage.innerHTML = window.__bvPlaceholder(it.title, it.author || '');
+  }
+  const openLink = colNormalizeUrl(it.link);
+  const openBtn = document.getElementById('bvOpen');
+  if(colIsWeb(openLink)){ openBtn.href = openLink; openBtn.classList.remove('hidden'); }
+  else{ openBtn.classList.add('hidden'); }
+  document.getElementById('bookViewerOverlay').classList.remove('hidden');
+}
+window.__bvPlaceholder = function(title, author){
+  const pal = COVER_PALETTES[colHash(title) % COVER_PALETTES.length];
+  return `<div class="bv-ph" style="background:linear-gradient(155deg,${pal[0]},${pal[1]});">${TOOTH_MARK}
+    <div class="bv-ph-title kh">${esc(title)}</div>${author ? `<div class="bv-ph-author kh">${esc(author)}</div>` : ''}</div>`;
+};
+function closeBookViewer(){
+  document.getElementById('bookViewerOverlay').classList.add('hidden');
+  document.getElementById('bvStage').innerHTML = '';
+  if(window.location.hash === '#bookViewer') history.replaceState(null, null, window.location.pathname);
+  bookViewerId = null;
 }
 
 function renderBooks(){
@@ -6183,8 +6248,87 @@ function switchStudyTab(t, skipFetch){
   document.querySelectorAll('.lib-panel').forEach(p => { p.hidden = p.dataset.tab !== t; });
   try{ sessionStorage.setItem(STUDY_TAB_KEY, t); }catch(e){}
   colRender(t);
-  if(!skipFetch) colMaybeFetch(t);
+  if(!skipFetch){ colMaybeFetch(t); if(t === 'books') bookFilesMaybeFetch(); }
 }
+
+
+/* ==========================================================
+   BOOKS — auto-discovered straight from the shared Drive folder
+   (the folder is the source of truth for which books exist and
+   their cover; the "Books" sheet only stores optional metadata
+   the librarian adds — author, category, year, note — keyed by
+   the file's own Drive id)
+   ========================================================== */
+const BOOKS_FOLDER_ID = '1MT6NRXclClJFWOxfFQTsOjGnJYoL5g4o';
+const BOOK_FILES_KEY = 'kep_dental_book_files_v1';
+let bookFiles = [];
+let bookFilesFetchedAt = 0;
+let bookFilesFetching = false;
+
+function loadBookFiles(){
+  try{ const a = JSON.parse(localStorage.getItem(BOOK_FILES_KEY)); if(Array.isArray(a)) bookFiles = a; }catch(e){}
+}
+function saveBookFiles(){ try{ localStorage.setItem(BOOK_FILES_KEY, JSON.stringify(bookFiles)); }catch(e){} }
+
+/* "Diagnosis of salivary gland disorders_V2405A_Apr-09-2339-2025_1.pdf" -> "Diagnosis of salivary gland disorders" */
+function bookTitleFromFile(name){
+  let t = String(name || '').replace(/\.[a-z0-9]{2,5}$/i, '');
+  t = t.replace(/_V\d+[A-Za-z]?_[A-Za-z]{3}-\d{2}-\d{4}-\d{4}_\d+$/, '');
+  t = t.replace(/[_+]+/g, ' ').replace(/\s+/g, ' ').trim();
+  return t || name;
+}
+
+/* make sure every file currently in the Drive folder has a matching (auto-created if needed) Books row */
+function mergeBookFiles(){
+  let changed = false;
+  bookFiles.forEach(f=>{
+    let it = colFind('books', f.id);
+    if(!it){
+      it = { id: f.id, title: bookTitleFromFile(f.name), author: '', category: 'ផ្សេងៗ', link: f.url, cover: '', year: '', location: '', note: '', updated: new Date().toISOString() };
+      colData.books.push(it);
+      changed = true;
+      colPush('books', 'collectionUpsert', it);
+    }else if(it.link !== f.url){
+      it.link = f.url;
+      changed = true;
+    }
+  });
+  if(changed){ colSave('books'); renderBooks(); }
+}
+
+function setBookFilesStatus(text, tone, autoClear){
+  const el = document.getElementById('bookFilesStatus');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'inv-status kh' + (tone ? ' ' + tone : '');
+  clearTimeout(setBookFilesStatus._t);
+  if(autoClear) setBookFilesStatus._t = setTimeout(()=>{ el.textContent = ''; el.className = 'inv-status kh'; }, 3000);
+}
+
+async function fetchBookFiles(silent){
+  if(!webAppUrl || bookFilesFetching) return;
+  bookFilesFetching = true;
+  if(!silent) setBookFilesStatus('កំពុងទាញបញ្ជីសៀវភៅ...', '');
+  try{
+    const sep = webAppUrl.includes('?') ? '&' : '?';
+    const res = await fetch(`${webAppUrl}${sep}action=getBookFiles&folderId=${encodeURIComponent(BOOKS_FOLDER_ID)}&t=${Date.now()}`);
+    const json = await res.json();
+    if(!(json && json.status === 'success' && json.kind === 'books' && Array.isArray(json.data))){
+      setBookFilesStatus('⚠️ Apps Script មិនទាន់គាំទ្រ (សូមដាក់កូដថ្មីក្នុង Code.gs)', 'warn');
+      return;
+    }
+    bookFiles = json.data.map(f => ({ id: f.id || '', name: f.name || '', url: f.url || '', date: f.date || '' })).filter(f => f.id && f.name);
+    bookFilesFetchedAt = Date.now();
+    saveBookFiles();
+    mergeBookFiles();
+    setBookFilesStatus('✓ ទាញរួចរាល់', 'ok', true);
+  }catch(e){
+    if(!silent) setBookFilesStatus('⚠️ ទាញមិនបាន សូមពិនិត្យអ៊ីនធឺណិត', 'warn', true);
+  }finally{
+    bookFilesFetching = false;
+  }
+}
+function bookFilesMaybeFetch(){ if(Date.now() - bookFilesFetchedAt > COL_STALE_MS) fetchBookFiles(true); }
 
 (function initStudyLibrary(){
   COL_NAMES.forEach(n=>{
@@ -6193,19 +6337,37 @@ function switchStudyTab(t, skipFetch){
     document.getElementById('col-' + n + '-search').addEventListener('input', (e)=>{ colSearchVal[n] = e.target.value; colRender(n); });
     document.getElementById('col-' + n + '-filter').addEventListener('change', (e)=>{ colFilterVal[n] = e.target.value; colRender(n); });
     document.getElementById('col-' + n + '-add').addEventListener('click', ()=> colOpenForm(n, null));
-    document.getElementById('col-' + n + '-sync').addEventListener('click', ()=> colFetch(n, false));
+    document.getElementById('col-' + n + '-sync').addEventListener('click', ()=>{
+      colFetch(n, false);
+      if(n === 'books') fetchBookFiles(false);
+    });
   });
+  loadBookFiles();
+  mergeBookFiles();
 
   document.querySelectorAll('.lib-tab').forEach(b => b.addEventListener('click', ()=> switchStudyTab(b.dataset.tab)));
-  document.querySelector('.sb-item[data-page="study"]').addEventListener('click', ()=> COL_NAMES.forEach(n => colMaybeFetch(n)));
+  document.querySelector('.sb-item[data-page="study"]').addEventListener('click', ()=>{
+    COL_NAMES.forEach(n => colMaybeFetch(n));
+    bookFilesMaybeFetch();
+  });
 
-  // Books: edit pencil / cover without a link
+  // Books: cover -> in-app viewer, pencil -> edit metadata
   document.getElementById('col-books-view').addEventListener('click', (e)=>{
-    const t = e.target.closest('[data-act="edit"]'); if(!t) return;
-    const bk = t.closest('.bk'); if(bk) colOpenForm('books', bk.dataset.id);
+    const editBtn = e.target.closest('[data-act="edit"]');
+    if(editBtn){ const bk = editBtn.closest('.bk'); if(bk) colOpenForm('books', bk.dataset.id); return; }
+    const openEl = e.target.closest('.bk-open');
+    if(openEl){ const bk = openEl.closest('.bk'); if(bk) openBookViewer(bk.dataset.id); }
   });
   document.getElementById('col-books-view').addEventListener('keydown', (e)=>{
-    if((e.key === 'Enter' || e.key === ' ') && e.target.matches('.bk-open[data-act="edit"]')){ e.preventDefault(); colOpenForm('books', e.target.closest('.bk').dataset.id); }
+    if((e.key === 'Enter' || e.key === ' ') && e.target.matches('.bk-open')){ e.preventDefault(); openBookViewer(e.target.closest('.bk').dataset.id); }
+  });
+  document.getElementById('bvClose').addEventListener('click', closeBookViewer);
+  document.getElementById('bookViewerOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'bookViewerOverlay') closeBookViewer(); });
+  document.getElementById('bvEdit').addEventListener('click', ()=>{
+    const id = bookViewerId; closeBookViewer(); if(id) colOpenForm('books', id);
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && !document.getElementById('bookViewerOverlay').classList.contains('hidden')) closeBookViewer();
   });
 
   // Notes: title list -> reader
