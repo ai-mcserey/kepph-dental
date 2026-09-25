@@ -5321,6 +5321,10 @@ function deleteInvItem(id){
   });
 }
 
+function openInvEdit(id){
+  const it = findInvItem(id);
+  promptForPin('សូមបញ្ចូល PIN ដើម្បីកែសម្រួល · ' + (it ? it.name : 'សម្ភារៈ'), ()=> openInvForm(id));
+}
 function openInvForm(id){
   invEditingId = id || null;
   const it = id ? findInvItem(id) : null;
@@ -5407,12 +5411,15 @@ function saveInvForm(){
     const tr = e.target.closest('tr[data-id]'); if(!tr) return;
     const id = tr.dataset.id;
     const btn = e.target.closest('[data-act]');
-    if(!btn){ openInvForm(id); return; }
+    if(!btn){ openInvEdit(id); return; }
     const act = btn.dataset.act;
     if(act === 'inc') adjustInvQty(id, 1);
     else if(act === 'dec') adjustInvQty(id, -1);
-    else if(act === 'edit') openInvForm(id);
-    else if(act === 'del') deleteInvItem(id);
+    else if(act === 'edit') openInvEdit(id);
+    else if(act === 'del'){
+      const it = findInvItem(id);
+      promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + (it ? it.name : 'សម្ភារៈ'), ()=> deleteInvItem(id));
+    }
   });
 
   document.getElementById('closeInvForm').addEventListener('click', closeInvForm);
@@ -5791,7 +5798,7 @@ const COLS = {
       {k:'topic',   l:'ប្រធានបទ · Topic', t:'select', def:'ផ្សេងៗ (Other)', opts:[
         'កាយវិភាគសាស្ត្រ (Anatomy)', 'សរីរវិទ្យា (Physiology)', 'ជីវគីមី (Biochemistry)',
         'រោគសាស្ត្រ (Pathology)', 'ឱសថសាស្ត្រ (Pharmacology)', 'មីក្រូជីវសាស្ត្រ (Microbiology)',
-        'ទន្តសាស្ត្រទូទៅ (Dental Medicine)', 'ធ្មេញទូទៅ / ការព្យាបាលស្តារ (Operative Dentistry)',
+        'ធ្មេញទូទៅ / ការព្យាបាលស្តារ (Operative Dentistry)',
         'ព្យាបាលឫសធ្មេញ (Endodontics)', 'វះកាត់មាត់ និង ម៉ាស៊ីល (Oral & Maxillofacial Surgery)',
         'ជម្ងឺអញ្ចាញធ្មេញ (Periodontics)', 'ការធ្វើធ្មេញសិប្បនិម្មិត (Prosthodontics)',
         'ការតម្រង់ធ្មេញ (Orthodontics)', 'ធ្មេញកុមារ (Pediatric Dentistry)',
@@ -6651,10 +6658,14 @@ function studentPhotosMaybeFetch(){ if(Date.now() - studentPhotoFetchedAt > COL_
     studentPhotosMaybeFetch();
   });
 
-  // Books: cover -> in-app viewer, pencil -> edit metadata
+  // Books: cover -> in-app viewer, pencil -> edit metadata (PIN-gated)
+  const openBookEdit = (id)=>{
+    const it = colFind('books', id);
+    promptForPin('សូមបញ្ចូល PIN ដើម្បីកែសម្រួល · ' + (it ? it.title : 'សៀវភៅ'), ()=> colOpenForm('books', id));
+  };
   document.getElementById('col-books-view').addEventListener('click', (e)=>{
     const editBtn = e.target.closest('[data-act="edit"]');
-    if(editBtn){ const bk = editBtn.closest('.bk'); if(bk) colOpenForm('books', bk.dataset.id); return; }
+    if(editBtn){ const bk = editBtn.closest('.bk'); if(bk) openBookEdit(bk.dataset.id); return; }
     const openEl = e.target.closest('.bk-open');
     if(openEl){ const bk = openEl.closest('.bk'); if(bk) openBookViewer(bk.dataset.id); }
   });
@@ -6664,7 +6675,7 @@ function studentPhotosMaybeFetch(){ if(Date.now() - studentPhotoFetchedAt > COL_
   document.getElementById('bvClose').addEventListener('click', closeBookViewer);
   document.getElementById('bookViewerOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'bookViewerOverlay') closeBookViewer(); });
   document.getElementById('bvEdit').addEventListener('click', ()=>{
-    const id = bookViewerId; closeBookViewer(); if(id) colOpenForm('books', id);
+    const id = bookViewerId; closeBookViewer(); if(id) openBookEdit(id);
   });
   document.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape' && !document.getElementById('bookViewerOverlay').classList.contains('hidden')) closeBookViewer();
@@ -6678,7 +6689,11 @@ function studentPhotosMaybeFetch(){ if(Date.now() - studentPhotoFetchedAt > COL_
   document.getElementById('noteReader').addEventListener('click', (e)=>{ if(e.target.id === 'noteReader') closeNoteReader(); });
   document.getElementById('nrPrev').addEventListener('click', ()=> stepNote(-1));
   document.getElementById('nrNext').addEventListener('click', ()=> stepNote(1));
-  document.getElementById('nrEdit').addEventListener('click', ()=>{ const id = nrCurrent; closeNoteReader(); colOpenForm('notes', id, true); });
+  document.getElementById('nrEdit').addEventListener('click', ()=>{
+    const id = nrCurrent;
+    const it = colFind('notes', id);
+    promptForPin('សូមបញ្ចូល PIN ដើម្បីកែសម្រួល · ' + (it ? it.title : 'មេរៀន'), ()=>{ closeNoteReader(); colOpenForm('notes', id, true); });
+  });
 
   // Practitioners — editing an existing student is PIN-gated
   const openStudentEdit = (id)=>{
@@ -6702,7 +6717,14 @@ function studentPhotosMaybeFetch(){ if(Date.now() - studentPhotoFetchedAt > COL_
   document.getElementById('closeColForm').addEventListener('click', colCloseForm);
   document.getElementById('colCancelBtn').addEventListener('click', colCloseForm);
   document.getElementById('colSaveBtn').addEventListener('click', colSaveForm);
-  document.getElementById('colDeleteBtn').addEventListener('click', ()=>{ if(colEditing.id) colDelete(colEditing.n, colEditing.id); });
+  document.getElementById('colDeleteBtn').addEventListener('click', ()=>{
+    if(!colEditing.id) return;
+    const n = colEditing.n, id = colEditing.id;
+    if(n === 'students' || n === 'notes' || n === 'books'){ colDelete(n, id); return; }   // reaching this form already required a PIN
+    const it = colFind(n, id);
+    const label = it ? it[COLS[n].primary] : COLS[n].singular;
+    promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + label, ()=> colDelete(n, id));
+  });
   document.getElementById('colFormOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'colFormOverlay') colCloseForm(); });
   document.getElementById('colFormOverlay').addEventListener('keydown', (e)=>{
     if(e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.type !== 'file'){ e.preventDefault(); colSaveForm(); }
