@@ -5782,7 +5782,12 @@ const COLS = {
     fields: [
       {k:'title',    l:'ចំណងជើង · Title', t:'text', req:true, full:true},
       {k:'author',   l:'អ្នកនិពន្ធ · Author', t:'text'},
-      {k:'category', l:'ប្រភេទ (ធ្នើ) · Category', t:'text', def:'ផ្សេងៗ', list:['ធ្មេញទូទៅ','វះកាត់មាត់','ព្យាបាលឫសធ្មេញ','ធ្មេញកុមារ','វិទ្យុសាស្ត្រ','ថ្នាំ','ផ្សេងៗ']},
+      {k:'category', l:'ប្រភេទ (ធ្នើ) · Category', t:'select', def:'Other', opts:[
+        'Anatomy', 'Physiology', 'Biochemistry', 'Pathology', 'Pharmacology', 'Microbiology',
+        'Operative Dentistry', 'Endodontics', 'Oral & Maxillofacial Surgery', 'Periodontics',
+        'Prosthodontics', 'Orthodontics', 'Pediatric Dentistry', 'Oral Radiology',
+        'Oral Medicine & Diagnosis', 'Anesthesiology', 'Dental Public Health', 'Infection Control', 'Other'
+      ]},
       {k:'link',     l:'តំណភ្ជាប់ឃ្លាំងសៀវភៅ / Drive · Link', t:'text', full:true},
       {k:'cover',    l:'រូបក្រប · Cover', t:'image', shape:'cover', full:true, hint:'រូបបញ្ឈរ (ដូចក្របសៀវភៅ) ។ បើមិនដាក់ទេ ប្រព័ន្ធសម្គាល់ក្របពី Drive ឬបង្កើតក្របស្អាតឲ្យ'},
       {k:'year',     l:'ឆ្នាំបោះពុម្ព · Year', t:'text'},
