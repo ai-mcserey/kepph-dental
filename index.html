@@ -394,6 +394,25 @@
     font-family: 'IBM Plex Mono', monospace;
     font-weight: 600;
   }
+  .xray-item .xray-patient {
+    font-size: 11.5px;
+    color: var(--ink);
+    font-weight: 700;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .xray-item .xray-orphan {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--amber-dark);
+    background: var(--amber-soft);
+    border-radius: 5px;
+    padding: 0 5px;
+    margin-left: 4px;
+  }
+  .xray-item:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 
   .modal{background:var(--bg);border:1px solid var(--border);border-radius:18px;max-width:760px;width:100%;box-shadow:0 30px 70px -20px rgba(11,42,74,0.4);overflow:hidden;margin-bottom:40px;}
   .modal.narrow{max-width:480px;}
@@ -1445,8 +1464,7 @@
             </div>
             <select id="xraySort" class="inv-select kh" aria-label="តម្រៀប">
               <option value="latest">ថ្មីបំផុតមុន</option>
-              <option value="name">តាមឈ្មោះ</option>
-              <option value="count">រូបច្រើនបំផុត</option>
+              <option value="name">តាមឈ្មោះអ្នកជំងឺ</option>
             </select>
           </div>
           <div class="inv-tools">
@@ -1454,17 +1472,7 @@
             <button type="button" class="btn btn-outline btn-sm kh" id="xrayRefreshBtn">🔄 Refresh</button>
           </div>
         </div>
-        <div class="emr-notes-section">
-          <div class="emr-table-wrap">
-            <table class="emr-table">
-              <thead><tr>
-                <th class="kh">ឈ្មោះអ្នកជំងឺ</th><th class="kh">ភេទ · អាយុ</th><th class="kh">ទូរស័ព្ទ</th>
-                <th class="kh">ចំនួនរូប</th><th class="kh">X-Ray ចុងក្រោយ</th><th></th>
-              </tr></thead>
-              <tbody id="xrayBody"></tbody>
-            </table>
-          </div>
-        </div>
+        <div class="xray-gallery-grid" id="xrayFlatGrid"></div>
       </section>
 
       <!-- Organization Structure -->
@@ -1599,6 +1607,7 @@
     <div class="xl-bar">
       <div class="xl-title kh" id="xlTitle"></div>
       <div class="xl-btns">
+        <button type="button" class="btn btn-outline btn-sm kh hidden" id="xlRecord">👤 មើលកំណត់ត្រា</button>
         <a id="xlOpen" class="btn btn-outline btn-sm kh" target="_blank" rel="noopener">បើកក្នុង Drive</a>
         <button type="button" class="x" id="xlClose" aria-label="បិទ" style="width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:var(--surface);cursor:pointer;">✕</button>
       </div>
@@ -3684,6 +3693,7 @@ function openPatientRecord(name){
 
         <div class="emr-actions-bar">
           <button type="button" class="btn btn-primary btn-full kh" id="addVisitBtn">＋ កត់ត្រាព្យាបាលថ្មី (New Visit)</button>
+          <button type="button" class="btn btn-danger btn-full kh" id="examFormBtn">📋 ទម្រង់ពិនិត្យ (Exam Form)</button>
           <button type="button" class="btn btn-outline kh" onclick="openXrayGallery('${safeName}')">📷 មើល X-Ray</button>
           <button type="button" class="btn btn-outline kh" id="printPatientBtn">🖨 បោះពុម្ព</button>
           <button type="button" class="btn btn-danger btn-full kh" id="deletePatientBtn" onclick="deletePatient('${safeName}')">🗑 លុបអ្នកជំងឺនេះ</button>
@@ -3720,6 +3730,20 @@ function openPatientRecord(name){
 
   document.getElementById('addVisitBtn').addEventListener('click', ()=>{
     openForm(null, {name: latest.name, phone: realPhone, sex: realSex, age: realAge, type: realType});
+  });
+
+  document.getElementById('examFormBtn').addEventListener('click', ()=>{
+    openExamForm({
+      f_caseNo: latest.code || '',
+      f_name: latest.name || '',
+      f_age: realAge || '',
+      f_phone: realPhone || '',
+      f_entryDate: formatExamEntryDate(new Date()),
+      f_diagnosis: latest.diagnosis || '',
+      f_treatmentPlan: latest.planDo || '',
+      sexVal: (realSex || '').toUpperCase() === 'M' ? 'M' : ((realSex || '').toUpperCase() === 'F' ? 'F' : null),
+      progressRows: buildExamProgressRows(records)
+    });
   });
 
   document.getElementById('printPatientBtn').addEventListener('click', ()=>{
@@ -4829,7 +4853,7 @@ const PAGE_META = {
   patients:     { title: 'អ្នកជំងឺ',        sub: 'Patients' },
   appointments: { title: 'ការណាត់ជួប',      sub: 'Appointments' },
   inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
-  xray:         { title: 'បញ្ចីថតធ្មេញ', sub: 'X-ray patient list' },
+  xray:         { title: 'បញ្ចីថតធ្មេញ', sub: 'X-ray image gallery' },
   org:          { title: 'រចនាសម្ព័ន្ធ', sub: 'Organization structure' },
   study:        { title: 'មាតិកាសិក្សា', sub: 'Study library' }
 };
@@ -5485,6 +5509,17 @@ function buildXrayGroups(){
   return [...groups.values()];
 }
 
+function buildXrayFlatList(){
+  const groups = buildXrayGroups();
+  const items = [];
+  groups.forEach(g=>{
+    g.files.forEach(f=>{
+      items.push(Object.assign({}, f, { patientName: g.name, profile: g.profile }));
+    });
+  });
+  return items;
+}
+
 function renderXray(){
   const groups = buildXrayGroups();
   const now = new Date();
@@ -5500,44 +5535,33 @@ function renderXray(){
     kpiCard('amber', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', monthImgs, 'រូបក្នុងខែនេះ', {page:'xray'}).replace('data-goto="xray"', 'data-noop="1"') +
     kpiCard('coral', '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', todayImgs, 'រូបថ្ងៃនេះ', {page:'xray'}).replace('data-goto="xray"', 'data-noop="1"');
 
-  let list = groups;
+  let list = buildXrayFlatList();
   if(xraySearchTerm){
     const t = xrayNormKey(xraySearchTerm);
-    list = list.filter(g => xrayNormKey(g.name).includes(t));
+    list = list.filter(it => xrayNormKey(it.patientName).includes(t));
   }
   list = list.slice().sort((a,b)=>{
-    if(xraySort === 'name') return a.name.localeCompare(b.name);
-    if(xraySort === 'count') return b.files.length - a.files.length || (b.latest - a.latest);
-    return b.latest - a.latest;
+    if(xraySort === 'name') return a.patientName.localeCompare(b.patientName) || (xrayFileDate(b) - xrayFileDate(a));
+    return xrayFileDate(b) - xrayFileDate(a);
   });
+  xvFiles = list;   // the lightbox pages through exactly this filtered/sorted flat list
 
-  const body = document.getElementById('xrayBody');
+  const grid = document.getElementById('xrayFlatGrid');
   if(!list.length){
-    body.innerHTML = `<tr><td colspan="6" style="padding:0;"><div class="empty-state kh" style="border:none;">${
-      groups.length ? 'រកមិនឃើញអ្នកជំងឺដែលត្រូវនឹងការស្វែងរកទេ<br><span style="opacity:.7">No patients match this search</span>'
+    grid.innerHTML = `<div class="empty-state kh" style="grid-column:1/-1;">${
+      groups.length ? 'រកមិនឃើញរូបភាពត្រូវនឹងការស្វែងរកទេ<br><span style="opacity:.7">No images match this search</span>'
       : (xrayIndex.fetchedAt ? 'មិនទាន់មានឯកសារ X-Ray ក្នុង Drive ទេ<br><span style="opacity:.7">No X-ray files found</span>'
-                            : 'កំពុងរង់ចាំទិន្នន័យ X-Ray...<br><span style="opacity:.7">Press Refresh to load</span>')}</div></td></tr>`;
+                            : 'កំពុងរង់ចាំទិន្នន័យ X-Ray...<br><span style="opacity:.7">Press Refresh to load</span>')}</div>`;
     return;
   }
 
-  body.innerHTML = list.map(g=>{
-    let sexAge = '—', phone = '—';
-    if(g.profile){
-      const p = g.profile;
-      sexAge = (String(p.sex || '').toUpperCase() === 'M' ? 'ប្រុស' : 'ស្រី') + (p.age ? ' · ' + p.age + ' ឆ្នាំ' : '');
-      phone = formatPhoneDisplay(p.phone) || '—';
-    }
-    const d = g.latest;
-    const dStr = d.getTime() ? `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}` : '—';
-    return `<tr class="emr-tr" data-key="${encodeURIComponent(g.key)}" data-has="${g.profile ? 1 : 0}" tabindex="0">
-      <td data-label="ឈ្មោះអ្នកជំងឺ"><span class="xr-name kh">${esc(g.name)}</span>${g.profile ? '' : '<span class="xr-orphan kh">គ្មានកំណត់ត្រា</span>'}</td>
-      <td data-label="ភេទ · អាយុ" class="kh">${esc(sexAge)}</td>
-      <td data-label="ទូរស័ព្ទ" class="mono">${esc(phone)}</td>
-      <td data-label="ចំនួនរូប"><span class="inv-pill ok mono" style="margin-left:0;">${g.files.length} រូប</span></td>
-      <td data-label="X-Ray ចុងក្រោយ" class="mono">${dStr}</td>
-      <td class="xr-act"><button type="button" class="btn btn-outline btn-sm kh" data-act="record"${g.profile ? '' : ' disabled'}>កំណត់ត្រា</button></td>
-    </tr>`;
-  }).join('');
+  grid.innerHTML = list.map((f, i) => `<div class="xray-item" data-i="${i}" role="button" tabindex="0" aria-label="X-Ray · ${esc(f.patientName)}">
+      <img src="${esc(xrayThumb(f))}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">
+      <div class="xray-info">
+        <div class="xray-patient kh">${esc(f.patientName)}${f.profile ? '' : '<span class="xray-orphan kh">?</span>'}</div>
+        <div class="xray-date">${xrayDateLabel(f)}</div>
+      </div>
+    </div>`).join('');
 }
 
 /* ---------- Viewer: all X-ray images of one patient ---------- */
@@ -5548,37 +5572,6 @@ function xrayDateLabel(f){
   const d = xrayFileDate(f);
   if(!d.getTime()) return '—';
   return `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
-}
-
-function openXrayViewer(key){
-  const g = buildXrayGroups().find(x => x.key === key);
-  if(!g) return;
-  xvFiles = g.files;
-  history.pushState({ modal: 'xrayGallery' }, '', '#xrayGallery');
-  document.getElementById('xrayGalleryTitle').textContent = '📷 X-Ray៖ ' + g.name;
-  const body = document.getElementById('xrayGalleryBody');
-  body.innerHTML = `
-    <div class="xv-head">
-      <span class="kh" style="font-size:12.5px;color:var(--ink-soft);">រូប X-Ray សរុប <b class="mono">${g.files.length}</b> · ចុចលើរូបដើម្បីមើលធំ</span>
-      <button type="button" class="btn btn-primary btn-sm kh" id="xvUpload">＋ Upload រូបថ្មី</button>
-    </div>
-    <div class="xray-gallery-grid">${g.files.map((f,i)=>`
-      <div class="xray-item xv-item" role="button" tabindex="0" data-i="${i}">
-        <img src="${esc(xrayThumb(f))}" alt="X-Ray ${i+1}" loading="lazy" onerror="this.style.visibility='hidden'">
-        <div class="xray-info"><div class="xray-date">${xrayDateLabel(f)}</div></div>
-      </div>`).join('')}
-    </div>`;
-  body.querySelector('#xvUpload').addEventListener('click', ()=>{
-    document.getElementById('xrayGalleryOverlay').classList.add('hidden');
-    document.getElementById('f_name').value = g.name;
-    openXrayModal();
-  });
-  const open = (el)=> openXrayLightbox(Number(el.dataset.i));
-  body.querySelectorAll('.xv-item').forEach(el=>{
-    el.addEventListener('click', ()=> open(el));
-    el.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); open(el); } });
-  });
-  document.getElementById('xrayGalleryOverlay').classList.remove('hidden');
 }
 
 function openXrayLightbox(i){
@@ -5592,10 +5585,18 @@ function openXrayLightbox(i){
   img.style.visibility = 'visible';
   img.onerror = ()=>{ img.style.visibility = 'hidden'; note.hidden = false; };
   img.src = id ? `https://drive.google.com/thumbnail?id=${id}&sz=w1600` : '';
-  document.getElementById('xlTitle').textContent = `${xvIndex + 1} / ${xvFiles.length} · ${xrayDateLabel(f)}`;
+  document.getElementById('xlTitle').textContent = `${esc(f.patientName || '')} · ${xvIndex + 1} / ${xvFiles.length} · ${xrayDateLabel(f)}`;
   document.getElementById('xlOpen').href = f.url || '#';
   document.getElementById('xlPrev').disabled = xvIndex === 0;
   document.getElementById('xlNext').disabled = xvIndex === xvFiles.length - 1;
+  const recordBtn = document.getElementById('xlRecord');
+  if(f.profile && f.patientName){
+    recordBtn.classList.remove('hidden');
+    recordBtn.onclick = ()=>{ closeXrayLightbox(); openPatientRecord(f.patientName); };
+  }else{
+    recordBtn.classList.add('hidden');
+    recordBtn.onclick = null;
+  }
   document.getElementById('xrayLightbox').classList.remove('hidden');
 }
 function closeXrayLightbox(){
@@ -5667,21 +5668,14 @@ function maybeFetchXray(){
   document.getElementById('xraySort').addEventListener('change', (e)=>{ xraySort = e.target.value; renderXray(); });
   document.getElementById('xrayRefreshBtn').addEventListener('click', ()=> fetchXrayIndex(false));
 
-  const tbody = document.getElementById('xrayBody');
-  tbody.addEventListener('click', (e)=>{
-    const tr = e.target.closest('tr[data-key]'); if(!tr) return;
-    const key = decodeURIComponent(tr.dataset.key);
-    if(e.target.closest('[data-act="record"]')){
-      const g = buildXrayGroups().find(x => x.key === key);
-      if(g && g.profile) openPatientRecord(g.name);
-      return;
-    }
-    openXrayViewer(key);
+  const flatGrid = document.getElementById('xrayFlatGrid');
+  flatGrid.addEventListener('click', (e)=>{
+    const item = e.target.closest('.xray-item[data-i]'); if(!item) return;
+    openXrayLightbox(Number(item.dataset.i));
   });
-  tbody.addEventListener('keydown', (e)=>{
-    if((e.key === 'Enter' || e.key === ' ') && e.target.matches('tr[data-key]')){
-      e.preventDefault(); openXrayViewer(decodeURIComponent(e.target.dataset.key));
-    }
+  flatGrid.addEventListener('keydown', (e)=>{
+    const item = e.target.closest('.xray-item[data-i]'); if(!item) return;
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); openXrayLightbox(Number(item.dataset.i)); }
   });
 
   // lightbox controls
@@ -6752,6 +6746,722 @@ function saveOrgForm(){
 
   document.querySelector('.sb-item[data-page="org"]').addEventListener('click', ()=>{ renderOrgChart(); orgMaybeFetch(); });
 })();
+
+
+/* ==========================================================
+   EXAM FORM — opens the printable Dental Examination Form in a new
+   tab, pre-filled with whatever patient data is already on hand
+   ========================================================== */
+const EXAM_FORM_HTML = `<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ទម្រង់ការពិនិត្យជំងឺមាត់ធ្មេញ · Dental Examination Form</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+Khmer:wght@400;500;600;700&family=Noto+Serif+Khmer:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EAF6F3; --surface:#FFFFFF; --surface-2:#F3FBF9;
+    --border:#D9EDE8; --border-soft:#E8F4F1;
+    --ink:#0B3B36; --ink-soft:#4C6864; --ink-dim:#8AA6A2;
+    --primary:#0E9384; --primary-dark:#0B7267; --primary-soft:#D8F3EE; --primary-softer:#EDFAF7;
+    --amber:#E8A33D; --amber-soft:#FBEBD2; --amber-dark:#8A5C16;
+    --coral:#E4574C; --coral-soft:#FBE1DE; --coral-dark:#A43227;
+    --form-cyan:#17C3C3; --form-cyan-dark:#0E9E9E;
+    --shadow:0 12px 30px -16px rgba(11,59,54,0.18);
+    --shadow-sm:0 4px 14px -8px rgba(11,59,54,0.16);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:
+      radial-gradient(1000px 460px at 8% -8%, rgba(14,147,132,0.08), transparent 55%),
+      radial-gradient(800px 400px at 105% 0%, rgba(232,163,61,0.07), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:'Inter','Noto Sans Khmer',sans-serif;
+    min-height:100vh;
+    padding-bottom:60px;
+  }
+  .kh{font-family:'Noto Sans Khmer','Inter',sans-serif;}
+  .khs{font-family:'Noto Serif Khmer','Sora',sans-serif;}
+  h1,h2,h3{font-family:'Sora','Noto Sans Khmer',sans-serif;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  button{font-family:inherit;}
+  .hidden{display:none !important;}
+
+  /* ---------- app toolbar (not printed) ---------- */
+  .topbar{background:var(--surface);border-bottom:1px solid var(--border-soft);padding:14px 22px;position:sticky;top:0;z-index:40;box-shadow:0 2px 16px -10px rgba(11,59,54,0.12);}
+  .topbar-inner{max-width:920px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+  .brand{display:flex;align-items:center;gap:11px;}
+  .brand-mark{width:40px;height:40px;border-radius:12px;background:linear-gradient(155deg, var(--primary), var(--primary-dark));display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:var(--shadow-sm);}
+  .brand-mark svg{width:22px;height:22px;}
+  .brand-text h1{margin:0;font-size:16px;color:var(--ink);font-weight:700;letter-spacing:-0.01em;}
+  .brand-text .sub{font-size:11px;color:var(--ink-dim);margin-top:1px;font-weight:500;}
+  .topbar-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+  .sync-badge{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:6px 10px;border-radius:8px;font-weight:600;border:1px solid;}
+
+  .btn{border:none;cursor:pointer;font-weight:600;font-size:13px;padding:9px 14px;border-radius:9px;display:inline-flex;align-items:center;gap:7px;transition:all .13s ease;}
+  .btn:active{transform:translateY(1px);}
+  .btn-primary{background:var(--primary);color:#fff;box-shadow:0 6px 16px -6px rgba(14,147,132,0.5);}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-outline{background:var(--surface);color:var(--ink);border:1.5px solid var(--border);}
+  .btn-outline:hover{border-color:var(--primary);background:var(--primary-softer);}
+  .btn-ghost{background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--border-soft);}
+  .btn-ghost:hover{color:var(--ink);}
+  .btn-danger{background:var(--coral-soft);color:var(--coral-dark);}
+  .btn-danger:hover{background:#f7cdc8;}
+  .btn-sm{padding:6px 11px;font-size:12px;border-radius:7px;}
+
+  .wrap{max-width:920px;margin:0 auto;padding:24px 18px 0;}
+
+  /* ---------- form sheet (this is what prints) ---------- */
+  .form-sheet{background:var(--surface);border:1px solid var(--border-soft);border-radius:14px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:24px;}
+  .fs-letterhead{display:flex;align-items:center;gap:14px;padding:20px 24px 14px;border-bottom:2px solid var(--ink);}
+  .fs-logo{width:56px;height:56px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #fff, #E5F0EE);border:2px solid var(--coral);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+  .fs-logo svg{width:30px;height:30px;}
+  .fs-title{text-align:center;flex:1;}
+  .fs-title .l1{font-size:16px;font-weight:700;color:var(--ink);}
+  .fs-title .l2{font-size:13px;color:var(--ink-soft);margin-top:2px;}
+  .fs-idbox{width:56px;}
+  .fs-metarow{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;padding:11px 24px;border-bottom:1.5px solid var(--ink);font-size:12px;background:var(--surface-2);align-items:center;}
+  .fs-metarow .mlabel{color:var(--ink-soft);}
+  .fs-metarow input{border:none;border-bottom:1px dotted var(--border);background:transparent;font-family:inherit;font-size:12.5px;color:var(--ink);padding:2px 4px;width:100%;}
+  .fs-metarow input:focus{outline:none;border-bottom-color:var(--primary);}
+  .fs-formtitle{text-align:center;padding:12px 20px 4px;}
+  .fs-formtitle .khs{font-size:17px;font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:5px;}
+
+  .fs-section-bar{background:linear-gradient(180deg, var(--form-cyan), var(--form-cyan-dark));color:#04312F;font-weight:700;text-align:center;padding:8px 12px;font-size:13.5px;letter-spacing:.02em;margin:14px 0 0;}
+
+  .fs-body{padding:0 24px 20px;}
+  .fs-grid{display:grid;gap:8px 18px;padding:10px 0;border-bottom:1px solid var(--border-soft);}
+  .fs-grid:last-child{border-bottom:none;}
+  .g2{grid-template-columns:1fr 1fr;}
+  .g3{grid-template-columns:1fr 1fr 1fr;}
+  .fld{display:flex;align-items:baseline;gap:6px;font-size:12.5px;}
+  .fld .lbl{color:var(--ink-soft);white-space:nowrap;flex-shrink:0;}
+  .fld input[type=text], .fld input[type=number]{border:none;border-bottom:1px dotted var(--border);background:transparent;font-family:inherit;font-size:12.5px;color:var(--ink);padding:2px 4px;width:100%;min-width:0;}
+  .fld input:focus{outline:none;border-bottom-color:var(--primary);}
+  .sex-pills, .fs-pill-row{display:flex;gap:6px;flex-wrap:wrap;}
+  .fs-pill{font-size:11.5px;padding:4px 11px;border-radius:999px;border:1.5px solid var(--border);cursor:pointer;color:var(--ink-soft);background:var(--surface);user-select:none;}
+  .fs-pill.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:600;}
+
+  .fs-check-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;padding:12px 0;}
+  .fs-check{display:flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;user-select:none;}
+  .fs-check input{width:15px;height:15px;accent-color:var(--primary);flex-shrink:0;}
+  .fs-check .extra{border:none;border-bottom:1px dotted var(--border);background:transparent;font-family:inherit;font-size:11.5px;color:var(--ink);width:90px;margin-left:4px;}
+  .fs-check .extra:focus{outline:none;border-bottom-color:var(--primary);}
+
+  /* tooth chart */
+  .fs-chart-wrap{padding:14px 0;}
+  .fs-chart-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-soft);margin-bottom:10px;}
+  .fs-chart-legend span{display:inline-flex;align-items:center;gap:5px;}
+  .legend-dot{width:11px;height:11px;border-radius:3px;display:inline-block;}
+  .arch2{display:flex;justify-content:center;align-items:flex-end;gap:2.5px;margin-bottom:3px;flex-wrap:nowrap;}
+  .arch2.lower{align-items:flex-start;margin-top:3px;margin-bottom:0;}
+  .qgap{width:9px;}
+  .tcell{
+    width:22px;height:30px;border-radius:6px 6px 8px 8px;border:1px solid var(--border);
+    background:var(--surface-2);display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:8.5px;color:var(--ink-dim);font-weight:600;
+    cursor:pointer;transition:all .12s ease;flex-shrink:0;
+  }
+  .tcell.primary-tooth{width:19px;height:26px;font-size:8px;}
+  .tcell:hover{border-color:var(--primary);}
+  .tcell.st-caries{background:var(--coral);border-color:var(--coral-dark);color:#fff;}
+  .tcell.st-missing{background:var(--ink-dim);border-color:var(--ink-soft);color:#fff;text-decoration:line-through;}
+  .tcell.st-prosthetic{background:var(--amber);border-color:var(--amber-dark);color:#fff;}
+  .arch-lbl{font-size:8.5px;text-align:center;color:var(--ink-dim);letter-spacing:.08em;text-transform:uppercase;margin:2px 0;font-weight:600;}
+  .fs-chart-hint{font-size:10.5px;color:var(--ink-dim);text-align:center;margin-top:6px;}
+  .fs-count-row{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:12px;font-size:12px;}
+  .fs-count-chip{background:var(--surface-2);border:1px solid var(--border-soft);border-radius:9px;padding:6px 12px;display:flex;align-items:center;gap:7px;}
+  .fs-count-chip .n{font-family:'IBM Plex Mono',monospace;font-weight:700;font-size:14px;}
+
+  .fs-textarea{width:100%;border:1px solid var(--border);border-radius:8px;background:var(--surface-2);font-family:inherit;font-size:12.5px;color:var(--ink);padding:8px 10px;min-height:44px;resize:vertical;margin-top:4px;}
+  .fs-textarea:focus{outline:none;border-color:var(--primary);}
+  .fs-label{font-size:11.5px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;}
+
+  /* progress table */
+  .fs-progress-table{width:100%;border-collapse:collapse;margin-top:8px;}
+  .fs-progress-table th{background:var(--primary-softer);font-size:10.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--primary-dark);padding:7px 8px;border:1px solid var(--border-soft);text-align:left;}
+  .fs-progress-table td{border:1px solid var(--border-soft);padding:4px 6px;vertical-align:top;}
+  .fs-progress-table input, .fs-progress-table textarea{border:none;background:transparent;font-family:inherit;font-size:12px;color:var(--ink);width:100%;padding:3px;resize:vertical;}
+  .fs-progress-table input:focus, .fs-progress-table textarea:focus{outline:none;background:var(--primary-softer);}
+  .fs-progress-table .rm-row-btn{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:13px;}
+  .fs-progress-table .rm-row-btn:hover{color:var(--coral);}
+  .fs-add-row{margin-top:8px;}
+
+  .fs-signrow{display:flex;justify-content:space-between;gap:16px;margin-top:16px;font-size:12px;flex-wrap:wrap;}
+  .fs-signrow .fld{flex:1;min-width:180px;}
+
+  /* ---------- history / overlay ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(11,42,39,0.35);backdrop-filter:blur(2px);z-index:60;display:flex;align-items:flex-start;justify-content:center;padding:30px 16px;overflow-y:auto;}
+  .modal{background:var(--bg);border:1px solid var(--border);border-radius:18px;max-width:520px;width:100%;box-shadow:0 30px 70px -20px rgba(11,59,54,0.4);overflow:hidden;margin-bottom:40px;}
+  .modal-head{background:var(--surface);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border-soft);}
+  .modal-head h2{margin:0;font-size:15px;color:var(--ink);}
+  .modal-head .x{cursor:pointer;background:var(--surface-2);border:1px solid var(--border-soft);color:var(--ink);width:28px;height:28px;border-radius:8px;font-size:14px;}
+  .modal-body{padding:20px;max-height:78vh;overflow-y:auto;}
+  .history-row{display:flex;justify-content:space-between;align-items:center;padding:11px 12px;background:var(--surface);border:1px solid var(--border-soft);border-radius:10px;margin-bottom:8px;cursor:pointer;}
+  .history-row:hover{border-color:var(--primary);}
+  .history-row .hname{font-size:13px;font-weight:600;color:var(--ink);}
+  .history-row .hmeta{font-size:11px;color:var(--ink-dim);margin-top:2px;}
+  .history-row .hdel{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:14px;padding:4px;}
+  .history-row .hdel:hover{color:var(--coral);}
+  .empty-state{text-align:center;padding:34px 20px;color:var(--ink-dim);background:var(--surface);border:1.5px dashed var(--border);border-radius:12px;font-size:12.5px;}
+  .storage-warn{margin:14px 18px 0;padding:10px 12px;background:var(--coral-soft);border:1px solid #f0b8b1;border-radius:9px;color:var(--coral-dark);font-size:12px;max-width:920px;margin-left:auto;margin-right:auto;}
+
+  @media print{
+    @page{ size: A4 portrait; margin: 10mm; }
+    body{background:none;}
+    .topbar, .storage-warn, .fs-toolbar-note{display:none !important;}
+    .wrap{max-width:100%;padding:0;}
+    .form-sheet{box-shadow:none;border:none;border-radius:0;margin:0;}
+    .fs-add-row, .rm-row-btn{display:none !important;}
+    input, textarea{border-color:transparent !important;}
+  }
+  @media (max-width:640px){
+    .fs-grid.g2, .fs-grid.g3{grid-template-columns:1fr;}
+    .fs-check-grid{grid-template-columns:1fr;}
+    .tcell{width:17px;height:24px;font-size:7px;}
+    .tcell.primary-tooth{width:15px;height:21px;font-size:6.5px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3c-2.2 0-3.6 1.2-4.8 1.2-1.5 0-2.7-1-3.9-.4C1.7 4.5 1 6.3 1 8.5c0 3.2 1.3 5.6 2 8.3.5 2 .8 4.2 2.3 4.2 1.6 0 1.7-2.4 2.2-4.6.4-1.7.9-3 1.9-3s1.5 1.3 1.9 3c.5 2.2.6 4.6 2.2 4.6 1.5 0 1.8-2.2 2.3-4.2.7-2.7 2-5.1 2-8.3 0-2.2-.7-4-2.3-4.7-1.2-.6-2.4.4-3.9.4C15.6 4.2 14.2 3 12 3z" fill="#fff"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1 class="kh">ទម្រង់ពិនិត្យជំងឺមាត់ធ្មេញ</h1>
+        <div class="sub">Kep Provincial Hospital · Dental Examination Form</div>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="sync-badge" id="storageBadge">○</span>
+      <button class="btn btn-ghost btn-sm" id="historyBtn">📁 ប្រវត្តិ History</button>
+      <button class="btn btn-outline btn-sm" id="newFormBtn">＋ ថ្មី New</button>
+      <button class="btn btn-primary btn-sm" id="saveFormBtn">💾 រក្សាទុក Save</button>
+      <button class="btn btn-primary btn-sm" id="printFormBtn">🖨 Print</button>
+    </div>
+  </div>
+</div>
+
+<div class="storage-warn hidden" id="storageWarnBanner"></div>
+
+<div class="wrap">
+  <div class="form-sheet" id="formSheet">
+
+    <!-- Letterhead -->
+    <div class="fs-letterhead">
+      <div class="fs-logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3c-2.2 0-3.6 1.2-4.8 1.2-1.5 0-2.7-1-3.9-.4C1.7 4.5 1 6.3 1 8.5c0 3.2 1.3 5.6 2 8.3.5 2 .8 4.2 2.3 4.2 1.6 0 1.7-2.4 2.2-4.6.4-1.7.9-3 1.9-3s1.5 1.3 1.9 3c.5 2.2.6 4.6 2.2 4.6 1.5 0 1.8-2.2 2.3-4.2.7-2.7 2-5.1 2-8.3 0-2.2-.7-4-2.3-4.7-1.2-.6-2.4.4-3.9.4C15.6 4.2 14.2 3 12 3z" fill="#E4574C"/></svg>
+      </div>
+      <div class="fs-title">
+        <div class="l1 kh">ព្រះរាជាណាចក្រកម្ពុជា</div>
+        <div class="l2 kh">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+      </div>
+      <div class="fs-idbox"></div>
+    </div>
+    <div class="fs-metarow">
+      <div class="mlabel kh">មន្ទីរពេទ្យបង្អែកខេត្តកែប</div>
+      <div class="mlabel kh">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</div>
+      <div style="display:flex;align-items:center;gap:6px;white-space:nowrap;">
+        <span class="mlabel kh">លេខជំងឺ:</span>
+        <input type="text" id="f_caseNo" style="width:90px;">
+      </div>
+    </div>
+    <div class="fs-formtitle"><span class="khs">ទម្រង់ការពិនិត្យជំងឺមាត់ធ្មេញ</span></div>
+
+    <!-- PATIENT INFORMATION -->
+    <div class="fs-section-bar kh">ព័ត៌មានអ្នកជំងឺ · PATIENT INFORMATION</div>
+    <div class="fs-body">
+      <div class="fs-grid g2">
+        <div class="fld kh"><span class="lbl">ឈ្មោះអ្នកជំងឺ Name:</span><input type="text" id="f_name"></div>
+        <div class="fld"><span class="lbl kh">ភេទ Sex:</span>
+          <div class="sex-pills" id="sexPills">
+            <div class="fs-pill" data-v="M">ប្រុស M</div>
+            <div class="fs-pill" data-v="F">ស្រី F</div>
+          </div>
+          <span class="lbl kh" style="margin-left:10px;">អាយុ Age:</span><input type="text" id="f_age" style="max-width:60px;">
+        </div>
+      </div>
+      <div class="fs-grid g3">
+        <div class="fld kh"><span class="lbl">ទូរស័ព្ទ Phone:</span><input type="text" id="f_phone"></div>
+        <div class="fld kh"><span class="lbl">ភូមិ Village:</span><input type="text" id="f_village"></div>
+        <div class="fld kh"><span class="lbl">ឃុំ/សង្កាត់:</span><input type="text" id="f_commune"></div>
+      </div>
+      <div class="fs-grid g3">
+        <div class="fld kh"><span class="lbl">ស្រុក/ក្រុង:</span><input type="text" id="f_district"></div>
+        <div class="fld kh"><span class="lbl">ខេត្ត Province:</span><input type="text" id="f_province"></div>
+        <div class="fld kh"><span class="lbl">ថ្ងៃ/ខែ/ឆ្នាំ ម៉ោងចូល:</span><input type="text" id="f_entryDate" placeholder="dd/mm/yyyy hh:mm"></div>
+      </div>
+    </div>
+
+    <!-- MEDICAL HISTORY -->
+    <div class="fs-section-bar kh">ប្រវត្តិវេជ្ជសាស្ត្រ · MEDICAL HISTORY</div>
+    <div class="fs-body">
+      <div class="fs-grid g3">
+        <div class="fld"><span class="lbl kh">សម្ពាធឈាម BP:</span><input type="text" id="f_bp" placeholder="120/80"></div>
+        <div class="fld"><span class="lbl">Pulse:</span><input type="text" id="f_pulse"></div>
+        <div class="fld"><span class="lbl">SPO2:</span><input type="text" id="f_spo2"></div>
+      </div>
+      <div class="fs-grid g2">
+        <div class="fld"><span class="lbl">Temperature:</span><input type="text" id="f_temp"></div>
+        <div></div>
+      </div>
+      <div class="fs-check-grid" id="medHistLeft"></div>
+    </div>
+
+    <!-- ORAL EXAMINATION -->
+    <div class="fs-section-bar kh">ការពិនិត្យមាត់ធ្មេញ · ORAL EXAMINATION</div>
+    <div class="fs-body">
+      <div class="fs-chart-wrap">
+        <div class="fs-chart-legend">
+          <span><span class="legend-dot" style="background:var(--surface-2);border:1px solid var(--border);"></span>ធម្មតា Normal</span>
+          <span><span class="legend-dot" style="background:var(--coral);"></span>ដង្កូវស៊ី Caries</span>
+          <span><span class="legend-dot" style="background:var(--ink-dim);"></span>បាត់ Missing</span>
+          <span><span class="legend-dot" style="background:var(--amber);"></span>ដាក់ Prosthetic</span>
+        </div>
+        <div class="arch-lbl">Upper · លើ</div>
+        <div class="arch2" id="upperChart"></div>
+        <div class="arch2 lower" id="lowerChart"></div>
+        <div class="arch-lbl">Lower · ក្រោម</div>
+        <div class="fs-chart-hint kh">ចុចលើធ្មេញម្តងៗ ដើម្បីប្តូរស្ថានភាព (ធម្មតា → ដង្កូវស៊ី → បាត់ → ដាក់) · Click a tooth to cycle its status</div>
+        <div class="fs-count-row">
+          <div class="fs-count-chip">ធ្មេញដង្កូវស៊ី Caries: <span class="n" id="cariesCount" style="color:var(--coral-dark);">0</span></div>
+          <div class="fs-count-chip">ធ្មេញបាត់ Missing: <span class="n" id="missingCount" style="color:var(--ink-soft);">0</span></div>
+          <div class="fs-count-chip">ធ្មេញដាក់ Prosthetic: <span class="n" id="prostheticCount" style="color:var(--amber-dark);">0</span></div>
+        </div>
+      </div>
+
+      <div class="fs-grid" style="border-top:1px solid var(--border-soft);padding-top:12px;">
+        <div class="fs-label kh">មូលហេតុចម្បងដែលមកពិនិត្យ · Chief Complaint</div>
+        <textarea class="fs-textarea kh" id="f_complaint"></textarea>
+      </div>
+
+      <div class="fs-grid g2">
+        <div class="fld"><span class="lbl kh">អនាម័យមាត់-ធ្មេញ Oral hygiene:</span></div>
+        <div class="fs-pill-row" id="hygienePills">
+          <div class="fs-pill kh" data-v="Poor">Poor ខ្សោយ</div>
+          <div class="fs-pill kh" data-v="Fair">Fair មធ្យម</div>
+          <div class="fs-pill kh" data-v="Good">Good ល្អ</div>
+        </div>
+      </div>
+      <div class="fs-grid g2">
+        <div class="fld"><span class="lbl kh">អញ្ចាញធ្មេញ Gingiva:</span></div>
+        <div class="fs-pill-row" id="gingivaPills">
+          <div class="fs-pill kh" data-v="good">ល្អ Good</div>
+          <div class="fs-pill kh" data-v="inflamed">រលាកអញ្ចាញ Gingivitis</div>
+          <div class="fs-pill kh" data-v="calculus">កំបោរច្រើន Heavy calculus</div>
+        </div>
+      </div>
+
+      <div class="fs-grid g2">
+        <div class="fld kh"><span class="lbl">ធ្មេញដាក់ Prosthetics #:</span><input type="text" id="f_prostheticsNum"></div>
+        <div class="fld">
+          <span class="lbl kh">X-Ray:</span>
+          <div class="fs-pill-row" id="xrayPills">
+            <div class="fs-pill kh" data-v="none">គ្មាន None</div>
+            <div class="fs-pill" data-v="periapical">Periapical</div>
+            <div class="fs-pill" data-v="panoramic">Panoramic</div>
+            <div class="fs-pill" data-v="cbct">CBCT</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fs-grid">
+        <div class="fs-label kh">រោគវិនិច្ឆ័យ · Diagnosis</div>
+        <textarea class="fs-textarea kh" id="f_diagnosis"></textarea>
+      </div>
+      <div class="fs-grid">
+        <div class="fs-label kh">គម្រោងការព្យាបាល · Treatment Plans</div>
+        <textarea class="fs-textarea kh" id="f_treatmentPlan"></textarea>
+      </div>
+      <div class="fs-grid">
+        <div class="fs-label kh">ពេទ្យពិនិត្យប្រឹក្សា · Consultation</div>
+        <textarea class="fs-textarea kh" id="f_consultation" style="min-height:32px;"></textarea>
+      </div>
+      <div class="fs-signrow">
+        <div class="fld kh"><span class="lbl">ហត្ថលេខា Signature:</span><input type="text" id="f_signature"></div>
+        <div class="fld kh"><span class="lbl">ថ្ងៃខែឆ្នាំ Date:</span><input type="text" id="f_consultDate" placeholder="dd/mm/yyyy"></div>
+      </div>
+    </div>
+
+    <!-- TREATMENTS & PROGRESS NOTES -->
+    <div class="fs-section-bar kh">ការព្យាបាល និង កំណត់ត្រាដំណើរការ · TREATMENTS &amp; PROGRESS NOTES</div>
+    <div class="fs-body">
+      <table class="fs-progress-table">
+        <thead>
+          <tr>
+            <th style="width:14%;">Date</th>
+            <th style="width:12%;">Teeth #</th>
+            <th>Treatments / Progress Notes</th>
+            <th style="width:16%;">Others (Signature)</th>
+            <th style="width:24px;"></th>
+          </tr>
+        </thead>
+        <tbody id="progressRows"></tbody>
+      </table>
+      <button class="btn btn-outline btn-sm fs-add-row" id="addProgressRowBtn">＋ បន្ថែមជួរ Add row</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- History modal -->
+<div class="overlay hidden" id="historyOverlay">
+  <div class="modal">
+    <div class="modal-head"><h2 class="kh">ប្រវត្តិទម្រង់ · Saved Forms</h2><button class="x" id="closeHistory">✕</button></div>
+    <div class="modal-body" id="historyList"></div>
+  </div>
+</div>
+
+<script>
+// ============================= constants =============================
+const PRIMARY_UR = ["55","54","53","52","51"];
+const PERM_UR = ["18","17","16","15","14","13","12","11"];
+const PERM_UL = ["21","22","23","24","25","26","27","28"];
+const PRIMARY_UL = ["61","62","63","64","65"];
+const PRIMARY_LR = ["85","84","83","82","81"];
+const PERM_LR = ["48","47","46","45","44","43","42","41"];
+const PERM_LL = ["31","32","33","34","35","36","37","38"];
+const PRIMARY_LL = ["71","72","73","74","75"];
+const UPPER_ROW = [].concat(PRIMARY_UR, PERM_UR, PERM_UL, PRIMARY_UL);
+const LOWER_ROW = [].concat(PRIMARY_LR, PERM_LR, PERM_LL, PRIMARY_LL);
+const PRIMARY_SET = new Set([].concat(PRIMARY_UR, PRIMARY_UL, PRIMARY_LR, PRIMARY_LL));
+const STATE_CYCLE = ['normal','caries','missing','prosthetic'];
+const MED_HISTORY_ITEMS = [
+  {id:'heart', kh:'ជំងឺបេះដូង (Heart Disease)'},
+  {id:'bp', kh:'សម្ពាធឈាមខ្ពស់/ទាប (Hypertension/Hypotension)'},
+  {id:'diabetes', kh:'ជំងឺទឹកនោមផ្អែម (Diabetes)'},
+  {id:'hepatitis', kh:'ជំងឺថ្លើម/រលាកថ្លើម (Hepatitis)'},
+  {id:'asthma', kh:'ជំងឺហឺត/ផ្លូវដង្ហើម (Asthma/Respiratory issues)'},
+  {id:'hiv', kh:'ជំងឺអេដស៍ (HIV)'},
+  {id:'tb', kh:'ជំងឺរបេង (TB)'},
+  {id:'bleeding', kh:'ប្រវត្តិឈាមមិនកក (Bleeding disorders)', extra:true},
+  {id:'allergy', kh:'ធ្លាប់មានប្រតិកម្មជាមួយថ្នាំ (Drug Allergies)', extra:true},
+  {id:'pregnant', kh:'សម្រាប់ស្ត្រី៖ កំពុងមានផ្ទៃពោះ ខែទី', extra:true},
+];
+
+// ============================= state =============================
+let toothStates = {};
+let sexVal = null, hygieneVal = null, gingivaVal = null, xrayVal = 'none';
+let medHistChecks = {};
+let progressRows = [];
+let currentFormId = null;
+let savedForms = [];
+
+// ============================= storage (portable) =============================
+let storageMode = 'unknown';
+function detectStorageMode(){
+  if(typeof window.storage !== 'undefined' && window.storage && window.storage.get){ storageMode='claude'; return; }
+  try{ const k='__probe__'; localStorage.setItem(k,'1'); localStorage.removeItem(k); storageMode='local'; return; }
+  catch(e){ storageMode='memory'; }
+}
+const memoryStore = {};
+async function storageGet(key){
+  if(storageMode==='claude'){ try{ return await window.storage.get(key, false); }catch(e){ return null; } }
+  if(storageMode==='local'){ try{ const v=localStorage.getItem('dentalexam_'+key); return v===null? null : {key, value:v, shared:false}; }catch(e){ return null; } }
+  return (key in memoryStore)? {key, value:memoryStore[key], shared:false} : null;
+}
+async function storageSet(key, value){
+  if(storageMode==='claude'){ try{ return await window.storage.set(key, value, false); }catch(e){ return null; } }
+  if(storageMode==='local'){ try{ localStorage.setItem('dentalexam_'+key, value); return {key, value, shared:false}; }catch(e){ return null; } }
+  memoryStore[key] = value;
+  return {key, value, shared:false};
+}
+function updateStorageBadge(){
+  const el = document.getElementById('storageBadge');
+  if(storageMode==='memory'){ el.textContent='⚠'; el.style.color='var(--coral-dark)'; el.style.borderColor='#f0b8b1'; el.style.background='var(--coral-soft)'; el.title='Storage unavailable — data will not persist'; }
+  else{ el.textContent='●'; el.style.color='var(--primary-dark)'; el.style.borderColor='var(--primary-soft)'; el.style.background='var(--primary-softer)'; el.title='Storage OK'; }
+}
+function showStorageWarningIfNeeded(){
+  if(storageMode==='memory'){
+    const b = document.getElementById('storageWarnBanner');
+    b.classList.remove('hidden');
+    b.innerHTML = '⚠ ការផ្ទុកទិន្នន័យមិនដំណើរការក្នុងកន្លែងបង្កប់នេះទេ (ទិន្នន័យនឹងបាត់នៅពេលបិទទំព័រ)។ សូម Print ឬ Save ជាប្រចាំ។<br><span style="opacity:.8">Storage is not available here — data will be lost on refresh. Print or save often.</span>';
+  }
+}
+async function persistSavedForms(){ try{ await storageSet('exam_forms', JSON.stringify(savedForms)); }catch(e){} }
+async function loadSavedForms(){
+  try{ const r = await storageGet('exam_forms'); if(r && r.value) savedForms = JSON.parse(r.value); }catch(e){ savedForms=[]; }
+}
+
+// ============================= tooth chart =============================
+function nextState(s){ const i = STATE_CYCLE.indexOf(s||'normal'); return STATE_CYCLE[(i+1)%STATE_CYCLE.length]; }
+function renderChart(){
+  const up = document.getElementById('upperChart'), lo = document.getElementById('lowerChart');
+  up.innerHTML=''; lo.innerHTML='';
+  const build = function(row, container){
+    row.forEach(function(t,idx){
+      if(idx===5 || idx===13 || idx===21){ const g=document.createElement('div'); g.className='qgap'; container.appendChild(g); }
+      const el = document.createElement('div');
+      const st = toothStates[t] || 'normal';
+      el.className = 'tcell'+(PRIMARY_SET.has(t)?' primary-tooth':'')+(st!=='normal'? ' st-'+st:'');
+      el.textContent = t;
+      el.dataset.tooth = t;
+      el.title = 'Tooth '+t+' — click to change status';
+      el.addEventListener('click', function(){
+        toothStates[t] = nextState(toothStates[t]);
+        if(toothStates[t]==='normal') delete toothStates[t];
+        renderChart();
+        updateToothCounts();
+      });
+      container.appendChild(el);
+    });
+  };
+  build(UPPER_ROW, up);
+  build(LOWER_ROW, lo);
+}
+function updateToothCounts(){
+  const vals = Object.values(toothStates);
+  document.getElementById('cariesCount').textContent = vals.filter(function(v){return v==='caries';}).length;
+  document.getElementById('missingCount').textContent = vals.filter(function(v){return v==='missing';}).length;
+  document.getElementById('prostheticCount').textContent = vals.filter(function(v){return v==='prosthetic';}).length;
+}
+
+// ============================= pill groups =============================
+function wirePills(containerId, onSelect, multi){
+  const container = document.getElementById(containerId);
+  container.querySelectorAll('.fs-pill').forEach(function(el){
+    el.addEventListener('click', function(){
+      if(multi){
+        el.classList.toggle('on');
+      } else {
+        container.querySelectorAll('.fs-pill').forEach(function(p){ p.classList.remove('on'); });
+        el.classList.add('on');
+      }
+      onSelect(el.dataset.v, el.classList.contains('on'));
+    });
+  });
+}
+wirePills('sexPills', function(v){ sexVal = v; });
+wirePills('hygienePills', function(v){ hygieneVal = v; });
+wirePills('gingivaPills', function(v){ gingivaVal = v; });
+wirePills('xrayPills', function(v){ xrayVal = v; });
+
+// ============================= medical history checkboxes =============================
+function renderMedHistory(){
+  document.getElementById('medHistLeft').innerHTML = MED_HISTORY_ITEMS.map(function(it){
+    return '<label class="fs-check kh"><input type="checkbox" data-id="'+it.id+'"><span>'+it.kh+'</span>'+
+      (it.extra? '<input type="text" class="extra" data-extra="'+it.id+'" placeholder="...">':'')+'</label>';
+  }).join('');
+  document.querySelectorAll('#medHistLeft input[type=checkbox]').forEach(function(cb){
+    cb.addEventListener('change', function(){ medHistChecks[cb.dataset.id] = cb.checked; });
+  });
+}
+
+// ============================= progress notes table =============================
+function addProgressRow(data){
+  const row = data || {date:'', teeth:'', notes:'', signature:''};
+  progressRows.push(row);
+  renderProgressRows();
+}
+function renderProgressRows(){
+  const tbody = document.getElementById('progressRows');
+  if(progressRows.length===0){
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-dim);font-size:12px;padding:14px;">មិនទាន់មានជួរទេ / No rows yet — click "Add row"</td></tr>';
+    return;
+  }
+  tbody.innerHTML = progressRows.map(function(r,i){
+    return '<tr>'+
+      '<td><input type="text" data-i="'+i+'" data-f="date" value="'+(r.date||'')+'" placeholder="dd/mm/yyyy"></td>'+
+      '<td><input type="text" data-i="'+i+'" data-f="teeth" value="'+(r.teeth||'')+'" class="mono"></td>'+
+      '<td><textarea data-i="'+i+'" data-f="notes" rows="1" class="kh">'+(r.notes||'')+'</textarea></td>'+
+      '<td><input type="text" data-i="'+i+'" data-f="signature" value="'+(r.signature||'')+'"></td>'+
+      '<td><button class="rm-row-btn" data-i="'+i+'">✕</button></td>'+
+    '</tr>';
+  }).join('');
+  tbody.querySelectorAll('input, textarea').forEach(function(inp){
+    inp.addEventListener('input', function(e){
+      const i = parseInt(e.target.dataset.i), f = e.target.dataset.f;
+      progressRows[i][f] = e.target.value;
+    });
+  });
+  tbody.querySelectorAll('.rm-row-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ progressRows.splice(parseInt(btn.dataset.i),1); renderProgressRows(); });
+  });
+}
+document.getElementById('addProgressRowBtn').addEventListener('click', function(){ addProgressRow(); });
+
+// ============================= collect / apply form data =============================
+const TEXT_FIELD_IDS = ['f_caseNo','f_name','f_age','f_phone','f_village','f_commune','f_district','f_province','f_entryDate',
+  'f_bp','f_pulse','f_spo2','f_temp','f_complaint','f_prostheticsNum','f_diagnosis','f_treatmentPlan','f_consultation','f_signature','f_consultDate'];
+
+function collectFormData(){
+  const data = {};
+  TEXT_FIELD_IDS.forEach(function(id){ data[id] = document.getElementById(id).value; });
+  data.sexVal = sexVal;
+  data.hygieneVal = hygieneVal;
+  data.gingivaVal = gingivaVal;
+  data.xrayVal = xrayVal;
+  data.toothStates = Object.assign({}, toothStates);
+  data.medHistChecks = Object.assign({}, medHistChecks);
+  const medExtras = {};
+  document.querySelectorAll('#medHistLeft .extra').forEach(function(inp){ medExtras[inp.dataset.extra] = inp.value; });
+  data.medHistExtras = medExtras;
+  data.progressRows = progressRows.map(function(r){ return Object.assign({}, r); });
+  data.savedAt = new Date().toISOString();
+  return data;
+}
+function applyFormData(data){
+  TEXT_FIELD_IDS.forEach(function(id){ if(document.getElementById(id)) document.getElementById(id).value = data[id]||''; });
+  sexVal = data.sexVal || null;
+  hygieneVal = data.hygieneVal || null;
+  gingivaVal = data.gingivaVal || null;
+  xrayVal = data.xrayVal || 'none';
+  toothStates = Object.assign({}, data.toothStates||{});
+  medHistChecks = Object.assign({}, data.medHistChecks||{});
+  progressRows = (data.progressRows||[]).map(function(r){ return Object.assign({}, r); });
+
+  document.querySelectorAll('#sexPills .fs-pill').forEach(function(el){ el.classList.toggle('on', el.dataset.v===sexVal); });
+  document.querySelectorAll('#hygienePills .fs-pill').forEach(function(el){ el.classList.toggle('on', el.dataset.v===hygieneVal); });
+  document.querySelectorAll('#gingivaPills .fs-pill').forEach(function(el){ el.classList.toggle('on', el.dataset.v===gingivaVal); });
+  document.querySelectorAll('#xrayPills .fs-pill').forEach(function(el){ el.classList.toggle('on', el.dataset.v===xrayVal); });
+  document.querySelectorAll('#medHistLeft input[type=checkbox]').forEach(function(cb){ cb.checked = !!medHistChecks[cb.dataset.id]; });
+  document.querySelectorAll('#medHistLeft .extra').forEach(function(inp){ inp.value = (data.medHistExtras && data.medHistExtras[inp.dataset.extra])||''; });
+
+  renderChart();
+  updateToothCounts();
+  renderProgressRows();
+}
+function resetForm(){
+  TEXT_FIELD_IDS.forEach(function(id){ document.getElementById(id).value=''; });
+  sexVal=null; hygieneVal=null; gingivaVal=null; xrayVal='none'; toothStates={}; medHistChecks={}; progressRows=[];
+  document.querySelectorAll('.fs-pill').forEach(function(el){ el.classList.remove('on'); });
+  document.querySelectorAll('#xrayPills .fs-pill[data-v="none"]').forEach(function(el){ el.classList.add('on'); });
+  document.querySelectorAll('#medHistLeft input[type=checkbox]').forEach(function(cb){ cb.checked=false; });
+  document.querySelectorAll('#medHistLeft .extra').forEach(function(inp){ inp.value=''; });
+  currentFormId = null;
+  renderChart();
+  updateToothCounts();
+  renderProgressRows();
+}
+
+// ============================= save / history =============================
+async function saveForm(){
+  const data = collectFormData();
+  if(!data.f_name.trim()){ alert('សូមបញ្ចូលឈ្មោះអ្នកជំងឺ / Please enter a patient name before saving'); return; }
+  if(currentFormId){
+    const idx = savedForms.findIndex(function(f){ return f.id===currentFormId; });
+    if(idx>=0) savedForms[idx] = Object.assign({}, data, {id:currentFormId});
+    else { data.id = currentFormId; savedForms.push(data); }
+  } else {
+    data.id = 'form_'+Date.now();
+    currentFormId = data.id;
+    savedForms.push(data);
+  }
+  await persistSavedForms();
+  alert('បានរក្សាទុក! Saved.');
+}
+function renderHistory(){
+  const list = document.getElementById('historyList');
+  if(savedForms.length===0){ list.innerHTML = '<div class="empty-state kh">មិនទាន់មានទម្រង់ដែលបានរក្សាទុកទេ<br><span style="opacity:.7">No saved forms yet</span></div>'; return; }
+  const sorted = savedForms.slice().sort(function(a,b){ return new Date(b.savedAt||0)-new Date(a.savedAt||0); });
+  list.innerHTML = sorted.map(function(f){
+    return '<div class="history-row" data-id="'+f.id+'">'+
+      '<div><div class="hname kh">'+(f.f_name||'(no name)')+'</div>'+
+      '<div class="hmeta">'+(f.f_caseNo? '#'+f.f_caseNo+' · ':'')+new Date(f.savedAt).toLocaleString()+'</div></div>'+
+      '<button class="hdel" data-id="'+f.id+'">🗑</button></div>';
+  }).join('');
+  list.querySelectorAll('.history-row').forEach(function(el){
+    el.addEventListener('click', function(e){
+      if(e.target.closest('.hdel')) return;
+      const f = savedForms.find(function(x){ return x.id===el.dataset.id; });
+      if(f){ applyFormData(f); currentFormId = f.id; document.getElementById('historyOverlay').classList.add('hidden'); }
+    });
+  });
+  list.querySelectorAll('.hdel').forEach(function(btn){
+    btn.addEventListener('click', async function(e){
+      e.stopPropagation();
+      if(!confirm('លុបទម្រង់នេះ? Delete this saved form?')) return;
+      savedForms = savedForms.filter(function(x){ return x.id!==btn.dataset.id; });
+      await persistSavedForms();
+      renderHistory();
+    });
+  });
+}
+
+// ============================= wiring =============================
+document.getElementById('newFormBtn').addEventListener('click', function(){
+  if(confirm('ចាប់ផ្តើមទម្រង់ថ្មី? ទិន្នន័យបច្ចុប្បន្នមិនទាន់រក្សាទុកនឹងបាត់។ Start a new form? Unsaved changes will be lost.')) resetForm();
+});
+document.getElementById('saveFormBtn').addEventListener('click', saveForm);
+document.getElementById('printFormBtn').addEventListener('click', function(){ window.print(); });
+document.getElementById('historyBtn').addEventListener('click', function(){ renderHistory(); document.getElementById('historyOverlay').classList.remove('hidden'); });
+document.getElementById('closeHistory').addEventListener('click', function(){ document.getElementById('historyOverlay').classList.add('hidden'); });
+document.getElementById('historyOverlay').addEventListener('click', function(e){ if(e.target.id==='historyOverlay') document.getElementById('historyOverlay').classList.add('hidden'); });
+
+document.querySelectorAll('#xrayPills .fs-pill[data-v="none"]').forEach(function(el){ el.classList.add('on'); });
+
+renderMedHistory();
+renderChart();
+updateToothCounts();
+addProgressRow();
+detectStorageMode();
+updateStorageBadge();
+showStorageWarningIfNeeded();
+loadSavedForms();
+<\/script>
+</body>
+</html>
+`;
+
+function formatExamEntryDate(d){
+  const p2 = n => String(n).padStart(2, '0');
+  return `${p2(d.getDate())}/${p2(d.getMonth() + 1)}/${d.getFullYear()} ${p2(d.getHours())}:${p2(d.getMinutes())}`;
+}
+function formatExamDateOnly(d){
+  const p2 = n => String(n).padStart(2, '0');
+  return `${p2(d.getDate())}/${p2(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
+/* pull one row per past visit for the exam form's own "Treatments / Progress Notes" table */
+function buildExamProgressRows(records){
+  const sorted = [...records].sort((a, b) => (parseAnyDate(a.timestamp) || 0) - (parseAnyDate(b.timestamp) || 0));
+  return sorted.map(r => {
+    const d = parseAnyDate(r.timestamp);
+    const parts = [];
+    if(r.treatment) parts.push(r.treatment);
+    if(r.diagnosis) parts.push(r.diagnosis);
+    if(r.doing) parts.push('DO: ' + r.doing);
+    if(r.medication) parts.push('Rx: ' + r.medication);
+    return {
+      date: d ? formatExamDateOnly(d) : '',
+      teeth: r.teeth || '',
+      notes: parts.join(' — '),
+      signature: ''
+    };
+  });
+}
+
+function openExamForm(prefill){
+  const payload = JSON.stringify(prefill).replace(/</g, '\\u003c');
+  const injected = `
+<script>
+(function(){
+  var PREFILL = ${payload};
+  function apply(){ if(typeof applyFormData === 'function') applyFormData(PREFILL); }
+  apply();
+})();
+<\/script>
+</body>`;
+  const html = EXAM_FORM_HTML.replace('</body>', injected);
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const win = window.open(url, '_blank');
+  if(!win){
+    showConfirm('កម្មវិធីរុករករារាំង Pop-up ។ សូមអនុញ្ញាត pop-up សម្រាប់គេហទំព័រនេះ ហើយសាកល្បងម្តងទៀត។', ()=>{});
+  }
+  setTimeout(()=> URL.revokeObjectURL(url), 120000);
+}
 
 // ចាប់ផ្តើមដំណើរការ
 populateAllSelectDropdowns();
