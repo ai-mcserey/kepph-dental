@@ -936,6 +936,9 @@
   @media (hover:none){ .bk-edit{opacity:.95;} }
 
   /* ---------- lessons ---------- */
+  .nt-group-head{display:flex;align-items:center;gap:10px;margin:22px 0 10px;font-size:15px;font-weight:700;color:var(--ink);}
+  .nt-group-head:first-child{margin-top:2px;}
+  .nt-group-head .mono{font-size:11px;font-weight:700;color:var(--primary-dark);background:var(--primary-soft);padding:2px 9px;border-radius:999px;}
   .nt-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
   .nt-card{position:relative;display:flex;flex-direction:column;gap:6px;padding:16px 18px 14px 22px;cursor:pointer;overflow:hidden;
     background:var(--surface);border:1px solid var(--border-soft);border-radius:16px;box-shadow:var(--shadow-sm);
@@ -971,20 +974,20 @@
   .nr-pager .btn[disabled]{opacity:.35;cursor:default;}
 
   /* ---------- practitioners ---------- */
-  .st-list{overflow:hidden;background:var(--surface);border:1px solid var(--border-soft);border-radius:18px;box-shadow:var(--shadow-sm);}
-  .st-head,.st-row{display:grid;grid-template-columns:70px minmax(0,2fr) minmax(0,1.1fr) minmax(0,.9fr) minmax(0,.9fr) 78px;gap:12px;align-items:center;padding:12px 18px;}
-  .st-head{background:var(--surface-2);border-bottom:1px solid var(--border);font-size:11.5px;font-weight:700;color:var(--ink-dim);}
-  .st-row{border-bottom:1px solid var(--border-soft);cursor:pointer;transition:background .12s ease;}
-  .st-row:last-child{border-bottom:none;}
-  .st-row:hover{background:var(--primary-softer);}
-  .st-row:focus-visible{outline:2px solid var(--amber);outline-offset:-2px;}
-  .st-avatar{width:54px;height:54px;border-radius:16px;object-fit:cover;display:flex;align-items:center;justify-content:center;
-    font-family:'Noto Serif Khmer',Georgia,serif;font-size:20px;font-weight:700;color:#fff;box-shadow:0 3px 8px -3px rgba(11,42,74,.45);}
-  .st-name{font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.4;}
-  .st-sub{margin-top:2px;font-size:11.5px;color:var(--ink-dim);line-height:1.4;}
-  .st-cell{font-size:13px;color:var(--ink);min-width:0;}
-  .st-cell .lbl{display:none;}
-  .st-act{text-align:right;white-space:nowrap;}
+  .st-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:14px;}
+  .st-row{position:relative;background:var(--surface);border:1px solid var(--border-soft);border-radius:16px;overflow:hidden;
+    box-shadow:var(--shadow-sm);cursor:pointer;display:flex;flex-direction:column;transition:border-color .12s ease;}
+  .st-row:hover{border-color:var(--primary);}
+  .st-row:focus-visible{outline:2px solid var(--amber);outline-offset:2px;}
+  .st-photo{width:100%;aspect-ratio:1/1;background:var(--primary-soft);overflow:hidden;}
+  .st-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;}
+  .st-photo-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    font-family:'Noto Serif Khmer',Georgia,serif;font-size:44px;font-weight:700;color:#fff;}
+  .st-card-body{padding:11px 12px 13px;}
+  .st-name{font-size:14px;font-weight:700;color:var(--ink);line-height:1.35;}
+  .st-note{margin-top:7px;font-size:11.5px;color:var(--ink-soft);line-height:1.5;max-height:4.5em;overflow:hidden;}
+  .st-act{position:absolute;top:8px;right:8px;}
+  .st-act .inv-btn{width:28px;height:28px;background:rgba(255,255,255,.92);}
 
   /* ---------- form: image field ---------- */
   .col-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
@@ -1008,13 +1011,7 @@
     .nr-sheet{padding:20px 20px 24px;border-radius:16px;}
     .nr-title{font-size:23px;}
     .nr-body{font-size:15.5px;}
-    .st-head{display:none;}
-    .st-row{grid-template-columns:58px minmax(0,1fr) auto;grid-template-areas:"av name act" "av phone act" "av dates dates";row-gap:4px;padding:12px 14px;}
-    .st-row .st-avatar{grid-area:av;align-self:start;}
-    .st-row .c-name{grid-area:name;} .st-row .c-phone{grid-area:phone;} .st-row .c-act{grid-area:act;}
-    .st-row .c-start,.st-row .c-end{grid-area:dates;}
-    .st-row .c-end{display:none;}
-    .st-row .c-start .lbl{display:inline;color:var(--ink-dim);}
+    .st-list{grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;}
     .col-grid{grid-template-columns:1fr;}
   }
   @media (prefers-reduced-motion:reduce){ .bk-cover{transition:none;} .bk:hover .bk-cover{transform:none;} }
@@ -1117,7 +1114,7 @@
     <button class="btn btn-primary btn-block kh" id="appLockBtn">ចូលប្រើប្រាស់ · Unlock</button>
     <div class="lock-sep kh">ឬ</div>
     <button type="button" class="btn btn-outline btn-block kh" id="lockStudyBtn">📚 មាតិកាសិក្សា · Study Library</button>
-    <p class="lock-hint kh">សិស្សកម្មសិក្សាអាចចូលអាននិងទាញយកបាន</p>
+    <p class="lock-hint kh">សិស្សអាចចូលអាននិងទាញយកបាន</p>
     <button type="button" class="btn btn-outline btn-block kh" id="lockOrgBtn" style="margin-top:10px;">🏢 រចនាសម្ព័ន្ធ · Organization</button>
     <p class="lock-hint kh">© 2026 MCSEREY. All rights Reserved</p>
   </div>
@@ -1445,6 +1442,7 @@
           </div>
           <div class="inv-tools">
             <span class="inv-status kh" id="col-students-status"></span>
+            <span class="inv-status kh" id="studentPhotoStatus"></span>
             <button type="button" class="btn btn-outline btn-sm kh" id="col-students-sync">🔄 Sync</button>
             <button type="button" class="btn btn-primary btn-sm kh" id="col-students-add">＋ បន្ថែមសិស្ស</button>
           </div>
@@ -2135,6 +2133,7 @@ document.getElementById('lockStudyBtn').addEventListener('click', ()=>{
   COL_NAMES.forEach(n => colMaybeFetch(n));
   bookFilesMaybeFetch();
   galleryMaybeFetch();
+  studentPhotosMaybeFetch();
 });
 
 document.getElementById('lockOrgBtn').addEventListener('click', ()=>{
@@ -5789,7 +5788,17 @@ const COLS = {
     sheet: 'Notes', singular: 'មេរៀន', primary: 'title', filterKey: 'topic', filterAll: 'ប្រធានបទទាំងអស់',
     fields: [
       {k:'title',   l:'ចំណងជើងមេរៀន · Title', t:'text', req:true, full:true},
-      {k:'topic',   l:'ប្រធានបទ · Topic', t:'text', def:'ផ្សេងៗ', list:['ធ្មេញទូទៅ','វះកាត់មាត់','ព្យាបាលឫសធ្មេញ','ធ្មេញកុមារ','វិទ្យុសាស្ត្រ','ការត្រួតពិនិត្យការឆ្លង','ផ្សេងៗ']},
+      {k:'topic',   l:'ប្រធានបទ · Topic', t:'select', def:'ផ្សេងៗ (Other)', opts:[
+        'កាយវិភាគសាស្ត្រ (Anatomy)', 'សរីរវិទ្យា (Physiology)', 'ជីវគីមី (Biochemistry)',
+        'រោគសាស្ត្រ (Pathology)', 'ឱសថសាស្ត្រ (Pharmacology)', 'មីក្រូជីវសាស្ត្រ (Microbiology)',
+        'ទន្តសាស្ត្រទូទៅ (Dental Medicine)', 'ធ្មេញទូទៅ / ការព្យាបាលស្តារ (Operative Dentistry)',
+        'ព្យាបាលឫសធ្មេញ (Endodontics)', 'វះកាត់មាត់ និង ម៉ាស៊ីល (Oral & Maxillofacial Surgery)',
+        'ជម្ងឺអញ្ចាញធ្មេញ (Periodontics)', 'ការធ្វើធ្មេញសិប្បនិម្មិត (Prosthodontics)',
+        'ការតម្រង់ធ្មេញ (Orthodontics)', 'ធ្មេញកុមារ (Pediatric Dentistry)',
+        'វិទ្យុសាស្ត្រមាត់ធ្មេញ (Oral Radiology)', 'រោគវិនិច្ឆ័យ/វេជ្ជសាស្ត្រមាត់ (Oral Medicine & Diagnosis)',
+        'ការប្រើថ្នាំសន្លប់ (Anesthesiology)', 'សុខភាពសាធារណៈធ្មេញ (Dental Public Health)',
+        'ការត្រួតពិនិត្យការឆ្លង (Infection Control)', 'ផ្សេងៗ (Other)'
+      ]},
       {k:'date',    l:'ថ្ងៃខែ · Date', t:'date', defToday:true},
       {k:'author',  l:'អ្នកសរសេរ / អ្នកបង្រៀន · Author', t:'text'},
       {k:'source',  l:'សៀវភៅយោង · Reference book', t:'text'},
@@ -5803,7 +5812,7 @@ const COLS = {
     sheet: 'Students', singular: 'សិស្ស', primary: 'name', filterKey: 'status', filterAll: 'ស្ថានភាពទាំងអស់',
     filterPreset: Object.values(STUDENT_STATUS),
     fields: [
-      {k:'photo',      l:'រូបថត · Photo', t:'image', shape:'photo', full:true, hint:'រូបថតមុខ (កាត់ជាការ៉េដោយស្វ័យប្រវត្តិ)'},
+      {k:'photo',      l:'រូបថត · Photo', t:'image', shape:'photo', full:true, driveUpload:true, hint:'រូបថតមុខ — នឹងផ្ទុកឡើង Drive ដោយស្វ័យប្រវត្តិ តាមឈ្មោះសិស្ស (កាត់ជាការ៉េ)'},
       {k:'name',       l:'ឈ្មោះសិស្ស · Name', t:'text', req:true, full:true},
       {k:'sex',        l:'ភេទ · Sex', t:'select', opts:['ស្រី','ប្រុស'], def:'ស្រី'},
       {k:'phone',      l:'ទូរស័ព្ទ · Phone', t:'text'},
@@ -5822,6 +5831,7 @@ const COL_NAMES = Object.keys(COLS);
 const colData = {}, colDeleted = {}, colFilterVal = {}, colSearchVal = {}, colFetching = {}, colFetchedAt = {};
 COL_NAMES.forEach(n => { colData[n] = []; colDeleted[n] = new Set(); colFilterVal[n] = ''; colSearchVal[n] = ''; colFetching[n] = false; colFetchedAt[n] = 0; });
 let colEditing = { n: null, id: null, fromReader: false };
+let colPendingUpload = {};
 let studyTab = 'books';
 let nrCurrent = null, nrOrder = [];
 const COL_STALE_MS = 60 * 1000;
@@ -5955,21 +5965,28 @@ function renderBooks(){
 }
 
 /* ---------- Notes: titles -> full reader ---------- */
+function noteCardHTML(it){
+  const accent = TOPIC_COLORS[colHash(it.topic) % TOPIC_COLORS.length];
+  const snip = it.content ? esc(it.content.replace(/[#*\-]+\s/g, '').replace(/\s+/g, ' ').slice(0, 160)) : '';
+  return `<article class="nt-card" tabindex="0" data-id="${esc(it.id)}" style="--accent:${accent};">
+    <div class="nt-top"><span class="nt-topic kh">${esc(it.topic) || '—'}</span><span class="nt-date mono">${colDate(it.date)}</span></div>
+    <h3 class="nt-title">${esc(it.title)}</h3>
+    ${snip ? `<p class="nt-snip kh">${snip}</p>` : ''}
+    ${it.author ? `<div class="nt-foot kh">✍ ${esc(it.author)}</div>` : ''}
+  </article>`;
+}
 function renderNotes(){
   const rows = colFilteredRows('notes');
-  nrOrder = rows.map(r => r.id);
   const host = document.getElementById('col-notes-view');
-  if(!rows.length){ host.innerHTML = colEmpty(colData.notes.length); return; }
-  host.innerHTML = '<div class="nt-list">' + rows.map(it => {
-    const accent = TOPIC_COLORS[colHash(it.topic) % TOPIC_COLORS.length];
-    const snip = it.content ? esc(it.content.replace(/[#*\-]+\s/g, '').replace(/\s+/g, ' ').slice(0, 160)) : '';
-    return `<article class="nt-card" tabindex="0" data-id="${esc(it.id)}" style="--accent:${accent};">
-      <div class="nt-top"><span class="nt-topic kh">${esc(it.topic) || '—'}</span><span class="nt-date mono">${colDate(it.date)}</span></div>
-      <h3 class="nt-title">${esc(it.title)}</h3>
-      ${snip ? `<p class="nt-snip kh">${snip}</p>` : ''}
-      ${it.author ? `<div class="nt-foot kh">✍ ${esc(it.author)}</div>` : ''}
-    </article>`;
-  }).join('') + '</div>';
+  if(!rows.length){ nrOrder = []; host.innerHTML = colEmpty(colData.notes.length); return; }
+  const groups = new Map();
+  rows.forEach(it => { const k = it.topic || 'ផ្សេងៗ'; if(!groups.has(k)) groups.set(k, []); groups.get(k).push(it); });
+  const topics = [...groups.keys()].sort((a, b) => a.localeCompare(b));
+  nrOrder = topics.flatMap(t => groups.get(t).map(it => it.id));
+  host.innerHTML = topics.map(t =>
+    `<div class="nt-group-head kh">${esc(t)}<span class="mono">${groups.get(t).length}</span></div>
+     <div class="nt-list">${groups.get(t).map(noteCardHTML).join('')}</div>`
+  ).join('');
 }
 
 function noteBodyHTML(text){
@@ -6020,12 +6037,19 @@ function stepNote(d){
 }
 
 /* ---------- Practitioners: photo · name · phone · start · end ---------- */
-function studentAvatar(it){
-  if(it.photo) return `<img class="st-avatar" src="${esc(it.photo)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`;
-  const bg = COVER_PALETTES[colHash(it.name) % COVER_PALETTES.length];
-  const ch = Array.from(it.name || '?')[0];
-  return `<div class="st-avatar" style="background:linear-gradient(155deg,${bg[0]},${bg[1]});">${esc(ch)}</div>`;
+function studentPhotoBlock(it){
+  if(it.photo) return `<img src="${esc(it.photo)}" alt="" data-name="${esc(it.name || '?')}" loading="lazy" onerror="studentPhotoFallback(this)">`;
+  return window.__stPlaceholder(it.name || '?');
 }
+function studentPhotoFallback(imgEl){
+  const wrap = imgEl.closest('.st-photo');
+  if(wrap) wrap.innerHTML = window.__stPlaceholder(imgEl.dataset.name || '?');
+}
+window.__stPlaceholder = function(name){
+  const bg = COVER_PALETTES[colHash(name) % COVER_PALETTES.length];
+  const ch = Array.from(name)[0];
+  return `<div class="st-photo-ph" style="background:linear-gradient(155deg,${bg[0]},${bg[1]});">${esc(ch)}</div>`;
+};
 function studentStatusPill(st){
   const cls = st === STUDENT_STATUS.done ? 'muted' : st === STUDENT_STATUS.paused ? 'low' : 'ok';
   return st ? `<span class="inv-pill ${cls} kh" style="margin-left:0;">${esc(st)}</span>` : '';
@@ -6035,14 +6059,14 @@ function renderStudents(){
   const host = document.getElementById('col-students-view');
   if(!rows.length){ host.innerHTML = colEmpty(colData.students.length); return; }
   host.innerHTML = `<div class="st-list">
-    <div class="st-head kh"><span></span><span>ឈ្មោះ</span><span>លេខទូរស័ព្ទ</span><span>ថ្ងៃចូល</span><span>ថ្ងៃចប់</span><span></span></div>
     ${rows.map(it => `<div class="st-row" tabindex="0" data-id="${esc(it.id)}">
-      ${studentAvatar(it)}
-      <div class="st-cell c-name"><div class="st-name kh">${esc(it.name)}</div><div class="st-sub kh">${esc([it.school, it.level].filter(Boolean).join(' · '))} ${studentStatusPill(it.status)}</div></div>
-      <div class="st-cell c-phone mono">${esc(it.phone) || '—'}</div>
-      <div class="st-cell c-start mono"><span class="lbl kh">ថ្ងៃចូល៖ </span>${colDate(it.start)}<span class="lbl kh"> → ${colDate(it.end)}</span></div>
-      <div class="st-cell c-end mono">${colDate(it.end)}</div>
-      <div class="st-cell c-act st-act"><button type="button" class="inv-btn" data-act="edit" title="កែសម្រួល" aria-label="កែសម្រួល">✎</button><button type="button" class="inv-btn del" data-act="del" title="លុប" aria-label="លុប">🗑</button></div>
+      <div class="st-photo">${studentPhotoBlock(it)}</div>
+      <div class="st-card-body">
+        <div class="st-name kh">${esc(it.name)}</div>
+        <div style="margin-top:6px;">${studentStatusPill(it.status)}</div>
+        ${it.note ? `<div class="st-note kh">${esc(it.note)}</div>` : ''}
+      </div>
+      <div class="st-act"><button type="button" class="inv-btn del" data-act="del" title="លុប" aria-label="លុប">🗑</button></div>
     </div>`).join('')}
   </div>`;
 }
@@ -6098,6 +6122,7 @@ async function colFetch(n, silent){
     [...colDeleted[n]].forEach(id => { if(!serverIds.has(id)) colDeleted[n].delete(id); });
     colFetchedAt[n] = Date.now();
     colSaveDeleted(n); colSave(n); colRender(n);
+    if(n === 'students') mergeStudentPhotos();
     colSetStatus(n, '✓ Sync ជោគជ័យ', 'ok', true);
   }catch(e){
     if(!silent) colSetStatus(n, '⚠️ Sync មិនជោគជ័យ', 'warn', true);
@@ -6158,7 +6183,7 @@ function colBindImageFields(cfg){
     const err = document.getElementById('colFormError');
     colSetPreview(k);
     document.querySelector(`[data-cfi-pick="${k}"]`).addEventListener('click', ()=> file.click());
-    document.querySelector(`[data-cfi-clear="${k}"]`).addEventListener('click', ()=>{ hidden.value = ''; url.value = ''; file.value = ''; colSetPreview(k); });
+    document.querySelector(`[data-cfi-clear="${k}"]`).addEventListener('click', ()=>{ hidden.value = ''; url.value = ''; file.value = ''; colSetPreview(k); delete colPendingUpload[k]; });
     url.addEventListener('input', ()=>{ hidden.value = colNormalizeUrl(url.value); colSetPreview(k); });
     file.addEventListener('change', async ()=>{
       const fl = file.files && file.files[0]; if(!fl) return;
@@ -6169,12 +6194,48 @@ function colBindImageFields(cfg){
         url.value = '';
         colSetPreview(k);
         err.textContent = '';
+        if(f.driveUpload) colPendingUpload[k] = fl; else delete colPendingUpload[k];
       }catch(e){ err.textContent = '⚠️ រូបនេះធំពេក ឬបើកមិនបាន សូមជ្រើសរូបផ្សេង'; }
     });
   });
 }
 
 /* ---------- form ---------- */
+
+/* resize an image File to a JPEG data URL for upload (larger/better than the tiny inline preview) */
+function colFileToJpegBase64(file, maxSide){
+  return new Promise((resolve, reject)=>{
+    const fr = new FileReader();
+    fr.onerror = reject;
+    fr.onload = ()=>{
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = ()=>{
+        const r = Math.min(maxSide / img.width, maxSide / img.height, 1);
+        const W = Math.max(1, Math.round(img.width * r)), H = Math.max(1, Math.round(img.height * r));
+        const c = document.createElement('canvas'); c.width = W; c.height = H;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, W, H);
+        ctx.drawImage(img, 0, 0, W, H);
+        resolve(c.toDataURL('image/jpeg', 0.85).split(',')[1]);
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+
+/* queue the actual Drive upload (goes through the same offline-safe, fire-and-forget flush
+   queue as everything else) and refresh the folder scan shortly after so the auto-match in
+   mergeStudentPhotos() picks up the new file and replaces the local preview with a short,
+   real Drive-hosted link — nothing heavy ever needs to live in the Sheet cell for long */
+async function colUploadPendingImage(file, name){
+  const base64 = await colFileToJpegBase64(file, 1000);
+  const filename = (cleanStr(name) || 'photo').replace(/[\\\/:*?"<>|]/g, '').trim() + '.jpg';
+  pushToSheet('uploadStudentPhoto', { folderId: STUDENT_PHOTO_FOLDER_ID, filename, mimeType: 'image/jpeg', base64 });
+  setTimeout(()=> fetchStudentPhotoFiles(true), 4000);
+}
+
 function colFieldHTML(n, f, value){
   const id = 'cf_' + f.k;
   const cls = 'field' + (f.full || f.t === 'textarea' || f.t === 'image' ? ' col-full' : '');
@@ -6194,7 +6255,8 @@ function colFieldHTML(n, f, value){
   if(f.t === 'textarea'){
     input = `<textarea id="${id}" class="kh" style="min-height:${(f.rows || 3) * 26 + 20}px;"${f.max ? ` maxlength="${f.max}"` : ''}>${esc(value)}</textarea>`;
   }else if(f.t === 'select'){
-    input = `<select id="${id}" class="kh">${f.opts.map(o => `<option value="${esc(o)}"${o === value ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+    const opts = (value && !f.opts.includes(value)) ? [value, ...f.opts] : f.opts;   // keep older saved values selectable even if the list changed since
+    input = `<select id="${id}" class="kh">${opts.map(o => `<option value="${esc(o)}"${o === value ? ' selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
   }else if(f.t === 'date'){
     input = `<input type="date" id="${id}" value="${esc(value)}">`;
   }else{
@@ -6212,6 +6274,7 @@ function colOpenForm(n, id, fromReader){
   const cfg = COLS[n];
   const it = id ? colFind(n, id) : null;
   colEditing = { n, id: it ? it.id : null, fromReader: !!fromReader };
+  colPendingUpload = {};
   const d = new Date();
   const todayStr = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
   document.getElementById('colFormTitle').textContent = (it ? 'កែសម្រួល' : 'បន្ថែម') + cfg.singular + (it ? ' · Edit' : ' · New');
@@ -6257,7 +6320,17 @@ function colSaveForm(){
     colData[n].push(item);
   }
   colSave(n); colRender(n);
-  colPush(n, 'collectionUpsert', item);
+
+  const uploads = cfg.fields.filter(f => f.driveUpload && colPendingUpload[f.k]);
+  if(uploads.length){
+    const pushItem = Object.assign({}, item);
+    uploads.forEach(f => { pushItem[f.k] = ''; });   // don't write the heavy inline preview to the Sheet — the Drive match will fill the real link in shortly
+    colPush(n, 'collectionUpsert', pushItem);
+    uploads.forEach(f => colUploadPendingImage(colPendingUpload[f.k], item[cfg.primary]));
+  }else{
+    colPush(n, 'collectionUpsert', item);
+  }
+  colPendingUpload = {};
   colEditing.id = item.id;
   colCloseForm();
 }
@@ -6288,7 +6361,7 @@ function switchStudyTab(t, skipFetch){
     return;
   }
   colRender(t);
-  if(!skipFetch){ colMaybeFetch(t); if(t === 'books') bookFilesMaybeFetch(); }
+  if(!skipFetch){ colMaybeFetch(t); if(t === 'books') bookFilesMaybeFetch(); if(t === 'students') studentPhotosMaybeFetch(); }
 }
 
 
@@ -6458,22 +6531,100 @@ function closeGalleryLightbox(){
   document.getElementById('glImg').src = '';
 }
 
+
+/* ==========================================================
+   INTERN PHOTOS — auto-matched from a shared Drive folder by filename.
+   The folder is just a place to drop "<student name>.jpg"; whenever a
+   filename's name matches an existing សិស្ស record, that
+   record's photo is filled in automatically (and kept in sync with
+   the file — no manual "paste a Drive link" step needed).
+   ========================================================== */
+const STUDENT_PHOTO_FOLDER_ID = '1Z3-xDxK7iIWwALiodEC33JiE-SPGoot6';
+const STUDENT_PHOTO_FILES_KEY = 'kep_dental_student_photo_files_v1';
+let studentPhotoFiles = [];
+let studentPhotoFetchedAt = 0;
+let studentPhotoFetching = false;
+
+function loadStudentPhotoFiles(){
+  try{ const a = JSON.parse(localStorage.getItem(STUDENT_PHOTO_FILES_KEY)); if(Array.isArray(a)) studentPhotoFiles = a; }catch(e){}
+}
+function saveStudentPhotoFiles(){ try{ localStorage.setItem(STUDENT_PHOTO_FILES_KEY, JSON.stringify(studentPhotoFiles)); }catch(e){} }
+
+function setStudentPhotoStatus(text, tone, autoClear){
+  const el = document.getElementById('studentPhotoStatus');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'inv-status kh' + (tone ? ' ' + tone : '');
+  clearTimeout(setStudentPhotoStatus._t);
+  if(autoClear) setStudentPhotoStatus._t = setTimeout(()=>{ el.textContent = ''; el.className = 'inv-status kh'; }, 3000);
+}
+
+/* match each Drive file to a student record by comparing the filename (minus extension) to the student's name */
+function mergeStudentPhotos(){
+  let changed = false;
+  studentPhotoFiles.forEach(f=>{
+    const base = xrayNormKey(String(f.name || '').replace(/\.[a-z0-9]{2,5}$/i, ''));
+    if(!base) return;
+    const it = colData.students.find(x => xrayNormKey(x.name) === base);
+    if(!it) return;
+    const thumb = `https://drive.google.com/thumbnail?id=${f.id}&sz=w400`;
+    if(it.photo !== thumb){
+      it.photo = thumb;
+      it.updated = new Date().toISOString();
+      changed = true;
+      colPush('students', 'collectionUpsert', it);
+    }
+  });
+  if(changed){ colSave('students'); if(studyTab === 'students') renderStudents(); }
+}
+
+async function fetchStudentPhotoFiles(silent){
+  if(!webAppUrl || studentPhotoFetching) return;
+  studentPhotoFetching = true;
+  if(!silent) setStudentPhotoStatus('កំពុងផ្គូផ្គងរូបថត...', '');
+  try{
+    const sep = webAppUrl.includes('?') ? '&' : '?';
+    const res = await fetch(`${webAppUrl}${sep}action=getStudentPhotos&folderId=${encodeURIComponent(STUDENT_PHOTO_FOLDER_ID)}&t=${Date.now()}`);
+    const json = await res.json();
+    if(!(json && json.status === 'success' && json.kind === 'studentPhotos' && Array.isArray(json.data))){
+      setStudentPhotoStatus('⚠️ Apps Script មិនទាន់គាំទ្រ (សូមដាក់កូដថ្មីក្នុង Code.gs)', 'warn');
+      return;
+    }
+    studentPhotoFiles = json.data.map(f => ({ id: f.id || '', name: f.name || '' })).filter(f => f.id && f.name);
+    studentPhotoFetchedAt = Date.now();
+    saveStudentPhotoFiles();
+    mergeStudentPhotos();
+    setStudentPhotoStatus('✓ រូបថតផ្គូផ្គងរួច', 'ok', true);
+  }catch(e){
+    if(!silent) setStudentPhotoStatus('⚠️ ទាញមិនបាន សូមពិនិត្យអ៊ីនធឺណិត', 'warn', true);
+  }finally{
+    studentPhotoFetching = false;
+  }
+}
+function studentPhotosMaybeFetch(){ if(Date.now() - studentPhotoFetchedAt > COL_STALE_MS) fetchStudentPhotoFiles(true); }
+
 (function initStudyLibrary(){
   COL_NAMES.forEach(n=>{
     colLoad(n);
     colRender(n);
     document.getElementById('col-' + n + '-search').addEventListener('input', (e)=>{ colSearchVal[n] = e.target.value; colRender(n); });
     document.getElementById('col-' + n + '-filter').addEventListener('change', (e)=>{ colFilterVal[n] = e.target.value; colRender(n); });
-    document.getElementById('col-' + n + '-add').addEventListener('click', ()=> colOpenForm(n, null));
+    document.getElementById('col-' + n + '-add').addEventListener('click', ()=>{
+      if(n === 'students') promptForPin('សូមបញ្ចូល PIN ដើម្បីបន្ថែមសិស្ស', ()=> colOpenForm(n, null));
+      else colOpenForm(n, null);
+    });
     document.getElementById('col-' + n + '-sync').addEventListener('click', ()=>{
       colFetch(n, false);
       if(n === 'books') fetchBookFiles(false);
+      if(n === 'students') fetchStudentPhotoFiles(false);
     });
   });
   loadBookFiles();
   mergeBookFiles();
   loadGalleryFiles();
   renderGallery();
+  loadStudentPhotoFiles();
+  mergeStudentPhotos();
   document.getElementById('gallerySyncBtn').addEventListener('click', ()=> fetchGalleryFiles(false));
   document.getElementById('galleryGrid').addEventListener('click', (e)=>{
     const item = e.target.closest('.gl-item'); if(item) openGalleryLightbox(Number(item.dataset.i));
@@ -6497,6 +6648,7 @@ function closeGalleryLightbox(){
     COL_NAMES.forEach(n => colMaybeFetch(n));
     bookFilesMaybeFetch();
     galleryMaybeFetch();
+    studentPhotosMaybeFetch();
   });
 
   // Books: cover -> in-app viewer, pencil -> edit metadata
@@ -6528,14 +6680,22 @@ function closeGalleryLightbox(){
   document.getElementById('nrNext').addEventListener('click', ()=> stepNote(1));
   document.getElementById('nrEdit').addEventListener('click', ()=>{ const id = nrCurrent; closeNoteReader(); colOpenForm('notes', id, true); });
 
-  // Practitioners
+  // Practitioners — editing an existing student is PIN-gated
+  const openStudentEdit = (id)=>{
+    const it = colFind('students', id);
+    promptForPin('សូមបញ្ចូល PIN ដើម្បីកែសម្រួល · ' + (it ? it.name : 'សិស្ស'), ()=> colOpenForm('students', id));
+  };
   document.getElementById('col-students-view').addEventListener('click', (e)=>{
     const row = e.target.closest('.st-row'); if(!row) return;
-    if(e.target.closest('[data-act="del"]')) colDelete('students', row.dataset.id);
-    else colOpenForm('students', row.dataset.id);
+    if(e.target.closest('[data-act="del"]')){
+      const it = colFind('students', row.dataset.id);
+      promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + (it ? it.name : 'សិស្ស'), ()=> colDelete('students', row.dataset.id));
+    }else{
+      openStudentEdit(row.dataset.id);
+    }
   });
   document.getElementById('col-students-view').addEventListener('keydown', (e)=>{
-    if((e.key === 'Enter' || e.key === ' ') && e.target.matches('.st-row')){ e.preventDefault(); colOpenForm('students', e.target.dataset.id); }
+    if((e.key === 'Enter' || e.key === ' ') && e.target.matches('.st-row')){ e.preventDefault(); openStudentEdit(e.target.dataset.id); }
   });
 
   // form
