@@ -987,6 +987,16 @@
   .st-name{font-size:14px;font-weight:700;color:var(--ink);line-height:1.35;}
   .st-note{margin-top:7px;font-size:11.5px;color:var(--ink-soft);line-height:1.5;max-height:4.5em;overflow:hidden;}
   .st-act{position:absolute;top:8px;right:8px;}
+  .st-stars{text-align:center;padding-top:8px;font-size:14px;color:var(--amber-dark);letter-spacing:1px;}
+  .skill-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 16px;margin-top:6px;}
+  .skill-grid label.skill-check{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--ink);text-transform:none;letter-spacing:normal;margin-bottom:0;padding:3px 0;cursor:pointer;user-select:none;}
+  .skill-check input{width:15px;height:15px;accent-color:var(--primary);flex-shrink:0;}
+  .skill-label{flex:1;}
+  .skill-pt{font-size:10.5px;color:var(--ink-dim);}
+  .skill-total{margin-top:10px;padding-top:9px;border-top:1px solid var(--border-soft);font-size:12.5px;color:var(--ink-soft);}
+  .skill-total b{color:var(--primary-dark);font-size:14px;}
+  .skill-stars{margin-left:6px;color:var(--amber-dark);letter-spacing:1px;}
+  @media (max-width:480px){ .skill-grid{grid-template-columns:1fr;} }
   .st-act .inv-btn{width:28px;height:28px;background:rgba(255,255,255,.92);}
 
   /* ---------- form: image field ---------- */
@@ -5772,6 +5782,28 @@ function checkIdleLock(){
    Stored locally, synced with the Sheet tabs Books / Notes / Students
    ========================================================== */
 const STUDENT_STATUS = { active: 'កំពុងហ្វឹកហាត់', done: 'បញ្ចប់', paused: 'ផ្អាក' };
+const STUDENT_SKILLS = [
+  {id:'scaling',      label:'Scaling',              pt:1},
+  {id:'composite',    label:'Composite',            pt:1},
+  {id:'gic',          label:'GIC',                  pt:1},
+  {id:'amalgam',      label:'Amalgam',              pt:1},
+  {id:'ext_incisor',  label:'Extraction Incisor',   pt:1},
+  {id:'ext_premolar', label:'Extraction Premolar',  pt:1},
+  {id:'ext_molar',    label:'Extraction Molar',     pt:2},
+  {id:'rct_incisor',  label:'RCT Incisor',          pt:1},
+  {id:'rct_premolar', label:'RCT Premolar',         pt:2},
+  {id:'rct_molar',    label:'RCT Molar',            pt:3}
+];
+const STUDENT_SKILLS_MAX = STUDENT_SKILLS.reduce((s, it) => s + it.pt, 0);
+function skillsChecked(skillsStr){ return new Set(String(skillsStr || '').split(',').map(s => s.trim()).filter(Boolean)); }
+function skillsTotal(skillsStr){
+  const checked = skillsChecked(skillsStr);
+  return STUDENT_SKILLS.reduce((s, it) => s + (checked.has(it.id) ? it.pt : 0), 0);
+}
+function skillStars(total, max){
+  const filled = max ? Math.round((total / max) * 5) : 0;
+  return '★'.repeat(filled) + '☆'.repeat(5 - filled);
+}
 const COL_MAX_CHARS = 45000;                       // one Sheet cell holds 50,000 characters
 const COVER_PALETTES = [['#1A6BDB','#0B3B7C'], ['#3D5AD8','#1B2A6B'], ['#0F7C9D','#0A3F58'], ['#5B6CC9','#2A2F73'], ['#2F80ED','#173F8F'], ['#0B8A83','#0B4550'], ['#6B5BD2','#2E2570']];
 const TOPIC_COLORS = ['#1A6BDB', '#5B6CC9', '#0F7C9D', '#0B8A83', '#B7791F', '#6B5BD2', '#C0504D'];
@@ -5834,6 +5866,7 @@ const COLS = {
       {k:'level',      l:'ឆ្នាំសិក្សា / កម្រិត · Level', t:'text'},
       {k:'supervisor', l:'គ្រូឧបត្ថម្ភ · Supervisor', t:'text'},
       {k:'status',     l:'ស្ថានភាព · Status', t:'select', opts:Object.values(STUDENT_STATUS), def:STUDENT_STATUS.active, full:true},
+      {k:'skills',     l:'ជំនាញដែលបានអនុវត្ត · Skills Completed', t:'checklist', full:true, items:STUDENT_SKILLS, max:STUDENT_SKILLS_MAX},
       {k:'note',       l:'កំណត់សម្គាល់ · Note', t:'textarea', full:true}
     ],
     sort: (a,b) => (a.status === STUDENT_STATUS.active ? 0 : 1) - (b.status === STUDENT_STATUS.active ? 0 : 1) || a.name.localeCompare(b.name)
@@ -6071,15 +6104,19 @@ function renderStudents(){
   const host = document.getElementById('col-students-view');
   if(!rows.length){ host.innerHTML = colEmpty(colData.students.length); return; }
   host.innerHTML = `<div class="st-list">
-    ${rows.map(it => `<div class="st-row" tabindex="0" data-id="${esc(it.id)}">
+    ${rows.map(it => {
+      const skTotal = skillsTotal(it.skills);
+      return `<div class="st-row" tabindex="0" data-id="${esc(it.id)}">
       <div class="st-photo">${studentPhotoBlock(it)}</div>
+      <div class="st-stars" title="ពិន្ទុសរុប · Total: ${skTotal} / ${STUDENT_SKILLS_MAX}">${skillStars(skTotal, STUDENT_SKILLS_MAX)}</div>
       <div class="st-card-body">
         <div class="st-name kh">${esc(it.name)}</div>
         <div style="margin-top:6px;">${studentStatusPill(it.status)}</div>
         ${it.note ? `<div class="st-note kh">${esc(it.note)}</div>` : ''}
       </div>
       <div class="st-act"><button type="button" class="inv-btn del" data-act="del" title="លុប" aria-label="លុប">🗑</button></div>
-    </div>`).join('')}
+    </div>`;
+    }).join('')}
   </div>`;
 }
 
@@ -6186,6 +6223,25 @@ function colSetPreview(k){
   box.style.backgroundImage = v ? 'url("' + v.replace(/"/g, '%22') + '")' : '';
 }
 
+function colBindSkillFields(cfg){
+  cfg.fields.filter(f => f.t === 'checklist').forEach(f=>{
+    const grid = document.querySelector(`[data-skill-field="${f.k}"]`);
+    if(!grid) return;
+    const hidden = document.getElementById('cf_' + f.k);
+    const totalEl = document.querySelector(`[data-skill-total="${f.k}"]`);
+    const starsEl = document.querySelector(`[data-skill-stars="${f.k}"]`);
+    grid.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+      cb.addEventListener('change', ()=>{
+        const checkedIds = [...grid.querySelectorAll('input[type=checkbox]:checked')].map(x => x.dataset.skillItem);
+        hidden.value = checkedIds.join(',');
+        const total = f.items.reduce((s, it) => s + (checkedIds.includes(it.id) ? it.pt : 0), 0);
+        totalEl.textContent = total;
+        starsEl.textContent = skillStars(total, f.max);
+      });
+    });
+  });
+}
+
 function colBindImageFields(cfg){
   cfg.fields.filter(f => f.t === 'image').forEach(f=>{
     const k = f.k;
@@ -6263,6 +6319,19 @@ function colFieldHTML(n, f, value){
         <div class="cfi-hint kh">${f.hint || ''}</div>
       </div></div></div>`;
   }
+  if(f.t === 'checklist'){
+    const checked = skillsChecked(value);
+    const total = f.items.reduce((s, it) => s + (checked.has(it.id) ? it.pt : 0), 0);
+    const rows = f.items.map(it => `<label class="skill-check kh">
+        <input type="checkbox" data-skill-item="${it.id}" data-skill-pt="${it.pt}"${checked.has(it.id) ? ' checked' : ''}>
+        <span class="skill-label">${esc(it.label)}</span><span class="skill-pt mono">${it.pt}pt</span>
+      </label>`).join('');
+    return `<div class="${cls}"><label>${f.l}</label>
+      <input type="hidden" id="${id}" value="${esc([...checked].join(','))}">
+      <div class="skill-grid" data-skill-field="${f.k}">${rows}</div>
+      <div class="skill-total kh">ពិន្ទុសរុប Total: <b class="mono" data-skill-total="${f.k}">${total}</b> / ${f.max} <span class="skill-stars" data-skill-stars="${f.k}">${skillStars(total, f.max)}</span></div>
+    </div>`;
+  }
   let input;
   if(f.t === 'textarea'){
     input = `<textarea id="${id}" class="kh" style="min-height:${(f.rows || 3) * 26 + 20}px;"${f.max ? ` maxlength="${f.max}"` : ''}>${esc(value)}</textarea>`;
@@ -6293,6 +6362,7 @@ function colOpenForm(n, id, fromReader){
   document.getElementById('colFormFields').innerHTML = cfg.fields.map(f =>
     colFieldHTML(n, f, it ? (it[f.k] || '') : (f.defToday ? todayStr : (f.def || '')))).join('');
   colBindImageFields(cfg);
+  colBindSkillFields(cfg);
   document.getElementById('colFormError').textContent = '';
   document.getElementById('colDeleteBtn').classList.toggle('hidden', !it);
   history.pushState({ modal: 'colForm' }, '', '#colForm');
