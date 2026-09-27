@@ -1052,6 +1052,9 @@
   /* small password prompt (shared look with showConfirm) */
   .pin-prompt input{width:100%;margin:12px 0 6px;text-align:center;letter-spacing:.3em;font-size:18px;}
   .appt-panel{min-width:0;}
+  body[data-page="expenses"] .topbar .search-wrap, body[data-page="expenses"] #fabAdd{display:none;}
+  #genericOptionsUI.hidden, #labPriceUI.hidden{display:none;}
+  #sendLabOverlay{z-index:97 !important;}
   .dash-report-head{margin:22px 0 10px;padding-top:6px;border-top:1px solid var(--border-soft);}
   .dash-report-head h3{margin:0;font-size:15px;color:var(--ink);}
   #reportOverlay.report-embedded{position:static;inset:auto;background:none;backdrop-filter:none;z-index:auto;display:block;padding:0;overflow:visible;}
@@ -1115,7 +1118,7 @@
 <!-- App Lock Overlay (ការពារពេលបើកកម្មវិធី) -->
 <div id="appLockOverlay">
   <div class="lock-box">
-    <div style="font-size: 40px; margin-bottom: 8px;">🔒</div>
+    <img src="data:image/jpeg;base64,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" alt="Kep Provincial Hospital · Dental Service" style="width:84px;height:84px;border-radius:50%;margin-bottom:8px;box-shadow:0 4px 14px -6px rgba(11,42,74,.35);">
     <h3 class="kh" style="margin: 0; font-size: 17px; color: var(--ink); line-height: 1.4;">ផ្នែកសេវាជំងឺមាត់ធ្មេញ<br>Dental Service EMR</h3>
     <p class="kh" style="font-size: 12px; color: var(--ink-dim); margin-top: 6px;">សូមបញ្ចូលលេខសម្ងាត់ PIN ដើម្បីចូលប្រើប្រាស់</p>
     <p id="appLockNote" class="kh hidden" style="font-size: 12px; color: var(--primary-dark); background: var(--primary-softer); border-radius: 8px; padding: 6px 10px; margin: 10px 0 0;">🔒 ចាក់សោដោយស្វ័យប្រវត្តិ ព្រោះមិនបានប្រើ ២០ នាទី</p>
@@ -1188,6 +1191,10 @@
         <button type="button" class="sb-item" data-page="inventory" title="ឃ្លាំងសម្ភារៈ · Inventory">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg>
           <span class="sb-label kh">ឃ្លាំងសម្ភារៈ<small>Inventory</small></span><span class="sb-badge warn" id="sbBadgeInv" hidden>0</span>
+        </button>
+        <button type="button" class="sb-item" data-page="expenses" title="បញ្ជីចំណាយ · Expenses">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          <span class="sb-label kh">បញ្ជីចំណាយ<small>Expenses</small></span>
         </button>
         <button type="button" class="sb-item" id="settingsBtn" title="ព័ត៌មានគ្លីនិក · Clinic settings">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1535,6 +1542,36 @@
         <div class="inv-status kh" id="orgSyncStatus" style="margin-top:10px;"></div>
       </section>
 
+      <!-- Expenses -->
+      <section class="page" id="page-expenses" data-page="expenses" hidden>
+        <div class="kpi-grid" id="expKpis"></div>
+        <div class="page-tools">
+          <div class="inv-tools">
+            <select id="expTypeFilter" class="inv-select kh" aria-label="ប្រភេទ"></select>
+            <div class="search-wrap">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" class="search-input search-input-topbar kh" id="expSearch" placeholder="ស្វែងរកចំណាយ..." aria-label="ស្វែងរកចំណាយ">
+            </div>
+          </div>
+          <div class="inv-tools">
+            <span class="inv-status kh" id="expSyncStatus"></span>
+            <button type="button" class="btn btn-outline btn-sm kh" id="expSyncBtn">🔄 Sync</button>
+            <button type="button" class="btn btn-primary btn-sm kh" id="expAddBtn">＋ បន្ថែមចំណាយ</button>
+          </div>
+        </div>
+        <div class="emr-notes-section">
+          <div class="emr-table-wrap">
+            <table class="emr-table">
+              <thead><tr>
+                <th class="kh">កាលបរិច្ឆេទ</th><th class="kh">ប្រភេទ</th><th class="kh">ការពិពណ៌នា</th>
+                <th class="kh">អ្នកជំងឺ</th><th class="kh">ចំនួនទឹកប្រាក់</th><th></th>
+              </tr></thead>
+              <tbody id="expBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
       <!-- Inventory -->
       <section class="page" id="page-inventory" data-page="inventory" hidden>
         <div class="kpi-grid" id="invKpis"></div>
@@ -1687,6 +1724,53 @@
 </div>
 
 <!-- Inventory item form -->
+<!-- Expense form -->
+<div class="overlay hidden" id="expFormOverlay">
+  <div class="modal narrow" style="max-width:540px;">
+    <div class="modal-head"><h2 class="kh" id="expFormTitle">បន្ថែមចំណាយថ្មី · New</h2><button class="x" id="closeExpForm" aria-label="បិទ">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="inv-row-2">
+          <div class="field"><label>កាលបរិច្ឆេទ · Date</label><input type="date" id="exp_date"></div>
+          <div class="field"><label>ប្រភេទ · Type</label><input type="text" id="exp_type" class="kh" list="expTypeList" autocomplete="off"></div>
+        </div>
+        <div class="field col-full"><label>ការពិពណ៌នា · Description</label><input type="text" id="exp_description" class="kh" autocomplete="off"></div>
+        <div class="inv-row-2">
+          <div class="field"><label>អ្នកជំងឺ (បើមាន) · Patient</label><input type="text" id="exp_patientName" class="kh" autocomplete="off"></div>
+          <div class="field"><label>ចំនួនទឹកប្រាក់ ($) · Amount</label><input type="number" min="0" step="0.01" id="exp_amount" class="mono" inputmode="decimal"></div>
+        </div>
+        <datalist id="expTypeList"></datalist>
+      </div>
+      <div id="expFormError" class="kh" style="color:var(--coral);font-size:12px;min-height:16px;margin-top:8px;"></div>
+      <div class="modal-actions">
+        <div class="left-action"><button type="button" class="btn btn-danger btn-sm kh hidden" id="expDeleteBtn">🗑 លុប</button></div>
+        <button type="button" class="btn btn-outline kh" id="expCancelBtn">បោះបង់</button>
+        <button type="button" class="btn btn-primary kh" id="expSaveBtn">រក្សាទុក Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Send to Lab -->
+<div class="overlay hidden" id="sendLabOverlay">
+  <div class="modal narrow" style="max-width:460px;">
+    <div class="modal-head"><h2 class="kh">🦷 បញ្ជូនទៅ Lab · Send to Lab</h2><button class="x" id="closeSendLab" aria-label="បិទ">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field col-full"><label>លេខធ្មេញ (ខ្ចីដោយក្បៀស) · Teeth</label><input type="text" id="lab_teeth" class="mono" placeholder="22,23" autocomplete="off"></div>
+        <div class="field col-full"><label>ប្រភេទគ្រាប់ធ្មេញ · Lab Type</label><select id="lab_type" class="kh"></select></div>
+        <div class="field col-full"><label>កាលបរិច្ឆេទ · Date</label><input type="date" id="lab_date"></div>
+      </div>
+      <div class="skill-total kh" style="margin-top:12px;">សរុប Total: <b class="mono" id="lab_total">$0.00</b> <span id="lab_calc_note" style="font-size:11px;color:var(--ink-dim);"></span></div>
+      <div id="sendLabError" class="kh" style="color:var(--coral);font-size:12px;min-height:16px;margin-top:8px;"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-outline kh" id="sendLabCancelBtn">បោះបង់</button>
+        <button type="button" class="btn btn-primary kh" id="sendLabConfirmBtn">✅ បញ្ជាក់ Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="invFormOverlay">
   <div class="modal narrow" style="max-width:580px;">
     <div class="modal-head"><h2 class="kh" id="invFormTitle">បន្ថែមសម្ភារៈថ្មី · New item</h2><button class="x" id="closeInvForm" aria-label="បិទ">✕</button></div>
@@ -1754,14 +1838,28 @@
         <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('diagnosis', this)">Diagnosis</button>
         <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('procedure', this)">Procedures</button>
         <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('regcard', this)">Registration Card</button>
+        <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('labprice', this)">Lab Price</button>
       </div>
 
-      <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-        <input type="text" id="newOptionInput" class="kh" placeholder="បញ្ចូលឈ្មោះថ្មី..." style="flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
-        <button type="button" class="btn btn-primary kh" onclick="addNewCustomOption()">＋ បន្ថែម</button>
+      <div id="genericOptionsUI">
+        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+          <input type="text" id="newOptionInput" class="kh" placeholder="បញ្ចូលឈ្មោះថ្មី..." style="flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
+          <button type="button" class="btn btn-primary kh" onclick="addNewCustomOption()">＋ បន្ថែម</button>
+        </div>
+
+        <div id="optionsListContainer" style="max-height: 320px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 8px; padding: 8px; background: var(--surface-2);">
+        </div>
       </div>
 
-      <div id="optionsListContainer" style="max-height: 320px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 8px; padding: 8px; background: var(--surface-2);">
+      <div id="labPriceUI" class="hidden">
+        <p class="kh" style="font-size:11.5px;color:var(--ink-dim);margin:0 0 10px;">កំណត់តម្លៃក្នុងមួយគ្រាប់ធ្មេញ សម្រាប់ប្រភេទគ្រាប់ធ្មេញនីមួយៗ (ប្រើនៅពេលបញ្ជូនទៅ Lab)។</p>
+        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+          <input type="text" id="newLabPriceType" class="kh" placeholder="ប្រភេទ (ឧ. PFM)..." style="flex: 2; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
+          <input type="number" id="newLabPriceAmount" min="0" step="0.01" placeholder="$" class="mono" style="flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
+          <button type="button" class="btn btn-primary kh" id="addLabPriceBtn">＋ បន្ថែម</button>
+        </div>
+        <div id="labPriceListContainer" style="max-height: 320px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 8px; padding: 8px; background: var(--surface-2);">
+        </div>
       </div>
 
       <div class="modal-actions" style="margin-top: 15px;">
@@ -2225,7 +2323,10 @@ function switchSettingTab(tabKey, btnElement) {
     b.className = 'btn btn-sm btn-ghost kh opt-tab';
   });
   btnElement.className = 'btn btn-sm btn-primary kh opt-tab';
-  renderOptionsList();
+  const isLabPrice = tabKey === 'labprice';
+  document.getElementById('genericOptionsUI').classList.toggle('hidden', isLabPrice);
+  document.getElementById('labPriceUI').classList.toggle('hidden', !isLabPrice);
+  if(isLabPrice) renderLabPriceList(); else renderOptionsList();
 }
 
 function renderOptionsList() {
@@ -3705,6 +3806,7 @@ function openPatientRecord(name){
           <button type="button" class="btn btn-danger btn-full kh" id="examFormBtn">📋 ទម្រង់ពិនិត្យ (Exam Form)</button>
           <button type="button" class="btn btn-outline kh" onclick="openXrayGallery('${safeName}')">📷 មើល X-Ray</button>
           <button type="button" class="btn btn-outline kh" id="printPatientBtn">🖨 បោះពុម្ព</button>
+          <button type="button" class="btn btn-outline btn-full kh" id="sendLabBtn">🦷 បញ្ជូនទៅ Lab (Send to Lab)</button>
           <button type="button" class="btn btn-danger btn-full kh" id="deletePatientBtn" onclick="deletePatient('${safeName}')">🗑 លុបអ្នកជំងឺនេះ</button>
         </div>
       </div>
@@ -3741,6 +3843,7 @@ function openPatientRecord(name){
     openForm(null, {name: latest.name, phone: realPhone, sex: realSex, age: realAge, type: realType});
   });
 
+  document.getElementById('sendLabBtn').addEventListener('click', ()=> openSendLabDialog(latest.name, latest.teeth || ''));
   document.getElementById('examFormBtn').addEventListener('click', ()=>{
     openExamForm({
       f_caseNo: latest.code || '',
@@ -4864,6 +4967,7 @@ const PAGE_META = {
   inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
   xray:         { title: 'បញ្ចីថតធ្មេញ', sub: 'X-ray image gallery' },
   org:          { title: 'រចនាសម្ព័ន្ធ', sub: 'Organization structure' },
+  expenses:     { title: 'បញ្ជីចំណាយ', sub: 'Expenses' },
   study:        { title: 'មាតិកាសិក្សា', sub: 'Study library' }
 };
 const PAGE_KEY = 'dental_emr_page';
@@ -6685,6 +6789,97 @@ async function fetchStudentPhotoFiles(silent){
 }
 function studentPhotosMaybeFetch(){ if(Date.now() - studentPhotoFetchedAt > COL_STALE_MS) fetchStudentPhotoFiles(true); }
 
+
+/* ==========================================================
+   LAB PRICE LIST (Settings) — price per tooth by crown/bridge type,
+   used to auto-calculate the cost when sending a mold to the lab
+   ========================================================== */
+let labPrices = [];
+let labPriceFetching = false;
+
+function loadLabPrices(){
+  try{ const a = JSON.parse(localStorage.getItem('kep_dental_labprices_v1')); if(Array.isArray(a)) labPrices = a; }catch(e){}
+}
+function saveLabPricesLocal(){ try{ localStorage.setItem('kep_dental_labprices_v1', JSON.stringify(labPrices)); }catch(e){} }
+function findLabPrice(id){ return labPrices.find(x => x.id === id); }
+function genLabPriceId(){ return 'LP' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
+
+function pushLabPrice(action, item){
+  const data = action === 'collectionDelete'
+    ? { sheet: 'LabPrices', id: item.id }
+    : { sheet: 'LabPrices', id: item.id, type: item.type, price: item.price, updated: item.updated };
+  pushToSheet(action, data);
+}
+
+async function fetchLabPrices(silent){
+  if(!webAppUrl || labPriceFetching) return;
+  labPriceFetching = true;
+  try{
+    await flushPendingQueue();
+    const url = webAppUrl + (webAppUrl.includes('?') ? '&' : '?') + 'sheet=LabPrices&_=' + Date.now();
+    const res = await fetch(url);
+    const json = await res.json();
+    if(!(json && json.status === 'success' && json.sheet === 'LabPrices' && Array.isArray(json.data))) return;
+    const pendingIds = new Set(getPendingQueue()
+      .filter(q => q && q.action === 'collectionUpsert' && q.data && q.data.sheet === 'LabPrices')
+      .map(q => q.data.id));
+    const server = json.data.map(r => ({ id: cleanStr(r.id), type: cleanStr(r.type), price: Number(r.price) || 0, updated: cleanStr(r.updated) })).filter(x => x.id && x.type);
+    const merged = server.filter(x => !pendingIds.has(x.id));
+    labPrices.forEach(x => { if(pendingIds.has(x.id)) merged.push(x); });
+    labPrices = merged;
+    saveLabPricesLocal();
+    if(currentSettingTab === 'labprice') renderLabPriceList();
+    populateLabTypeSelect();
+  }catch(e){ /* silent: this is a background refresh */ }
+  finally{ labPriceFetching = false; }
+}
+
+function renderLabPriceList(){
+  const c = document.getElementById('labPriceListContainer');
+  if(!labPrices.length){
+    c.innerHTML = `<div class="kh" style="text-align:center;color:var(--ink-dim);padding:14px;">មិនទាន់មានតម្លៃ Lab ទេ — បន្ថែមខាងលើ</div>`;
+    return;
+  }
+  c.innerHTML = labPrices.slice().sort((a, b) => a.type.localeCompare(b.type)).map(it => `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;padding:7px 12px;border-radius:6px;margin-bottom:5px;border:1px solid var(--border-soft);">
+      <span class="kh" style="font-size:12.5px;font-weight:600;flex:1;min-width:0;">${esc(it.type)}</span>
+      <span class="mono" style="font-size:12px;color:var(--ink-soft);">$</span>
+      <input type="number" min="0" step="0.01" class="mono" data-labprice-id="${esc(it.id)}" value="${it.price}" style="width:76px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;">
+      <button type="button" class="btn btn-danger btn-sm" style="padding:2px 8px;font-size:11px;" data-labprice-del="${esc(it.id)}">✕</button>
+    </div>`).join('');
+  c.querySelectorAll('[data-labprice-id]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{
+      const it = findLabPrice(inp.dataset.labpriceId);
+      if(!it) return;
+      it.price = Number(inp.value) || 0;
+      it.updated = new Date().toISOString();
+      saveLabPricesLocal();
+      pushLabPrice('collectionUpsert', it);
+      populateLabTypeSelect();
+    });
+  });
+  c.querySelectorAll('[data-labprice-del]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.labpriceDel;
+      const it = findLabPrice(id);
+      promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + (it ? it.type : 'តម្លៃ Lab'), ()=>{
+        labPrices = labPrices.filter(x => x.id !== id);
+        saveLabPricesLocal(); renderLabPriceList(); populateLabTypeSelect();
+        pushLabPrice('collectionDelete', { id });
+      });
+    });
+  });
+}
+
+function populateLabTypeSelect(){
+  const sel = document.getElementById('lab_type');
+  if(!sel) return;
+  const cur = sel.value;
+  sel.innerHTML = labPrices.slice().sort((a, b) => a.type.localeCompare(b.type))
+    .map(it => `<option value="${esc(it.id)}">${esc(it.type)} ($${it.price.toFixed(2)}/tooth)</option>`).join('');
+  if([...sel.options].some(o => o.value === cur)) sel.value = cur;
+}
+
 (function initStudyLibrary(){
   COL_NAMES.forEach(n=>{
     colLoad(n);
@@ -7720,12 +7915,295 @@ function openExamForm(prefill){
   setTimeout(()=> URL.revokeObjectURL(url), 120000);
 }
 
+
+/* ==========================================================
+   EXPENSES (បញ្ជីចំណាយ) — general clinic expense log; Dental Lab
+   submissions from a patient record are recorded here automatically
+   ========================================================== */
+function expTodayYMD(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+const EXPENSE_TYPES = ['DL (Dental Lab)', 'សម្ភារៈ (Supplies)', 'ជួសជុល (Repair)', 'ថ្នាំ (Medicine)', 'ផ្សេងៗ (Other)'];
+
+let expenses = [];
+let expDeleted = new Set();
+let expSearchTerm = '';
+let expTypeFilter = '';
+let expFetching = false;
+let expEditingId = null;
+
+function loadExpenses(){
+  try{ const a = JSON.parse(localStorage.getItem('kep_dental_expenses_v1')); if(Array.isArray(a)) expenses = a; }catch(e){}
+  try{ const d = JSON.parse(localStorage.getItem('kep_dental_expenses_deleted_v1')); if(Array.isArray(d)) expDeleted = new Set(d); }catch(e){}
+}
+function saveExpenses(){ try{ localStorage.setItem('kep_dental_expenses_v1', JSON.stringify(expenses)); }catch(e){} }
+function saveExpDeleted(){ try{ localStorage.setItem('kep_dental_expenses_deleted_v1', JSON.stringify([...expDeleted])); }catch(e){} }
+function findExpItem(id){ return expenses.find(x => x.id === id); }
+function genExpId(){ return 'EXP' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
+
+function normalizeExpItem(r){
+  return {
+    id: cleanStr(r.id), date: normalizeExpiry(r.date), type: cleanStr(r.type),
+    description: cleanStr(r.description), patientName: cleanStr(r.patientName),
+    amount: Number(r.amount) || 0, updated: cleanStr(r.updated)
+  };
+}
+
+function setExpStatus(text, tone, autoClear){
+  const el = document.getElementById('expSyncStatus');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'inv-status kh' + (tone ? ' ' + tone : '');
+  clearTimeout(setExpStatus._t);
+  if(autoClear) setExpStatus._t = setTimeout(()=>{ el.textContent = ''; el.className = 'inv-status kh'; }, 3000);
+}
+
+function expMatches(it){
+  if(expTypeFilter && it.type !== expTypeFilter) return false;
+  if(expSearchTerm){
+    const hay = [it.description, it.patientName, it.type].join(' ').toLowerCase();
+    if(!hay.includes(expSearchTerm.toLowerCase())) return false;
+  }
+  return true;
+}
+
+function renderExpenses(){
+  const items = expenses;
+  const now = new Date();
+  const monthKey = now.getFullYear() + '-' + now.getMonth();
+  const monthItems = items.filter(it=>{ const d = parseAnyDate(it.date); return d && (d.getFullYear() + '-' + d.getMonth()) === monthKey; });
+  const monthTotal = monthItems.reduce((s, it) => s + it.amount, 0);
+  const monthDL = monthItems.filter(it => it.type.indexOf('DL') === 0).reduce((s, it) => s + it.amount, 0);
+
+  document.getElementById('expKpis').innerHTML =
+    kpiCard('',      '<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', '$' + monthTotal.toFixed(2), 'ចំណាយសរុបខែនេះ', {page:'expenses'}) +
+    kpiCard('coral', '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>', '$' + monthDL.toFixed(2), 'ចំណាយ Lab ខែនេះ', {page:'expenses'}) +
+    kpiCard('blue',  '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', items.length, 'កំណត់ត្រាសរុប', {page:'expenses'});
+
+  const types = [...new Set([...EXPENSE_TYPES, ...items.map(i => i.type).filter(Boolean)])];
+  if(expTypeFilter && !types.includes(expTypeFilter)) expTypeFilter = '';
+  const sel = document.getElementById('expTypeFilter');
+  sel.innerHTML = '<option value="">ប្រភេទទាំងអស់</option>' + types.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  sel.value = expTypeFilter;
+
+  const rows = items.filter(expMatches).sort((a, b) => (parseAnyDate(b.date) || 0) - (parseAnyDate(a.date) || 0));
+  const body = document.getElementById('expBody');
+  if(!rows.length){
+    body.innerHTML = `<tr><td colspan="6" style="padding:0;"><div class="empty-state kh" style="border:none;">${
+      items.length ? 'មិនមានកំណត់ត្រាត្រូវនឹងតម្រងនេះទេ<br><span style="opacity:.7">No matches</span>'
+                   : 'មិនទាន់មានចំណាយទេ · ចុច ＋ បន្ថែមចំណាយ<br><span style="opacity:.7">No expenses yet</span>'}</div></td></tr>`;
+    return;
+  }
+  body.innerHTML = rows.map(it => `<tr class="emr-tr" data-id="${esc(it.id)}">
+    <td data-label="កាលបរិច្ឆេទ" class="mono">${colDate(it.date)}</td>
+    <td data-label="ប្រភេទ" class="kh">${esc(it.type) || '—'}</td>
+    <td data-label="ការពិពណ៌នា" class="kh">${esc(it.description) || '—'}</td>
+    <td data-label="អ្នកជំងឺ" class="kh">${esc(it.patientName) || '—'}</td>
+    <td data-label="ចំនួនទឹកប្រាក់" class="mono">$${it.amount.toFixed(2)}</td>
+    <td class="inv-actions"><button type="button" class="inv-btn del" data-act="del" title="លុប" aria-label="លុប">🗑</button></td>
+  </tr>`).join('');
+}
+
+function pushExpense(action, item){
+  const data = action === 'collectionDelete'
+    ? { sheet: 'Expenses', id: item.id }
+    : { sheet: 'Expenses', id: item.id, date: item.date, type: item.type, description: item.description, patientName: item.patientName, amount: item.amount, updated: item.updated };
+  pushToSheet(action, data);
+}
+
+async function fetchExpenses(silent){
+  if(!webAppUrl || expFetching) return;
+  expFetching = true;
+  if(!silent) setExpStatus('កំពុង Sync...', '');
+  try{
+    await flushPendingQueue();
+    const url = webAppUrl + (webAppUrl.includes('?') ? '&' : '?') + 'sheet=Expenses&_=' + Date.now();
+    const res = await fetch(url);
+    const json = await res.json();
+    if(!(json && json.status === 'success' && json.sheet === 'Expenses' && Array.isArray(json.data))){
+      setExpStatus('⚠️ Apps Script មិនទាន់គាំទ្រ Expenses (សូមដាក់កូដថ្មីក្នុង Code.gs)', 'warn');
+      return;
+    }
+    const pendingIds = new Set(getPendingQueue()
+      .filter(q => q && q.action === 'collectionUpsert' && q.data && q.data.sheet === 'Expenses')
+      .map(q => q.data.id));
+    const server = json.data.map(normalizeExpItem).filter(x => x.id);
+    const serverIds = new Set(server.map(x => x.id));
+    const merged = server.filter(x => !expDeleted.has(x.id) && !pendingIds.has(x.id));
+    expenses.forEach(x => { if(pendingIds.has(x.id)) merged.push(x); });
+    expenses = merged;
+    [...expDeleted].forEach(id => { if(!serverIds.has(id)) expDeleted.delete(id); });
+    saveExpDeleted(); saveExpenses(); renderExpenses();
+    setExpStatus('✓ Sync ជោគជ័យ', 'ok', true);
+  }catch(e){
+    if(!silent) setExpStatus('⚠️ Sync មិនជោគជ័យ', 'warn', true);
+  }finally{
+    expFetching = false;
+  }
+}
+
+function openExpEdit(id){
+  const it = findExpItem(id);
+  promptForPin('សូមបញ្ចូល PIN ដើម្បីកែសម្រួល · ' + (it ? (it.description || it.type) : 'ចំណាយ'), ()=> openExpForm(id));
+}
+function deleteExpItem(id){
+  const it = findExpItem(id); if(!it) return;
+  showConfirm(`លុបចំណាយ "${esc(it.description || it.type)}" ចេញ?`, ()=>{
+    expenses = expenses.filter(x => x.id !== id);
+    expDeleted.add(id);
+    saveExpDeleted(); saveExpenses(); renderExpenses();
+    pushExpense('collectionDelete', { id });
+    closeExpForm();
+  });
+}
+function openExpForm(id){
+  expEditingId = id || null;
+  const it = id ? findExpItem(id) : null;
+  document.getElementById('expFormTitle').textContent = (it ? 'កែសម្រួល' : 'បន្ថែម') + 'ចំណាយ · ' + (it ? 'Edit' : 'New');
+  document.getElementById('expTypeList').innerHTML = EXPENSE_TYPES.map(t => `<option value="${esc(t)}">`).join('');
+  document.getElementById('exp_date').value = it ? it.date : expTodayYMD();
+  document.getElementById('exp_type').value = it ? it.type : EXPENSE_TYPES[4];
+  document.getElementById('exp_description').value = it ? it.description : '';
+  document.getElementById('exp_patientName').value = it ? it.patientName : '';
+  document.getElementById('exp_amount').value = it ? it.amount : '';
+  document.getElementById('expFormError').textContent = '';
+  document.getElementById('expDeleteBtn').classList.toggle('hidden', !it);
+  history.pushState({ modal: 'expForm' }, '', '#expForm');
+  document.getElementById('expFormOverlay').classList.remove('hidden');
+  setTimeout(()=> document.getElementById('exp_description').focus(), 60);
+}
+function closeExpForm(){
+  document.getElementById('expFormOverlay').classList.add('hidden');
+  if(window.location.hash === '#expForm') history.replaceState(null, null, window.location.pathname);
+  expEditingId = null;
+}
+function saveExpForm(){
+  const amount = Number(document.getElementById('exp_amount').value);
+  const err = document.getElementById('expFormError');
+  if(!(amount >= 0)){ err.textContent = '⚠️ សូមបញ្ចូលចំនួនទឹកប្រាក់'; document.getElementById('exp_amount').focus(); return; }
+  const fields = {
+    date: document.getElementById('exp_date').value || expTodayYMD(),
+    type: cleanStr(document.getElementById('exp_type').value) || 'ផ្សេងៗ (Other)',
+    description: cleanStr(document.getElementById('exp_description').value),
+    patientName: cleanStr(document.getElementById('exp_patientName').value),
+    amount, updated: new Date().toISOString()
+  };
+  let item;
+  if(expEditingId && findExpItem(expEditingId)){
+    item = Object.assign(findExpItem(expEditingId), fields);
+  }else{
+    item = Object.assign({ id: genExpId() }, fields);
+    expenses.push(item);
+  }
+  saveExpenses(); renderExpenses();
+  pushExpense('collectionUpsert', item);
+  closeExpForm();
+}
+
+/* ---------- Send to Lab (auto-creates an Expense entry) ---------- */
+let sendLabPatientName = '';
+function countTeeth(str){ return String(str || '').split(',').map(s => s.trim()).filter(Boolean).length; }
+function updateSendLabTotal(){
+  const n = countTeeth(document.getElementById('lab_teeth').value);
+  const lp = findLabPrice(document.getElementById('lab_type').value);
+  const total = lp ? lp.price * n : 0;
+  document.getElementById('lab_total').textContent = '$' + total.toFixed(2);
+  document.getElementById('lab_calc_note').textContent = lp ? `(${n} ធ្មេញ × $${lp.price.toFixed(2)})` : (labPrices.length ? '' : '⚠️ សូមកំណត់តម្លៃ Lab ក្នុង Settings ជាមុនសិន');
+}
+function openSendLabDialog(patientName, teethPrefill){
+  sendLabPatientName = patientName;
+  document.getElementById('lab_teeth').value = teethPrefill || '';
+  document.getElementById('lab_date').value = expTodayYMD();
+  document.getElementById('sendLabError').textContent = '';
+  populateLabTypeSelect();
+  updateSendLabTotal();
+  history.pushState({ modal: 'sendLab' }, '', '#sendLab');
+  document.getElementById('sendLabOverlay').classList.remove('hidden');
+}
+function closeSendLabDialog(){
+  document.getElementById('sendLabOverlay').classList.add('hidden');
+  if(window.location.hash === '#sendLab') history.replaceState(null, null, window.location.pathname);
+}
+
+(function initExpenses(){
+  loadExpenses();
+  renderExpenses();
+  loadLabPrices();
+
+  document.getElementById('expTypeFilter').addEventListener('change', (e)=>{ expTypeFilter = e.target.value; renderExpenses(); });
+  document.getElementById('expSearch').addEventListener('input', (e)=>{ expSearchTerm = e.target.value; renderExpenses(); });
+  document.getElementById('expAddBtn').addEventListener('click', ()=> openExpForm(null));
+  document.getElementById('expSyncBtn').addEventListener('click', ()=> fetchExpenses(false));
+  document.getElementById('expBody').addEventListener('click', (e)=>{
+    const tr = e.target.closest('tr[data-id]'); if(!tr) return;
+    const id = tr.dataset.id;
+    const btn = e.target.closest('[data-act]');
+    if(btn && btn.dataset.act === 'del'){
+      const it = findExpItem(id);
+      promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + (it ? (it.description || it.type) : 'ចំណាយ'), ()=> deleteExpItem(id));
+    }else{
+      openExpEdit(id);
+    }
+  });
+  document.getElementById('closeExpForm').addEventListener('click', closeExpForm);
+  document.getElementById('expCancelBtn').addEventListener('click', closeExpForm);
+  document.getElementById('expSaveBtn').addEventListener('click', saveExpForm);
+  document.getElementById('expDeleteBtn').addEventListener('click', ()=>{ if(expEditingId) deleteExpItem(expEditingId); });
+  document.getElementById('expFormOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'expFormOverlay') closeExpForm(); });
+  document.querySelector('.sb-item[data-page="expenses"]').addEventListener('click', ()=>{ renderExpenses(); fetchExpenses(true); });
+
+  document.getElementById('addLabPriceBtn').addEventListener('click', ()=>{
+    const typeInp = document.getElementById('newLabPriceType');
+    const priceInp = document.getElementById('newLabPriceAmount');
+    const type = cleanStr(typeInp.value);
+    const price = Number(priceInp.value) || 0;
+    if(!type) return;
+    const item = { id: genLabPriceId(), type, price, updated: new Date().toISOString() };
+    labPrices.push(item); saveLabPricesLocal(); renderLabPriceList(); populateLabTypeSelect();
+    pushLabPrice('collectionUpsert', item);
+    typeInp.value = ''; priceInp.value = '';
+  });
+
+  document.getElementById('lab_teeth').addEventListener('input', updateSendLabTotal);
+  document.getElementById('lab_type').addEventListener('change', updateSendLabTotal);
+  document.getElementById('closeSendLab').addEventListener('click', closeSendLabDialog);
+  document.getElementById('sendLabCancelBtn').addEventListener('click', closeSendLabDialog);
+  document.getElementById('sendLabOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'sendLabOverlay') closeSendLabDialog(); });
+  document.getElementById('sendLabConfirmBtn').addEventListener('click', ()=>{
+    const teeth = cleanStr(document.getElementById('lab_teeth').value);
+    const lp = findLabPrice(document.getElementById('lab_type').value);
+    const err = document.getElementById('sendLabError');
+    if(!teeth){ err.textContent = '⚠️ សូមបញ្ចូលលេខធ្មេញ'; return; }
+    if(!lp){ err.textContent = '⚠️ សូមជ្រើសប្រភេទគ្រាប់ធ្មេញ (កំណត់ក្នុង Clinic Settings > Lab Price)'; return; }
+    const n = countTeeth(teeth);
+    const amount = lp.price * n;
+    const date = document.getElementById('lab_date').value || expTodayYMD();
+    const item = {
+      id: genExpId(), date, type: 'DL (Dental Lab)',
+      description: `ធ្មេញ ${teeth} · ${lp.type}`,
+      patientName: sendLabPatientName, amount, updated: new Date().toISOString()
+    };
+    expenses.push(item); saveExpenses(); renderExpenses();
+    pushExpense('collectionUpsert', item);
+    closeSendLabDialog();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      if(!document.getElementById('expFormOverlay').classList.contains('hidden')) closeExpForm();
+      if(!document.getElementById('sendLabOverlay').classList.contains('hidden')) closeSendLabDialog();
+    }
+  });
+})();
+
 // ចាប់ផ្តើមដំណើរការ
 populateAllSelectDropdowns();
 loadLocalRecords();
 flushPendingQueue();
 fetchFromSheet(true);
 fetchInventory(true);
+fetchExpenses(true);
+fetchLabPrices(true);
 </script>
 </body>
 </html>
