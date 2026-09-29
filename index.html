@@ -112,6 +112,8 @@
   .btn-danger:hover{background:#f7cdc8;}
   .btn-success{background:#16A34A;color:#fff;border:1px solid #15803D;}
   .btn-success:hover{background:#15803D;}
+  .btn-orange{background:#F97316;color:#fff;border:1px solid #EA660C;}
+  .btn-orange:hover{background:#EA660C;}
   .btn-sm{padding:6px 12px;font-size:12px;border-radius:7px;}
   .btn-block{width:100%;justify-content:center;}
 
@@ -1100,7 +1102,7 @@
   #reportOverlay.report-embedded .modal-body{padding:0;max-height:none;overflow:visible;}
   @media (max-width:1024px){ .appt-grid{grid-template-columns:1fr;} }
 
-  @media print{ .app-shell{display:none !important;} }
+  @media print{ body:not(.printing-panel):not(.printing-full-report) .app-shell{display:none !important;} }
   @media (prefers-reduced-motion:reduce){ .sidebar,.sb-item,#sbCollapseBtn .sb-ico{transition:none !important;} }
 
   /* collapsed rail (desktop) */
@@ -1311,7 +1313,6 @@
     <div class="modal-body">
       <div id="reportTopActions" style="text-align: right; margin-bottom: 15px; display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap;">
         <button class="btn btn-primary btn-sm kh" onclick="openDiseaseListModal()" style="background-color: var(--amber-dark); border-color: var(--amber-dark);">📋 បញ្ជីជំងឺ (DHIS2)</button>
-        <button class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="ទិន្នន័យជំងឺ" style="background-color: var(--coral); border-color: var(--coral);">📄 ទិន្នន័យជំងឺ</button>
         <button class="btn btn-outline btn-sm kh" id="printFullReportBtn" title="Print Report" onclick="printFullReport()">🖨️ Print</button>
       </div>
       
@@ -1377,6 +1378,7 @@
             <button type="button" class="chip" data-f="missing"><i class="dot coral"></i>ខកខាន <span class="chip-n">0</span></button>
             <button type="button" class="chip" data-f="labo"><i class="dot violet"></i>Labo <span class="chip-n">0</span></button>
             <button type="button" class="chip" data-f="done"><i class="dot teal"></i>រួចរាល់ <span class="chip-n">0</span></button>
+            <button type="button" class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="Print" style="background-color: var(--coral); border-color: var(--coral); margin-left:4px;">📄 Print</button>
           </div>
           <span class="mono" id="listCount" style="font-size:12px;color:var(--ink-dim)"></span>
         </div>
@@ -1833,6 +1835,7 @@
           <div class="field"><label>លេខធ្មេញ · Tooth</label><input type="text" id="plan_tooth" class="mono" placeholder="ឧ. 16" autocomplete="off"></div>
           <div class="field"><label>Treatment Plan</label><select id="plan_treatment" class="kh"></select></div>
         </div>
+        <div class="field col-full"><label>ចំណាំ (Note) — ស្រេចចិត្ត</label><input type="text" id="plan_note" class="kh" placeholder="ចំណាំបន្ថែម..." autocomplete="off"></div>
       </div>
       <button type="button" class="btn btn-success btn-block kh" id="planAddBtn" style="margin-top:2px;">＋ បន្ថែមគម្រោង / Add</button>
       <div id="planListContainer" style="margin-top:16px;"></div>
@@ -2901,10 +2904,13 @@ function renderPlanningList(){
     return;
   }
   c.innerHTML = planningItems.map((it, i) => `
-    <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border-soft);border-radius:10px;padding:9px 12px;margin-bottom:7px;">
+    <div style="display:flex;align-items:flex-start;gap:10px;background:#fff;border:1px solid var(--border-soft);border-radius:10px;padding:9px 12px;margin-bottom:7px;">
       <span class="mono" style="font-weight:800;color:var(--primary-dark);font-size:14px;min-width:34px;">${esc(it.tooth)}</span>
-      <span class="kh" style="flex:1;font-size:12.5px;">${esc(it.plan)}</span>
-      <button type="button" class="btn btn-danger btn-sm" data-plan-del="${i}" style="padding:3px 9px;font-size:11px;">✕</button>
+      <div style="flex:1;min-width:0;">
+        <div class="kh" style="font-size:12.5px;">${esc(it.plan)}</div>
+        ${it.note ? `<div class="kh" style="font-size:11px;color:var(--ink-dim);margin-top:2px;">📝 ${esc(it.note)}</div>` : ''}
+      </div>
+      <button type="button" class="btn btn-danger btn-sm" data-plan-del="${i}" style="padding:3px 9px;font-size:11px;flex-shrink:0;">✕</button>
     </div>`).join('');
   c.querySelectorAll('[data-plan-del]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
@@ -2919,6 +2925,7 @@ function openPlanningModal(patientName, prefillTooth){
   planningItems = getPatientPlanItems(records).map(it => ({...it}));
   populatePlanTreatmentSelect();
   document.getElementById('plan_tooth').value = prefillTooth || '';
+  document.getElementById('plan_note').value = '';
   renderPlanningList();
   history.pushState({ modal: 'planning' }, '', '#planning');
   document.getElementById('planningOverlay').classList.remove('hidden');
@@ -2931,10 +2938,12 @@ function closePlanningModal(){
 function addPlanItem(){
   const tooth = document.getElementById('plan_tooth').value.trim();
   const plan = document.getElementById('plan_treatment').value;
+  const note = document.getElementById('plan_note').value.trim();
   if(!tooth || !plan) return;
   const existing = planningItems.find(it => it.tooth === tooth);
-  if(existing) existing.plan = plan; else planningItems.push({ tooth, plan });
+  if(existing){ existing.plan = plan; existing.note = note; } else planningItems.push({ tooth, plan, note });
   document.getElementById('plan_tooth').value = '';
+  document.getElementById('plan_note').value = '';
   renderPlanningList();
 }
 function savePlanning(){
@@ -3508,6 +3517,7 @@ function renderDoDetailBody(r){
         <button class="btn btn-danger btn-sm" id="doDetailDelBtn">🗑 លុប Delete</button>
       </div>
       <button class="btn btn-outline btn-sm" id="doDetailFullBtn">🦷 Full record</button>
+      <button class="btn btn-success btn-sm kh" id="doDetailSaveBtn">💾 Save</button>
       <button class="btn btn-primary btn-sm" id="doDetailEditBtn">✏️ Edit</button>
     </div>
   `;
@@ -3529,6 +3539,10 @@ function renderDoDetailBody(r){
   document.getElementById('doDetailEditBtn').addEventListener('click', ()=>{
     document.getElementById('doDetailOverlay').classList.add('hidden');
     openForm(r);
+  });
+  document.getElementById('doDetailSaveBtn').addEventListener('click', ()=>{
+    document.getElementById('doDetailOverlay').classList.add('hidden');
+    if (window.location.hash === '#detail') history.replaceState(null, null, window.location.pathname);
   });
 }
 
@@ -3806,7 +3820,9 @@ function renderClinicalNotesHTML(records) {
           </tr>
         </thead>
         <tbody>
-          ${rows.map(r => `
+          ${rows.map(r => {
+            const liveStatus = recomputeStatusFromSteps(r);   // always derived fresh from the step list — never trusts a possibly-stale stored value
+            return `
             <tr class="emr-tr" onclick="openDoDetail('${r._id}')">
               <td data-label="កាលបរិច្ឆេទ (Date)" class="mono" style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">${formatDateDisplay(r.timestamp).split(' ')[0]}</td>
               <td data-label="ធ្មេញ (Tooth)" class="mono" style="font-weight:800;color:var(--primary-dark);font-size:13px;">${r.teeth || '—'}</td>
@@ -3816,10 +3832,10 @@ function renderClinicalNotesHTML(records) {
                 ${r.planDo ? `<div style="color:var(--ink-soft);line-height:1.4;">📋 ${r.planDo}</div>` : (!r.timeLast ? '<div style="color:var(--ink-dim);">—</div>' : '')}
               </td>
               <td data-label="ស្ថានភាព (Status)" style="text-align:center;">
-                <div class="emr-status ${r.status==='Done'?'done':(r.status==='Appt'||r.status==='Doing'?'doing':'missing')}">${r.status === 'Doing' ? 'Appt' : (r.status || 'Missing')}</div>
+                <div class="emr-status ${liveStatus==='Done'?'done':(liveStatus==='Appt'?'doing':'missing')}">${liveStatus}</div>
               </td>
             </tr>
-          `).join('')}
+          `; }).join('')}
         </tbody>
       </table>
     </div>
@@ -3908,8 +3924,8 @@ function openPatientRecord(name){
 
         <div class="emr-actions-bar">
           <button type="button" class="btn btn-primary btn-full kh" id="addVisitBtn">＋ កត់ត្រាព្យាបាលថ្មី (New Visit)</button>
-          <button type="button" class="btn btn-success btn-full kh" id="planningBtn">🗓️ គម្រោង Planning</button>
-          <button type="button" class="btn btn-danger btn-full kh" id="examFormBtn">📋 ទម្រង់ពិនិត្យ (Exam Form)</button>
+          <button type="button" class="btn btn-success btn-full kh" id="planningBtn">🗓️ គម្រោងព្យាបាល Treatment Plan</button>
+          <button type="button" class="btn btn-orange btn-full kh" id="examFormBtn">📋 ឯកសារពិនិត្យជំងឺ (Dental Form)</button>
           <button type="button" class="btn btn-outline kh" onclick="openXrayGallery('${safeName}')">📷 មើល X-Ray</button>
           <button type="button" class="btn btn-outline kh" id="printPatientBtn">🖨 បោះពុម្ព</button>
           <button type="button" class="btn btn-danger btn-full kh" id="deletePatientBtn" onclick="deletePatient('${safeName}')">🗑 លុបអ្នកជំងឺនេះ</button>
