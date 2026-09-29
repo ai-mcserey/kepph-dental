@@ -110,6 +110,8 @@
   .btn-ghost:hover{color:var(--ink);}
   .btn-danger{background:var(--coral-soft);color:var(--coral-dark);border:1px solid #f5b5af;}
   .btn-danger:hover{background:#f7cdc8;}
+  .btn-success{background:#16A34A;color:#fff;border:1px solid #15803D;}
+  .btn-success:hover{background:#15803D;}
   .btn-sm{padding:6px 12px;font-size:12px;border-radius:7px;}
   .btn-block{width:100%;justify-content:center;}
 
@@ -325,6 +327,30 @@
   
   #toothHistoryModalOverlay { z-index: 75 !important; background: rgba(8,28,56,0.55) !important; }
   #doDetailOverlay          { z-index: 80 !important; background: rgba(8,28,56,0.6) !important; }
+  .dd-meta{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+  .dd-tx-row{display:flex;align-items:center;gap:10px;}
+  .dd-tx-badge{background:var(--primary-dark);color:#fff;font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:6px;letter-spacing:.03em;flex-shrink:0;}
+  .dd-tx-name{font-weight:700;font-style:italic;color:var(--ink);font-size:14px;}
+  .dd-steps-wrap{margin-top:14px;padding-left:4px;}
+  .dd-step-row{display:flex;align-items:flex-start;gap:12px;position:relative;padding-bottom:20px;}
+  .dd-step-row:not(:last-child)::before{content:'';position:absolute;left:15px;top:32px;bottom:0;width:2px;background:var(--border);}
+  .dd-step-circ{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;background:var(--primary-soft);z-index:1;}
+  .dd-circ-normal{background:var(--primary-soft);color:var(--primary-dark);}
+  .dd-circ-appt{background:var(--amber);color:#fff;}
+  .dd-circ-done{background:#16A34A;color:#fff;}
+  .dd-circ-labo{background:#7C5CDB;color:#fff;}
+  .dd-step-info{flex:1;min-width:0;padding-top:5px;}
+  .dd-step-name{font-weight:700;color:var(--ink);font-size:13.5px;}
+  .dd-step-name-appt{color:var(--amber-dark);}
+  .dd-step-name-done{color:#15803D;}
+  .dd-step-name-labo{color:#5B3FB8;}
+  .dd-step-dt{font-size:12px;color:var(--ink-soft);}
+  .dd-step-note{font-size:11.5px;color:var(--ink-dim);margin-top:3px;}
+  .dd-step-del{width:22px;height:22px;flex-shrink:0;border-radius:50%;border:none;background:var(--coral-soft);color:var(--coral-dark);cursor:pointer;font-size:11px;margin-top:5px;}
+  .dd-step-del:hover{background:#f0b8b1;}
+  .dd-addstep{margin-top:6px;padding-top:14px;border-top:1px dashed var(--border-soft);display:flex;flex-direction:column;gap:8px;}
+  .dd-addstep-head{font-size:12.5px;font-weight:700;color:var(--ink-soft);}
+  .dd-addstep select, .dd-addstep input{padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12.5px;}
   #formOverlay              { z-index: 85 !important; }
   #xrayModalOverlay         { z-index: 95 !important; }
   #xrayGalleryOverlay       { z-index: 96 !important; }
@@ -471,6 +497,8 @@
   .tooth-cell:hover:not(.invisible) { border-color: var(--primary); transform: scale(1.15); z-index: 2; box-shadow: var(--shadow-sm); }
   .tooth-cell.treated { background: var(--primary) !important; border-color: var(--primary-dark) !important; color: #fff !important; font-weight: 800 !important; box-shadow: 0 4px 10px -3px rgba(26,107,219,0.4); transform: translateY(-2px); }
   .tooth-cell.treated:hover:not(.invisible) { transform: scale(1.15) translateY(-2px); background: var(--primary-dark) !important; }
+  #planningOverlay{z-index:97 !important;}
+  .tooth-cell.planned { outline: 2.5px dashed #E8A33D !important; outline-offset: 2px; }
   .arch-label { font-size: 10.5px; text-align: center; color: var(--ink-dim); letter-spacing: .05em; text-transform: uppercase; margin: 10px 0; font-weight: 800; }
 
   .emr-notes-section { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
@@ -516,6 +544,18 @@
   @media(max-width:640px){ .appointment-fields-grid{ grid-template-columns: 1fr; } }
 
   .med-table-wrapper{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+  .med-bar{ position:relative; display:flex; flex-direction:column; gap:9px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 38px 12px 12px; margin-bottom:10px; }
+  .med-bar-section-label{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-dim); margin-bottom:-3px; }
+  .med-bar-clinic{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%; }
+  .med-bar-clinic .med-row-date{ width:130px; flex-shrink:0; }
+  .med-bar-clinic .med-row-qty{ width:70px; flex-shrink:0; }
+  .med-bar-divider{ width:100%; height:1px; background:var(--border); flex-shrink:0; }
+  .med-bar-medicine{ width:100%; }
+  .med-bar-medicine .med-row-name{ width:100%; font-weight:700; }
+  .med-bar-del{ position:absolute; top:9px; right:9px; padding:3px 8px; font-size:11px; }
+  @media (max-width:640px){
+    .med-bar-clinic{ width:100%; }
+  }
   .med-table-header{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .med-table{ width: 100%; border-collapse: collapse; font-size: 12px; background: #fff; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
   .med-table th{ background: var(--surface-2); color: var(--ink-dim); font-size: 10px; text-transform: uppercase; letter-spacing: .03em; padding: 7px 8px; text-align: left; border-bottom: 1px solid var(--border); }
@@ -1052,9 +1092,6 @@
   /* small password prompt (shared look with showConfirm) */
   .pin-prompt input{width:100%;margin:12px 0 6px;text-align:center;letter-spacing:.3em;font-size:18px;}
   .appt-panel{min-width:0;}
-  body[data-page="expenses"] .topbar .search-wrap, body[data-page="expenses"] #fabAdd{display:none;}
-  #genericOptionsUI.hidden, #labPriceUI.hidden{display:none;}
-  #sendLabOverlay{z-index:97 !important;}
   .dash-report-head{margin:22px 0 10px;padding-top:6px;border-top:1px solid var(--border-soft);}
   .dash-report-head h3{margin:0;font-size:15px;color:var(--ink);}
   #reportOverlay.report-embedded{position:static;inset:auto;background:none;backdrop-filter:none;z-index:auto;display:block;padding:0;overflow:visible;}
@@ -1191,10 +1228,6 @@
         <button type="button" class="sb-item" data-page="inventory" title="ឃ្លាំងសម្ភារៈ · Inventory">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5V8z"/><path d="m3 8 9 5 9-5"/><path d="M12 13v8"/></svg>
           <span class="sb-label kh">ឃ្លាំងសម្ភារៈ<small>Inventory</small></span><span class="sb-badge warn" id="sbBadgeInv" hidden>0</span>
-        </button>
-        <button type="button" class="sb-item" data-page="expenses" title="បញ្ជីចំណាយ · Expenses">
-          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          <span class="sb-label kh">បញ្ជីចំណាយ<small>Expenses</small></span>
         </button>
         <button type="button" class="sb-item" id="settingsBtn" title="ព័ត៌មានគ្លីនិក · Clinic settings">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -1542,36 +1575,6 @@
         <div class="inv-status kh" id="orgSyncStatus" style="margin-top:10px;"></div>
       </section>
 
-      <!-- Expenses -->
-      <section class="page" id="page-expenses" data-page="expenses" hidden>
-        <div class="kpi-grid" id="expKpis"></div>
-        <div class="page-tools">
-          <div class="inv-tools">
-            <select id="expTypeFilter" class="inv-select kh" aria-label="ប្រភេទ"></select>
-            <div class="search-wrap">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
-              <input type="text" class="search-input search-input-topbar kh" id="expSearch" placeholder="ស្វែងរកចំណាយ..." aria-label="ស្វែងរកចំណាយ">
-            </div>
-          </div>
-          <div class="inv-tools">
-            <span class="inv-status kh" id="expSyncStatus"></span>
-            <button type="button" class="btn btn-outline btn-sm kh" id="expSyncBtn">🔄 Sync</button>
-            <button type="button" class="btn btn-primary btn-sm kh" id="expAddBtn">＋ បន្ថែមចំណាយ</button>
-          </div>
-        </div>
-        <div class="emr-notes-section">
-          <div class="emr-table-wrap">
-            <table class="emr-table">
-              <thead><tr>
-                <th class="kh">កាលបរិច្ឆេទ</th><th class="kh">ប្រភេទ</th><th class="kh">ការពិពណ៌នា</th>
-                <th class="kh">អ្នកជំងឺ</th><th class="kh">ចំនួនទឹកប្រាក់</th><th></th>
-              </tr></thead>
-              <tbody id="expBody"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
       <!-- Inventory -->
       <section class="page" id="page-inventory" data-page="inventory" hidden>
         <div class="kpi-grid" id="invKpis"></div>
@@ -1724,53 +1727,6 @@
 </div>
 
 <!-- Inventory item form -->
-<!-- Expense form -->
-<div class="overlay hidden" id="expFormOverlay">
-  <div class="modal narrow" style="max-width:540px;">
-    <div class="modal-head"><h2 class="kh" id="expFormTitle">បន្ថែមចំណាយថ្មី · New</h2><button class="x" id="closeExpForm" aria-label="បិទ">✕</button></div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="inv-row-2">
-          <div class="field"><label>កាលបរិច្ឆេទ · Date</label><input type="date" id="exp_date"></div>
-          <div class="field"><label>ប្រភេទ · Type</label><input type="text" id="exp_type" class="kh" list="expTypeList" autocomplete="off"></div>
-        </div>
-        <div class="field col-full"><label>ការពិពណ៌នា · Description</label><input type="text" id="exp_description" class="kh" autocomplete="off"></div>
-        <div class="inv-row-2">
-          <div class="field"><label>អ្នកជំងឺ (បើមាន) · Patient</label><input type="text" id="exp_patientName" class="kh" autocomplete="off"></div>
-          <div class="field"><label>ចំនួនទឹកប្រាក់ ($) · Amount</label><input type="number" min="0" step="0.01" id="exp_amount" class="mono" inputmode="decimal"></div>
-        </div>
-        <datalist id="expTypeList"></datalist>
-      </div>
-      <div id="expFormError" class="kh" style="color:var(--coral);font-size:12px;min-height:16px;margin-top:8px;"></div>
-      <div class="modal-actions">
-        <div class="left-action"><button type="button" class="btn btn-danger btn-sm kh hidden" id="expDeleteBtn">🗑 លុប</button></div>
-        <button type="button" class="btn btn-outline kh" id="expCancelBtn">បោះបង់</button>
-        <button type="button" class="btn btn-primary kh" id="expSaveBtn">រក្សាទុក Save</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Send to Lab -->
-<div class="overlay hidden" id="sendLabOverlay">
-  <div class="modal narrow" style="max-width:460px;">
-    <div class="modal-head"><h2 class="kh">🦷 បញ្ជូនទៅ Lab · Send to Lab</h2><button class="x" id="closeSendLab" aria-label="បិទ">✕</button></div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="field col-full"><label>លេខធ្មេញ (ខ្ចីដោយក្បៀស) · Teeth</label><input type="text" id="lab_teeth" class="mono" placeholder="22,23" autocomplete="off"></div>
-        <div class="field col-full"><label>ប្រភេទគ្រាប់ធ្មេញ · Lab Type</label><select id="lab_type" class="kh"></select></div>
-        <div class="field col-full"><label>កាលបរិច្ឆេទ · Date</label><input type="date" id="lab_date"></div>
-      </div>
-      <div class="skill-total kh" style="margin-top:12px;">សរុប Total: <b class="mono" id="lab_total">$0.00</b> <span id="lab_calc_note" style="font-size:11px;color:var(--ink-dim);"></span></div>
-      <div id="sendLabError" class="kh" style="color:var(--coral);font-size:12px;min-height:16px;margin-top:8px;"></div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-outline kh" id="sendLabCancelBtn">បោះបង់</button>
-        <button type="button" class="btn btn-primary kh" id="sendLabConfirmBtn">✅ បញ្ជាក់ Confirm</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="overlay hidden" id="invFormOverlay">
   <div class="modal narrow" style="max-width:580px;">
     <div class="modal-head"><h2 class="kh" id="invFormTitle">បន្ថែមសម្ភារៈថ្មី · New item</h2><button class="x" id="closeInvForm" aria-label="បិទ">✕</button></div>
@@ -1838,28 +1794,14 @@
         <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('diagnosis', this)">Diagnosis</button>
         <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('procedure', this)">Procedures</button>
         <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('regcard', this)">Registration Card</button>
-        <button type="button" class="btn btn-sm btn-ghost kh opt-tab" onclick="switchSettingTab('labprice', this)">Lab Price</button>
       </div>
 
-      <div id="genericOptionsUI">
-        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-          <input type="text" id="newOptionInput" class="kh" placeholder="បញ្ចូលឈ្មោះថ្មី..." style="flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
-          <button type="button" class="btn btn-primary kh" onclick="addNewCustomOption()">＋ បន្ថែម</button>
-        </div>
-
-        <div id="optionsListContainer" style="max-height: 320px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 8px; padding: 8px; background: var(--surface-2);">
-        </div>
+      <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+        <input type="text" id="newOptionInput" class="kh" placeholder="បញ្ចូលឈ្មោះថ្មី..." style="flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
+        <button type="button" class="btn btn-primary kh" onclick="addNewCustomOption()">＋ បន្ថែម</button>
       </div>
 
-      <div id="labPriceUI" class="hidden">
-        <p class="kh" style="font-size:11.5px;color:var(--ink-dim);margin:0 0 10px;">កំណត់តម្លៃក្នុងមួយគ្រាប់ធ្មេញ សម្រាប់ប្រភេទគ្រាប់ធ្មេញនីមួយៗ (ប្រើនៅពេលបញ្ជូនទៅ Lab)។</p>
-        <div style="display: flex; gap: 8px; margin-bottom: 14px;">
-          <input type="text" id="newLabPriceType" class="kh" placeholder="ប្រភេទ (ឧ. PFM)..." style="flex: 2; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
-          <input type="number" id="newLabPriceAmount" min="0" step="0.01" placeholder="$" class="mono" style="flex: 1; padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline:none;">
-          <button type="button" class="btn btn-primary kh" id="addLabPriceBtn">＋ បន្ថែម</button>
-        </div>
-        <div id="labPriceListContainer" style="max-height: 320px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 8px; padding: 8px; background: var(--surface-2);">
-        </div>
+      <div id="optionsListContainer" style="max-height: 320px; overflow-y: auto; border: 1px solid var(--border-soft); border-radius: 8px; padding: 8px; background: var(--surface-2);">
       </div>
 
       <div class="modal-actions" style="margin-top: 15px;">
@@ -1881,6 +1823,27 @@
 </div>
 
 <!-- Quick DO / treatment detail popup -->
+<!-- Treatment Planning: a list of tooth -> planned treatment, not a diagram -->
+<div class="overlay hidden" id="planningOverlay">
+  <div class="modal narrow" style="max-width:520px;">
+    <div class="modal-head"><h2 class="kh">🗓️ គម្រោងព្យាបាល · Treatment Planning</h2><button class="x" id="closePlanning" aria-label="បិទ">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="inv-row-2">
+          <div class="field"><label>លេខធ្មេញ · Tooth</label><input type="text" id="plan_tooth" class="mono" placeholder="ឧ. 16" autocomplete="off"></div>
+          <div class="field"><label>Treatment Plan</label><select id="plan_treatment" class="kh"></select></div>
+        </div>
+      </div>
+      <button type="button" class="btn btn-success btn-block kh" id="planAddBtn" style="margin-top:2px;">＋ បន្ថែមគម្រោង / Add</button>
+      <div id="planListContainer" style="margin-top:16px;"></div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-outline kh" id="planningCancelBtn">បោះបង់</button>
+      <button type="button" class="btn btn-success kh" id="planningSaveBtn">✅ រក្សាទុក Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="doDetailOverlay">
   <div class="modal narrow">
     <div class="modal-head"><h2 class="kh" id="doDetailName">—</h2><button class="x" id="closeDoDetail">✕</button></div>
@@ -1933,29 +1896,32 @@
           </div>
         </div>
 
-        <!-- Row 2: Phone, Visit Date-Time, Registration Card -->
-        <div class="row-phone-visit-type" id="group_phone_visit_type">
+        <!-- Row 2: Phone, Registration Card -->
+        <div class="row-phone-visit-type" id="group_phone_visit_type" style="grid-template-columns:1fr 1fr;">
           <div class="field">
             <label>លេខទូរស័ព្ទ · Phone</label>
             <input type="text" id="f_phone" placeholder="097xxxxxxx">
-          </div>
-          <div class="field">
-            <label>កាលបរិច្ឆេទចូល · Visit Date-Time</label>
-            <input type="datetime-local" id="f_visitDateTime" class="mono">
           </div>
           <div class="field">
             <label>Registration Card (Type)</label>
             <select id="f_type" class="kh"></select>
           </div>
         </div>
-        
-        <!-- Row 3: Teeth, Diagnosis (Indication), Diagnosis (ICD10) -->
-        <div class="row-three-cols">
+
+        <!-- Row 3: Visit Date-Time, Teeth -->
+        <div class="row-three-cols" style="grid-template-columns:1fr 1fr;">
+          <div class="field">
+            <label>កាលបរិច្ឆេទចូល · Visit Date-Time</label>
+            <input type="datetime-local" id="f_visitDateTime" class="mono">
+          </div>
           <div class="field">
             <label>លេខធ្មេញ · Teeth (FDI)</label>
             <input type="text" id="f_teeth" class="mono" placeholder="ឧ. 16, 24, 54, 61">
           </div>
+        </div>
 
+        <!-- Row 4: Diagnosis (Indication), Diagnosis (ICD10) -->
+        <div class="row-three-cols" style="grid-template-columns:1fr 1fr;">
           <div class="field">
             <label>Diagnosis (Indication)</label>
             <select id="f_diagnosis" class="kh"></select>
@@ -1982,53 +1948,18 @@
           </div>
         </div>
 
-        <!-- Row 4: Treatment, Procedures, Procedure Time -->
-        <div class="row-treatment-proc-time">
+        <!-- Row 5: Treatment, Procedures -->
+        <div class="row-treatment-proc-time" style="grid-template-columns:1fr 1fr;">
           <div class="field">
             <label>Treatment</label>
             <select id="f_treatment" class="kh"></select>
             <input type="text" id="f_treatment_custom" placeholder="សរសេរផ្សេង / type custom" style="margin-top:6px;display:none;">
           </div>
           <div class="field">
-            <label>នីតិវិធី · Procedures</label>
+            <label>នីតិវិធីដំបូង · First Procedure</label>
             <select id="f_procedure_select" class="kh"></select>
             <textarea id="f_doing" class="kh" placeholder="សរសេរនីតិវិធីលម្អិត / custom procedure..." style="margin-top:6px;display:none;"></textarea>
-          </div>
-          <div class="field">
-            <label>ម៉ោងនីតិវិធី · Procedure Time</label>
-            <input type="datetime-local" id="f_doingDateTime" class="mono">
-          </div>
-        </div>
-
-        <!-- Row 5: ស្ថានភាព Status & ការណាត់ជួប -->
-        <div class="appointment-box-wrapper">
-          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--amber-dark); margin-bottom:10px;">
-            ស្ថានភាពព្យាបាល និងការណាត់ជួប · Status & Appointment
-          </div>
-          <div class="status-checkbox-group">
-            <label class="status-check-label" style="color:var(--primary-dark);">
-              <input type="checkbox" id="chk_done" onchange="selectStatusCheckbox('Done')">
-              <span>✅ រួចរាល់ (Done)</span>
-            </label>
-            <label class="status-check-label appt-lbl" style="color:var(--amber-dark);">
-              <input type="checkbox" id="chk_appt" onchange="selectStatusCheckbox('Appt')">
-              <span>🗓️ មានណាត់ (Appt)</span>
-            </label>
-            <label class="status-check-label missing-lbl" style="color:var(--coral-dark);">
-              <input type="checkbox" id="chk_missing" onchange="selectStatusCheckbox('Missing')">
-              <span>⏳ រង់ចាំ/អវត្តមាន (Missing)</span>
-            </label>
-          </div>
-          
-          <div id="appointmentFields" class="appointment-fields-grid" style="display:none;">
-            <div class="field" style="margin:0;">
-              <label>ថ្ងៃខែឆ្នាំ និងម៉ោងណាត់ · Appointment Date-Time</label>
-              <input type="datetime-local" id="f_apptDateTime" class="mono">
-            </div>
-            <div class="field" style="margin:0;">
-              <label>គម្រោងព្យាបាលលើកក្រោយ · Plan DO</label>
-              <input type="text" id="f_planDo" class="kh" placeholder="ឧ. Obturation, Luting crown, Remove suture...">
-            </div>
+            <p class="kh" style="font-size:10.5px;color:var(--ink-dim);margin:4px 0 0;">យកតាមកាលបរិច្ឆេទចូល · uses the visit date above. ជំហានផ្សេងទៀត បន្ថែមនៅ "+ Add Step" ក្រោយពេលរក្សាទុក។</p>
           </div>
         </div>
 
@@ -2038,20 +1969,7 @@
             <label style="margin:0;">💊 តារាងចេញថ្នាំ · Medication Prescription</label>
             <button type="button" class="btn btn-outline btn-sm" id="addMedRowBtn" style="padding:4px 10px;font-size:11.5px;">＋ បន្ថែមថ្នាំ / Add</button>
           </div>
-          <div style="overflow-x:auto;">
-            <table class="med-table" id="medPrescriptionTable">
-              <thead>
-                <tr>
-                  <th style="width:130px;">ថ្ងៃចេញថ្នាំ (Date)</th>
-                  <th>ឈ្មោះថ្នាំ (Medicine)</th>
-                  <th style="width:190px;">ពេលលេប (Dosage Time)</th>
-                  <th style="width:90px;">ចំនួន (Qty)</th>
-                  <th style="width:36px;text-align:center;">លុប</th>
-                </tr>
-              </thead>
-              <tbody id="medTableBody"></tbody>
-            </table>
-          </div>
+          <div id="medTableBody"></div>
           <div class="quick-med-pills">
             <span style="font-size:11px;color:var(--ink-dim);align-self:center;">ថ្នាំប្រើញឹកញាប់៖</span>
             <span class="q-pill" onclick="quickAddMed('Amoxicillin 500mg', '10')">Amoxicillin (500mg)</span>
@@ -2296,10 +2214,10 @@ const DEFAULT_LISTS = {
   ],
   diagnosis: ['ឈឺធ្មេញ', 'ធ្មេញរង្គើរ', 'ឈាមអញ្ចាញធ្មេញ', 'ហើមអញ្ចាញ', 'ខ្ទុះអញ្ចាញ'],
   procedure: [
-    'Opening', 'Dressing Calcium', 'Obturation', 'Scaling upper/lower',
+    'Opening', 'Shaping and Cleaning', 'Dressing Calcium', 'Obturation', 'Scaling upper/lower',
     'Irrigation with NaOCl', 'Working length measurement', 'Tooth Extraction',
     'Suture', 'Composite Restoration', 'GIC Filling', 'Crown preparation',
-    'Impression taking', 'Crown cementation'
+    'Impression taking', 'Crown cementation', 'Appointment', 'Labo', 'Done'
   ],
   regcard: [
     'បង់ពេញថ្លៃ', 'លើកលែង', 'មូលនិធិសមធម៌ (ក្រីក្រ)', 'មូលនិធិសមធម៌ (ហានិភ័យ)',
@@ -2323,10 +2241,7 @@ function switchSettingTab(tabKey, btnElement) {
     b.className = 'btn btn-sm btn-ghost kh opt-tab';
   });
   btnElement.className = 'btn btn-sm btn-primary kh opt-tab';
-  const isLabPrice = tabKey === 'labprice';
-  document.getElementById('genericOptionsUI').classList.toggle('hidden', isLabPrice);
-  document.getElementById('labPriceUI').classList.toggle('hidden', !isLabPrice);
-  if(isLabPrice) renderLabPriceList(); else renderOptionsList();
+  renderOptionsList();
 }
 
 function renderOptionsList() {
@@ -2450,20 +2365,9 @@ let activePatientContext = null;
 let currentFormStatus = 'Appt';
 
 function selectStatusCheckbox(status) {
+  // Status is now set from the ជំហាន (Step) panel — this form no longer shows the picker.
+  // Kept only so any stray callers don't throw; it just records the value.
   currentFormStatus = status;
-  document.getElementById('chk_done').checked = (status === 'Done');
-  document.getElementById('chk_appt').checked = (status === 'Appt');
-  document.getElementById('chk_missing').checked = (status === 'Missing');
-
-  const apptFields = document.getElementById('appointmentFields');
-  if (status === 'Appt') {
-    apptFields.style.display = 'grid';
-    if (!document.getElementById('f_apptDateTime').value) {
-      document.getElementById('f_apptDateTime').value = getLocalNowDateTime();
-    }
-  } else {
-    apptFields.style.display = 'none';
-  }
 }
 
 window.addEventListener('popstate', function(e) {
@@ -2708,8 +2612,10 @@ procSelect.addEventListener('change', (e) => {
 });
 
 function addMedicationRow(data = {}){
-  const tbody = document.getElementById('medTableBody');
-  const tr = document.createElement('tr');
+  const host = document.getElementById('medTableBody');
+  const bar = document.createElement('div');
+  bar.className = 'med-bar';
+  bar.setAttribute('data-med-row', '');
   const defaultDate = data.date || getLocalTodayYMD();
   const name = data.name || '';
   const m = data.m !== undefined ? data.m : true;
@@ -2717,20 +2623,25 @@ function addMedicationRow(data = {}){
   const e = data.e !== undefined ? data.e : true;
   const qty = data.qty || '10';
 
-  tr.innerHTML = `
-    <td><input type="date" class="med-input med-row-date" value="${defaultDate}"></td>
-    <td><input type="text" class="med-input med-row-name kh" placeholder="ឈ្មោះថ្នាំ (ឧ. Amoxicillin)" value="${name}"></td>
-    <td>
+  bar.innerHTML = `
+    <div class="med-bar-section-label kh">Clinic — ថ្ងៃចេញ / ពេលលេប / ចំនួន</div>
+    <div class="med-bar-clinic">
+      <input type="date" class="med-input med-row-date" value="${defaultDate}">
       <div class="med-time-checks">
         <label><input type="checkbox" class="med-row-m" ${m ? 'checked':''}> ព្រឹក</label>
         <label><input type="checkbox" class="med-row-n" ${n ? 'checked':''}> ថ្ងៃ</label>
         <label><input type="checkbox" class="med-row-e" ${e ? 'checked':''}> ល្ងាច</label>
       </div>
-    </td>
-    <td><input type="text" class="med-input med-row-qty" placeholder="10" value="${qty}"></td>
-    <td style="text-align:center;"><button type="button" class="btn btn-danger btn-sm" style="padding:3px 7px;font-size:11px;" onclick="this.closest('tr').remove()">✕</button></td>
+      <input type="text" class="med-input med-row-qty" placeholder="ចំនួន" value="${qty}">
+    </div>
+    <div class="med-bar-divider"></div>
+    <div class="med-bar-section-label kh">Medicine — ឈ្មោះថ្នាំ</div>
+    <div class="med-bar-medicine">
+      <input type="text" class="med-input med-row-name kh" placeholder="ឈ្មោះថ្នាំ (ឧ. Amoxicillin)" value="${name}">
+    </div>
+    <button type="button" class="btn btn-danger btn-sm med-bar-del" title="លុប" aria-label="លុប" onclick="this.closest('[data-med-row]').remove()">✕</button>
   `;
-  tbody.appendChild(tr);
+  host.appendChild(bar);
 }
 
 function quickAddMed(name, defaultQty){
@@ -2738,15 +2649,15 @@ function quickAddMed(name, defaultQty){
 }
 
 function getPrescriptionData(){
-  const rows = document.querySelectorAll('#medTableBody tr');
+  const rows = document.querySelectorAll('#medTableBody [data-med-row]');
   const items = [];
-  rows.forEach(tr => {
-    const date = tr.querySelector('.med-row-date').value;
-    const name = tr.querySelector('.med-row-name').value.trim();
-    const m = tr.querySelector('.med-row-m').checked;
-    const n = tr.querySelector('.med-row-n').checked;
-    const e = tr.querySelector('.med-row-e').checked;
-    const qty = tr.querySelector('.med-row-qty').value.trim();
+  rows.forEach(bar => {
+    const date = bar.querySelector('.med-row-date').value;
+    const name = bar.querySelector('.med-row-name').value.trim();
+    const m = bar.querySelector('.med-row-m').checked;
+    const n = bar.querySelector('.med-row-n').checked;
+    const e = bar.querySelector('.med-row-e').checked;
+    const qty = bar.querySelector('.med-row-qty').value.trim();
     if(name){
       items.push({date, name, m, n, e, qty});
     }
@@ -2888,6 +2799,8 @@ async function fetchFromSheet(isSilent = false){
         let planDo = cleanStr(r['planDo'] || r[14] || '');        
         let medication = cleanStr(r['medication'] || r[15] || '');
         let status = cleanStr(r['status'] || r[16] || 'Done'); 
+        let steps = cleanStr(r['steps'] || r[17] || '');
+        let planTeeth = cleanStr(r['planTeeth'] || r[18] || '');
 
         let timestamp = cleanStr(r['timestamp'] || r[0] || '');
         let code = cleanStr(r['code'] || r[1] || '') || ('row_' + i);
@@ -2896,7 +2809,7 @@ async function fetchFromSheet(isSilent = false){
 
         return {
           ...r,
-          code, name, sex, age, type, phone, diagnosis, idc10, treatment, teeth, doing, doingDateTime, timeLast, planDo, medication, status, timestamp,
+          code, name, sex, age, type, phone, diagnosis, idc10, treatment, teeth, doing, doingDateTime, timeLast, planDo, medication, status, steps, planTeeth, timestamp,
           _id: code || ('rec_' + i)
         };
       });
@@ -2944,31 +2857,109 @@ async function fetchFromSheet(isSilent = false){
 
 function parseTeeth(str){ if(!str) return []; return String(str).split(',').map(s=>s.trim()).filter(Boolean); }
 
-function archCellsHTML(arr, treatedSet, isPrimary = false){
+function archCellsHTML(arr, treatedSet, isPrimary = false, plannedSet){
   const halfLen = arr.length / 2;
   return arr.map((t, idx)=>{
     const gap = idx === halfLen ? '<div class="quad-gap"></div>' : '';
     if(!t) return gap + `<div class="tooth-cell invisible"></div>`;
     const isTreated = treatedSet.has(t);
+    const isPlanned = !!(plannedSet && plannedSet.has(t));
     const primaryCls = isPrimary ? ' primary-tooth' : '';
     const treatedCls = isTreated ? ' treated' : '';
-    const tooltip = isTreated ? `ធ្មេញលេខ ${t} (បានព្យាបាល - ចុចមើលប្រវត្តិ)` : `ធ្មេញលេខ ${t} (ចុចកត់ត្រាថ្មី)`;
-    return gap + `<div class="tooth-cell${primaryCls}${treatedCls}" data-tooth="${t}" title="${tooltip}">${t}</div>`;
+    const plannedCls = isPlanned ? ' planned' : '';
+    const tooltipBits = [isTreated ? 'បានព្យាបាល' : '', isPlanned ? 'មានគម្រោង Planning' : ''].filter(Boolean).join(' · ');
+    const tooltip = `ធ្មេញលេខ ${t}${tooltipBits ? ' (' + tooltipBits + ')' : ' (ចុចកត់ត្រាថ្មី)'}`;
+    return gap + `<div class="tooth-cell${primaryCls}${treatedCls}${plannedCls}" data-tooth="${t}" title="${tooltip}">${t}</div>`;
   }).join('');
 }
 
-function buildToothChartBlockHTML(treatedSet){
+function buildToothChartBlockHTML(treatedSet, plannedSet){
   return `
     <div class="odontogram-panel" style="margin:0; width:100%;">
       <div class="arch-label">Upper Arch · ធ្មេញលើ</div>
-      <div class="arch-row upper-perm">${archCellsHTML(UPPER, treatedSet, false)}</div>
-      <div class="arch-row upper-prim">${archCellsHTML(PRIMARY_UPPER_PADDED, treatedSet, true)}</div>
-      <div class="arch-row lower-prim">${archCellsHTML(PRIMARY_LOWER_PADDED, treatedSet, true)}</div>
-      <div class="arch-row lower-perm">${archCellsHTML(LOWER, treatedSet, false)}</div>
+      <div class="arch-row upper-perm">${archCellsHTML(UPPER, treatedSet, false, plannedSet)}</div>
+      <div class="arch-row upper-prim">${archCellsHTML(PRIMARY_UPPER_PADDED, treatedSet, true, plannedSet)}</div>
+      <div class="arch-row lower-prim">${archCellsHTML(PRIMARY_LOWER_PADDED, treatedSet, true, plannedSet)}</div>
+      <div class="arch-row lower-perm">${archCellsHTML(LOWER, treatedSet, false, plannedSet)}</div>
       <div class="arch-label">Lower Arch · ធ្មេញក្រោម</div>
     </div>
   `;
 }
+
+/* ---------- Treatment Planning: a list of tooth -> planned treatment (shares the main diagram) ---------- */
+let planningPatientName = null;
+let planningItems = [];   // [{tooth, plan}]
+
+function populatePlanTreatmentSelect(){
+  const sel = document.getElementById('plan_treatment');
+  sel.innerHTML = appCustomLists.treatment.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+}
+function renderPlanningList(){
+  const c = document.getElementById('planListContainer');
+  if(!planningItems.length){
+    c.innerHTML = `<div class="empty-state kh" style="padding:18px 12px;">មិនទាន់មានគម្រោងទេ<br><span style="opacity:.7">No planned teeth yet</span></div>`;
+    return;
+  }
+  c.innerHTML = planningItems.map((it, i) => `
+    <div style="display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--border-soft);border-radius:10px;padding:9px 12px;margin-bottom:7px;">
+      <span class="mono" style="font-weight:800;color:var(--primary-dark);font-size:14px;min-width:34px;">${esc(it.tooth)}</span>
+      <span class="kh" style="flex:1;font-size:12.5px;">${esc(it.plan)}</span>
+      <button type="button" class="btn btn-danger btn-sm" data-plan-del="${i}" style="padding:3px 9px;font-size:11px;">✕</button>
+    </div>`).join('');
+  c.querySelectorAll('[data-plan-del]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      planningItems.splice(Number(btn.dataset.planDel), 1);
+      renderPlanningList();
+    });
+  });
+}
+function openPlanningModal(patientName, prefillTooth){
+  planningPatientName = patientName;
+  const records = getPatientRecords(patientName);
+  planningItems = getPatientPlanItems(records).map(it => ({...it}));
+  populatePlanTreatmentSelect();
+  document.getElementById('plan_tooth').value = prefillTooth || '';
+  renderPlanningList();
+  history.pushState({ modal: 'planning' }, '', '#planning');
+  document.getElementById('planningOverlay').classList.remove('hidden');
+  setTimeout(()=> document.getElementById('plan_tooth').focus(), 60);
+}
+function closePlanningModal(){
+  document.getElementById('planningOverlay').classList.add('hidden');
+  if(window.location.hash === '#planning') history.replaceState(null, null, window.location.pathname);
+}
+function addPlanItem(){
+  const tooth = document.getElementById('plan_tooth').value.trim();
+  const plan = document.getElementById('plan_treatment').value;
+  if(!tooth || !plan) return;
+  const existing = planningItems.find(it => it.tooth === tooth);
+  if(existing) existing.plan = plan; else planningItems.push({ tooth, plan });
+  document.getElementById('plan_tooth').value = '';
+  renderPlanningList();
+}
+function savePlanning(){
+  if(!planningPatientName) return;
+  const records = getPatientRecords(planningPatientName);
+  if(!records.length) return;
+  const sorted = [...records].sort((a, b) => (parseAnyDate(b.timestamp) || 0) - (parseAnyDate(a.timestamp) || 0));
+  const latestRec = sorted[0];
+  const idx = allRecords.findIndex(x => x._id === latestRec._id || x.code === latestRec.code);
+  if(idx === -1) return;
+  allRecords[idx].planTeeth = JSON.stringify(planningItems);
+  saveLocalRecords();
+  renderAll();
+  if(activePatientContext) refreshPatientBodyOnly(activePatientContext);
+  pushToSheet('updateRecord', {...allRecords[idx]});
+  closePlanningModal();
+}
+document.getElementById('closePlanning').addEventListener('click', closePlanningModal);
+document.getElementById('planningCancelBtn').addEventListener('click', closePlanningModal);
+document.getElementById('planningSaveBtn').addEventListener('click', savePlanning);
+document.getElementById('planAddBtn').addEventListener('click', addPlanItem);
+document.getElementById('planningOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'planningOverlay') closePlanningModal(); });
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape' && !document.getElementById('planningOverlay').classList.contains('hidden')) closePlanningModal();
+});
 
 function getWeekRange(now){
   now = now || new Date();
@@ -3470,81 +3461,67 @@ function renderList(){
 function openDoDetail(id){
   const r = allRecords.find(x=>x._id===id || x.code===id);
   if(!r) return;
-  
-  history.pushState({ modal: 'detail' }, '', '#detail');
 
-  document.getElementById('doDetailName').textContent = r.name + ' · ' + formatDateDisplay(r.timestamp);
-  
-  const formattedProcedure = formatProcedureDisplay(r.doing, r.doingDateTime);
+  history.pushState({ modal: 'stepdetail' }, '', '#stepdetail');
+  document.getElementById('doDetailName').innerHTML = `🦷 ${esc(r.treatment || 'ព្យាបាល')}`;
+  renderDoDetailBody(r);
+  document.getElementById('doDetailOverlay').classList.remove('hidden');
+}
 
-  const presItems = parsePrescriptionString(r.medication);
-  const medByDate = {};
-  presItems.forEach(item => {
-    const d = item.date || 'មិនระបុថ្ងៃ';
-    if(!medByDate[d]) medByDate[d] = [];
-    medByDate[d].push(item);
-  });
+function renderDoDetailBody(r){
+  const steps = stepsArray(r);
+  const dateStr = formatDateDisplay(r.timestamp).split(' ')[0];
 
-  let medHtml = '';
-  Object.keys(medByDate).sort().forEach(dateKey => {
-    medHtml += `<div style="margin-top:6px;font-size:12px;">🗓️ <b>ថ្ងៃទី៖ ${dateKey.replace(/-/g, '/')}</b></div><ul style="margin:4px 0 8px 20px;padding:0;font-size:12px;color:var(--primary-dark);">`;
-    medByDate[dateKey].forEach(it => {
-      const times = [it.m?'ព្រឹក':'', it.n?'ថ្ងៃ':'', it.e?'ល្ងាច':''].filter(Boolean).join(' + ');
-      medHtml += `<li><b>${it.name}</b> (${times || '—'}) · ចំនួន: ${it.qty || '—'}</li>`;
-    });
-    medHtml += `</ul>`;
-  });
+  const stepRows = steps.map((st, i) => {
+    const kind = stepKind(st.name);
+    const circleCls = kind === 'done' ? 'dd-circ-done' : kind === 'appt' ? 'dd-circ-appt' : kind === 'labo' ? 'dd-circ-labo' : 'dd-circ-normal';
+    const nameCls = kind === 'done' ? 'dd-step-name-done' : kind === 'appt' ? 'dd-step-name-appt' : kind === 'labo' ? 'dd-step-name-labo' : '';
+    const canDelete = i > 0;
+    return `<div class="dd-step-row">
+      <div class="dd-step-circ ${circleCls}">${i + 1}</div>
+      <div class="dd-step-info">
+        <span class="dd-step-name kh ${nameCls}">${esc(st.name)}</span> - <span class="mono dd-step-dt">${st.datetime ? formatDateDisplay(st.datetime) : '—'}</span>
+        ${st.note ? `<div class="dd-step-note kh">${esc(st.note)}</div>` : ''}
+      </div>
+      ${canDelete ? `<button type="button" class="dd-step-del" data-step-id="${esc(st.id)}" title="លុបជំហាននេះ" aria-label="លុបជំហាននេះ">✕</button>` : '<span style="width:22px;flex-shrink:0;"></span>'}
+    </div>`;
+  }).join('');
+
+  const procOpts = (appCustomLists.procedure || []).map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
 
   document.getElementById('doDetailBody').innerHTML = `
-    <div class="detail-item full" style="margin-bottom:12px;">
-      <div class="k">Diagnosis (Indication)</div>
-      <div class="v kh">${r.diagnosis||'—'}</div>
+    <div class="dd-meta kh">ធ្មេញ: <b>${esc(r.teeth) || '—'}</b> · ${dateStr}</div>
+    <div class="dd-tx-row">
+      <span class="dd-tx-badge">TX</span>
+      <span class="dd-tx-name kh">${esc(r.treatment) || '—'}</span>
     </div>
-    <div class="detail-item full" style="margin-bottom:12px;">
-      <div class="k">Treatment</div>
-      <div class="v kh">${r.treatment||'—'}</div>
+    <div class="dd-steps-wrap">${stepRows}</div>
+    <div class="dd-addstep">
+      <div class="dd-addstep-head kh">+ បន្ថែមជំហានថ្មី · Add Step</div>
+      <select id="ddNewStepProc" class="kh">${procOpts}</select>
+      <input type="datetime-local" id="ddNewStepDT" class="mono">
+      <input type="text" id="ddNewStepNote" class="kh" placeholder="ចំណាំ (Note) — ស្រេចចិត្ត">
+      <button type="button" class="btn btn-primary btn-sm kh" id="ddAddStepBtn">+ បន្ថែម</button>
     </div>
-    <div class="detail-item full" style="margin-bottom:12px;">
-      <div class="k">Diagnosis (ICD10)</div>
-      <div class="v kh">${r.idc10||'—'}</div>
-    </div>
-    <div class="detail-item full" style="margin-bottom:12px;">
-      <div class="k">លេខធ្មេញ · Teeth (FDI)</div>
-      <div class="v mono">${r.teeth||'—'}</div>
-    </div>
-    <div class="detail-item full" style="margin-bottom:12px;">
-      <div class="k">Registration Card</div>
-      <div class="v kh" style="font-weight:700;color:var(--primary-dark);">${r.type||'បង់ពេញថ្លៃ'}</div>
-    </div>
-    <div class="detail-item full" style="margin-bottom:12px;">
-      <div class="k">ស្ថានភាព (Status)</div>
-      <div class="v kh" style="color:var(--primary);font-weight:600;">${r.status||'Missing'}</div>
-    </div>
-    <div class="detail-item full" style="margin-bottom:12px;">
-      <div class="k">នីតិវិធី និងកាលបរិច្ឆេទម៉ោង</div>
-      <div class="v kh">${formattedProcedure}</div>
-    </div>
-    ${r.timeLast ? `
-    <div class="detail-item full" style="margin-bottom:12px;">
-      <div class="k">ការណាត់ជួប និង Plan DO</div>
-      <div class="v kh" style="color:var(--amber-dark);">
-        <b>🗓️ ថ្ងៃណាត់៖</b> <span class="mono">${formatDateDisplay(r.timeLast)}</span>
-        ${r.planDo ? `<br><b>📋 Plan:</b> ${r.planDo}` : ''}
-      </div>
-    </div>` : ''}
-    ${presItems.length ? `
-    <div class="detail-item full" style="margin-top:10px;border-top:1px dashed var(--border);padding-top:10px;">
-      <div class="k">💊 ថ្នាំចេញជូន (តាមថ្ងៃខែឆ្នាំ)</div>
-      ${medHtml}
-    </div>` : ''}
     <div class="modal-actions">
       <div class="left-action">
-        <button class="btn btn-danger btn-sm" onclick="document.getElementById('doDetailOverlay').classList.add('hidden'); deleteSingleRecordById('${r._id}')">🗑 លុប Delete</button>
+        <button class="btn btn-danger btn-sm" id="doDetailDelBtn">🗑 លុប Delete</button>
       </div>
       <button class="btn btn-outline btn-sm" id="doDetailFullBtn">🦷 Full record</button>
       <button class="btn btn-primary btn-sm" id="doDetailEditBtn">✏️ Edit</button>
     </div>
   `;
+
+  document.getElementById('ddNewStepDT').value = getLocalNowDateTime();
+
+  document.querySelectorAll('.dd-step-del').forEach(btn=>{
+    btn.addEventListener('click', ()=> deleteStep(r._id, btn.dataset.stepId));
+  });
+  document.getElementById('ddAddStepBtn').addEventListener('click', ()=> addStep(r._id));
+  document.getElementById('doDetailDelBtn').addEventListener('click', ()=>{
+    document.getElementById('doDetailOverlay').classList.add('hidden');
+    deleteSingleRecordById(r._id);
+  });
   document.getElementById('doDetailFullBtn').addEventListener('click', ()=>{
     document.getElementById('doDetailOverlay').classList.add('hidden');
     openPatientRecord(r.name);
@@ -3553,12 +3530,79 @@ function openDoDetail(id){
     document.getElementById('doDetailOverlay').classList.add('hidden');
     openForm(r);
   });
-  document.getElementById('doDetailOverlay').classList.remove('hidden');
+}
+
+/* re-render the Full Dental Record body in place (e.g. after a step changes its status)
+   without pushing another history entry — the record modal is already open */
+function refreshPatientBodyOnly(name){
+  const origPushState = history.pushState;
+  history.pushState = function(){};
+  try{ openPatientRecord(name); }
+  finally{ history.pushState = origPushState; }
+}
+
+function updateRecordStatus(id, newStatus){
+  const idx = allRecords.findIndex(x=>x._id===id || x.code===id);
+  if(idx === -1) return;
+  allRecords[idx].status = newStatus;
+  saveLocalRecords();
+  renderAll();
+  pushToSheet('updateRecord', {...allRecords[idx]});
+}
+
+function addStep(id){
+  const idx = allRecords.findIndex(x=>x._id===id || x.code===id);
+  if(idx === -1) return;
+  const procSel = document.getElementById('ddNewStepProc').value;
+  if(!procSel) return;
+  const dt = document.getElementById('ddNewStepDT').value;
+  const note = document.getElementById('ddNewStepNote').value.trim();
+  const steps = stepsArray(allRecords[idx]);
+  steps.push({ id: genStepId(), name: procSel, datetime: dt ? formatDateDisplay(dt) : '', note });
+  allRecords[idx].steps = JSON.stringify(steps);
+  allRecords[idx].doing = steps[0].name;
+  allRecords[idx].doingDateTime = steps[0].datetime;
+  allRecords[idx].status = recomputeStatusFromSteps(allRecords[idx]);
+  applyNextStepFromSteps(allRecords[idx]);
+  saveLocalRecords();
+  renderAll();
+  if(activePatientContext) refreshPatientBodyOnly(activePatientContext);
+  pushToSheet('updateRecord', {...allRecords[idx]});
+  renderDoDetailBody(allRecords[idx]);
+}
+
+function deleteStep(id, stepId){
+  const idx = allRecords.findIndex(x=>x._id===id || x.code===id);
+  if(idx === -1) return;
+  let steps = stepsArray(allRecords[idx]);
+  steps = steps.filter(s => s.id !== stepId);
+  allRecords[idx].steps = JSON.stringify(steps);
+  allRecords[idx].status = recomputeStatusFromSteps(allRecords[idx]);
+  applyNextStepFromSteps(allRecords[idx]);
+  saveLocalRecords();
+  renderAll();
+  if(activePatientContext) refreshPatientBodyOnly(activePatientContext);
+  pushToSheet('updateRecord', {...allRecords[idx]});
+  renderDoDetailBody(allRecords[idx]);
 }
 
 function getPatientRecords(name){
   const target = cleanStr(name).toLowerCase();
   return allRecords.filter(r => cleanStr(r.name).toLowerCase() === target);
+}
+
+/* the treatment plan is patient-level, but only lives on one record's `planTeeth` field —
+   search back through the patient's history (newest first) for the last one that has it set,
+   so the plan doesn't appear to vanish just because a newer visit was logged since.
+   planTeeth is stored as a JSON array of {tooth, plan}. */
+function getPatientPlanItems(records){
+  const sorted = [...records].sort((a, b) => (parseAnyDate(b.timestamp) || 0) - (parseAnyDate(a.timestamp) || 0));
+  const withPlan = sorted.find(r => cleanStr(r.planTeeth));
+  if(!withPlan) return [];
+  try{
+    const a = JSON.parse(withPlan.planTeeth);
+    return Array.isArray(a) ? a.filter(it => it && it.tooth) : [];
+  }catch(e){ return []; }
 }
 
 function getAllTreatedTeethSet(records){
@@ -3586,18 +3630,28 @@ function openToothHistoryModal(toothNum, patientName){
     body.innerHTML = `
       <div class="empty-state kh" style="padding:26px 14px;">
         មិនទាន់មានកំណត់ត្រាព្យាបាលធ្មេញលេខ <b>${toothNum}</b> ទេ<br>
-        <button class="btn btn-primary btn-sm" style="margin-top:14px;" id="popupAddTxBtn">＋ បន្ថែមការព្យាបាលធ្មេញ ${toothNum}</button>
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" id="popupAddTxBtn">＋ បន្ថែមការព្យាបាលធ្មេញ ${toothNum}</button>
+          <button class="btn btn-success btn-sm kh" id="popupPlanBtn">🗓️ Plan</button>
+        </div>
       </div>`;
     document.getElementById('popupAddTxBtn')?.addEventListener('click', ()=>{
       document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
       const latest = records[0] || {};
       openForm(null, {name: patientName, phone: latest.phone, sex: latest.sex, age: latest.age, type: latest.type, teeth: toothNum});
     });
+    document.getElementById('popupPlanBtn')?.addEventListener('click', ()=>{
+      document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
+      openPlanningModal(patientName, toothNum);
+    });
   } else {
     let html = `
-      <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;">
+      <div style="margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;">
         <span style="font-size:12px;color:var(--ink-dim);">សរុប <b>${toothRecords.length}</b> កំណត់ត្រាសម្រាប់ធ្មេញនេះ</span>
-        <button class="btn btn-outline btn-sm" id="popupAddTxBtn">＋ បន្ថែមការព្យាបាល</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" id="popupAddTxBtn">＋ បន្ថែមការព្យាបាល</button>
+          <button class="btn btn-success btn-sm kh" id="popupPlanBtn">🗓️ Plan</button>
+        </div>
       </div>
     `;
     html += renderClinicalNotesHTML(toothRecords);
@@ -3607,6 +3661,10 @@ function openToothHistoryModal(toothNum, patientName){
       document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
       const latest = records[0] || {};
       openForm(null, {name: patientName, phone: latest.phone, sex: latest.sex, age: latest.age, type: latest.type, teeth: toothNum});
+    });
+    document.getElementById('popupPlanBtn')?.addEventListener('click', ()=>{
+      document.getElementById('toothHistoryModalOverlay').classList.add('hidden');
+      openPlanningModal(patientName, toothNum);
     });
   }
   
@@ -3679,37 +3737,83 @@ function formatProcedureDisplay(doing, dateTime) {
   return `${doing} <span class="mono" style="color:var(--primary-dark);font-size:11px;">${dtStr}</span>`;
 }
 
+/* ==========================================================
+   PROCEDURE STEPS — a stepped timeline per treatment record.
+   Stored as JSON in record.steps; older records without it fall
+   back to a single step derived from doing/doingDateTime.
+   ========================================================== */
+function stepsArray(r){
+  if(r && r.steps){
+    try{
+      const a = JSON.parse(r.steps);
+      if(Array.isArray(a) && a.length) return a;
+    }catch(e){}
+  }
+  if(r && r.doing) return [{ id: 'legacy', name: r.doing, datetime: r.doingDateTime || r.timestamp || '', note: '' }];
+  return [];
+}
+function stepKind(name){
+  const n = String(name || '').toLowerCase();
+  if(n.indexOf('done') !== -1 || n.indexOf('រួចរាល់') !== -1) return 'done';
+  if(n.indexOf('appointment') !== -1 || n.indexOf('ណាត់') !== -1) return 'appt';
+  if(n.indexOf('labo') !== -1) return 'labo';
+  return 'normal';
+}
+/* status is derived from the step list itself — the most recent step that carries a
+   status-like meaning (Done / Appointment / Labo) wins; a plain procedure step (Opening,
+   Scaling, Obturation, ...) doesn't change it */
+/* Status always mirrors whichever step is LAST in the list — not the last "special" one.
+   A plain procedure step (Access Cavity, Obturation...) as the last entry means Missing
+   (still in progress, no explicit status yet); only Appointment/Done/Labo as the very last
+   step set the status to that. */
+function recomputeStatusFromSteps(record){
+  const steps = stepsArray(record);
+  if(!steps.length) return 'Missing';
+  const k = stepKind(steps[steps.length - 1].name);
+  if(k === 'done') return 'Done';
+  if(k === 'appt') return 'Appt';
+  if(k === 'labo') return 'Labo';
+  return 'Missing';
+}
+/* "Next Step" (timeLast/planDo, shown in the Clinical Notes table) now comes from the most
+   recent Appointment-kind step instead of the old separate form field */
+function applyNextStepFromSteps(record){
+  const steps = stepsArray(record);
+  for(let i = steps.length - 1; i >= 0; i--){
+    if(stepKind(steps[i].name) === 'appt'){
+      record.timeLast = steps[i].datetime || '';
+      record.planDo = steps[i].note || steps[i].name;
+      return;
+    }
+  }
+  record.timeLast = '';
+  record.planDo = '';
+}
+function genStepId(){ return 'ST' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
+
 function renderClinicalNotesHTML(records) {
   const rows = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
   return `
     <div class="emr-table-wrap">
-      <table class="emr-table">
+      <table class="emr-table" style="table-layout:fixed;">
         <thead>
           <tr>
-            <th style="width:90px;">កាលបរិច្ឆេទ<br>(Date)</th>
-            <th style="width:60px;">ធ្មេញ<br>(Tooth)</th>
-            <th style="width:160px;">ការធ្វើរោគវិនិច្ឆ័យ<br>(Diagnosis / Tx)</th>
-            <th>កំណត់ត្រាគ្លីនិក & នីតិវិធី<br>(Clinical Notes & Proc)</th>
-            <th style="width:120px;">ការណាត់បន្ទាប់<br>(Next Plan)</th>
-            <th style="width:85px;text-align:center;">ស្ថានភាព<br>(Status)</th>
+            <th style="width:14%;">កាលបរិច្ឆេទ<br>(Date)</th>
+            <th style="width:9%;">ធ្មេញ<br>(Tooth)</th>
+            <th style="width:33%;">ការព្យាបាល<br>(Treatment)</th>
+            <th style="width:31%;">ជំហានបន្ទាប់<br>(Next Step)</th>
+            <th style="width:13%;text-align:center;">ស្ថានភាព<br>(Status)</th>
           </tr>
         </thead>
         <tbody>
           ${rows.map(r => `
-            <tr class="emr-tr" onclick="openDetail('${r._id}', true)">
+            <tr class="emr-tr" onclick="openDoDetail('${r._id}')">
               <td data-label="កាលបរិច្ឆេទ (Date)" class="mono" style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">${formatDateDisplay(r.timestamp).split(' ')[0]}</td>
               <td data-label="ធ្មេញ (Tooth)" class="mono" style="font-weight:800;color:var(--primary-dark);font-size:13px;">${r.teeth || '—'}</td>
-              <td data-label="ការធ្វើរោគវិនិច្ឆ័យ (Diagnosis / Tx)" class="kh">
-                <div style="font-weight:700;color:var(--ink);font-size:13px;">${r.treatment || '—'}</div>
-                <div style="font-size:10.5px;color:var(--ink-dim);margin-top:4px;">${r.diagnosis || '—'}</div>
-              </td>
-              <td data-label="កំណត់ត្រាគ្លីនិក & នីតិវិធី (Clinical Notes & Proc)" class="kh">
-                <div style="margin-bottom:6px;font-size:12.5px;"><b>DO:</b> ${r.doing || '—'} ${r.doingDateTime ? `<span class="mono" style="font-size:10.5px;color:#888;margin-left:4px;">[🕒 ${formatDateDisplay(r.doingDateTime)}]</span>` : ''}</div>
-                ${r.medication ? `<div style="font-size:11.5px;color:var(--primary-dark);border-top:1px dashed var(--border-soft);padding-top:6px;">💊 <b>Rx:</b> ${r.medication}</div>` : ''}
-              </td>
-              <td data-label="ការណាត់បន្ទាប់ (Next Plan)" class="kh" style="font-size:12px;">
-                ${r.timeLast ? `<div class="mono" style="color:var(--amber-dark);font-weight:700;margin-bottom:4px;">🗓️ ${formatDateDisplay(r.timeLast).split(' ')[0]}</div>` : '<div style="color:var(--ink-dim);">—</div>'}
-                ${r.planDo ? `<div style="color:var(--ink-soft);line-height:1.4;">📋 ${r.planDo}</div>` : ''}
+              <td data-label="ការព្យាបាល (Treatment)" class="kh" style="font-weight:700;color:var(--ink);font-size:13px;">${r.treatment || '—'}</td>
+              <td data-label="ជំហានបន្ទាប់ (Next Step)" class="kh" style="font-size:12px;">
+                ${r.timeLast ? `<div class="mono" style="color:var(--amber-dark);font-weight:700;margin-bottom:4px;">🗓️ ${formatDateDisplay(r.timeLast).split(' ')[0]}</div>` : ''}
+                ${r.planDo ? `<div style="color:var(--ink-soft);line-height:1.4;">📋 ${r.planDo}</div>` : (!r.timeLast ? '<div style="color:var(--ink-dim);">—</div>' : '')}
               </td>
               <td data-label="ស្ថានភាព (Status)" style="text-align:center;">
                 <div class="emr-status ${r.status==='Done'?'done':(r.status==='Appt'||r.status==='Doing'?'doing':'missing')}">${r.status === 'Doing' ? 'Appt' : (r.status || 'Missing')}</div>
@@ -3733,6 +3837,7 @@ function openPatientRecord(name){
   const sortedRecords = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
   const latest = sortedRecords[0];
   const treatedTeethSet = getAllTreatedTeethSet(records);
+  const plannedTeethSet = new Set(getPatientPlanItems(records).map(it => it.tooth));
 
   const realPhone = formatPhoneDisplay(sortedRecords.find(r => cleanStr(r.phone))?.phone || latest.phone || '');
   const realSex = sortedRecords.find(r => cleanStr(r.sex))?.sex || latest.sex || 'F';
@@ -3803,10 +3908,10 @@ function openPatientRecord(name){
 
         <div class="emr-actions-bar">
           <button type="button" class="btn btn-primary btn-full kh" id="addVisitBtn">＋ កត់ត្រាព្យាបាលថ្មី (New Visit)</button>
+          <button type="button" class="btn btn-success btn-full kh" id="planningBtn">🗓️ គម្រោង Planning</button>
           <button type="button" class="btn btn-danger btn-full kh" id="examFormBtn">📋 ទម្រង់ពិនិត្យ (Exam Form)</button>
           <button type="button" class="btn btn-outline kh" onclick="openXrayGallery('${safeName}')">📷 មើល X-Ray</button>
           <button type="button" class="btn btn-outline kh" id="printPatientBtn">🖨 បោះពុម្ព</button>
-          <button type="button" class="btn btn-outline btn-full kh" id="sendLabBtn">🦷 បញ្ជូនទៅ Lab (Send to Lab)</button>
           <button type="button" class="btn btn-danger btn-full kh" id="deletePatientBtn" onclick="deletePatient('${safeName}')">🗑 លុបអ្នកជំងឺនេះ</button>
         </div>
       </div>
@@ -3817,7 +3922,7 @@ function openPatientRecord(name){
           <span style="font-size:11.5px; font-weight:600; color:var(--ink-dim); text-transform:none;">ធ្មេញពាក់ព័ន្ធសរុប: <b style="color:var(--amber-dark); font-size:13px;">${treatedTeethSet.size}</b></span>
         </div>
         <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:16px;">
-          ${buildToothChartBlockHTML(treatedTeethSet)}
+          ${buildToothChartBlockHTML(treatedTeethSet, plannedTeethSet)}
         </div>
       </div>
     </div>
@@ -3843,7 +3948,7 @@ function openPatientRecord(name){
     openForm(null, {name: latest.name, phone: realPhone, sex: realSex, age: realAge, type: realType});
   });
 
-  document.getElementById('sendLabBtn').addEventListener('click', ()=> openSendLabDialog(latest.name, latest.teeth || ''));
+  document.getElementById('planningBtn').addEventListener('click', ()=> openPlanningModal(latest.name));
   document.getElementById('examFormBtn').addEventListener('click', ()=>{
     openExamForm({
       f_caseNo: latest.code || '',
@@ -3871,6 +3976,7 @@ function openPatientRecord(name){
 }
 
 function buildPatientPrintHTML(latest, records, treatedTeethSet, realPhone, realSex, realAge, realType){
+  const plannedTeethSet = new Set(getPatientPlanItems(records).map(it => it.tooth));
   const rows = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
   const now = new Date();
   const printDateStr = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')}`;
@@ -3897,7 +4003,7 @@ function buildPatientPrintHTML(latest, records, treatedTeethSet, realPhone, real
     </div>
 
     <div class="ps-section-title">Dental Chart — Treated Teeth</div>
-    ${buildToothChartBlockHTML(treatedTeethSet)}
+    ${buildToothChartBlockHTML(treatedTeethSet, plannedTeethSet)}
 
     <div class="ps-section-title">Full Visit History</div>
     <table class="ps-visit-table">
@@ -4070,14 +4176,8 @@ function openForm(editRecord, prefill){
       procDoing.value = knownProc[0] || 'Opening';
     }
     
-    const recDT = editRecord.doingDateTime ? dateToYMDTime(editRecord.doingDateTime) : nowDateTime;
-    document.getElementById('f_doingDateTime').value = recDT;
-    
-    let st = editRecord.status === 'Doing' ? 'Appt' : (editRecord.status || 'Done');
-    selectStatusCheckbox(st);
+    currentFormStatus = editRecord.status === 'Doing' ? 'Appt' : (editRecord.status || 'Done');   // preserved as-is; edited only from the ជំហាន (Step) panel
 
-    document.getElementById('f_apptDateTime').value = editRecord.timeLast ? dateToYMDTime(editRecord.timeLast) : nowDateTime;
-    document.getElementById('f_planDo').value = editRecord.planDo || '';
 
     const parsedMeds = parsePrescriptionString(editRecord.medication);
     if(parsedMeds.length > 0){
@@ -4127,11 +4227,8 @@ function openForm(editRecord, prefill){
     procDoing.style.display = 'none';
     procDoing.value = appCustomLists.procedure[0] || 'Opening';
 
-    document.getElementById('f_doingDateTime').value = nowDateTime;
-    selectStatusCheckbox('Appt'); 
-    
-    document.getElementById('f_apptDateTime').value = nowDateTime;
-    document.getElementById('f_planDo').value = '';
+    currentFormStatus = 'Appt';
+
 
     addMedicationRow({date: todayDateOnly});
     
@@ -4162,11 +4259,8 @@ function openForm(editRecord, prefill){
     procDoing.style.display = 'none';
     procDoing.value = appCustomLists.procedure[0] || 'Opening';
 
-    document.getElementById('f_doingDateTime').value = nowDateTime;
-    selectStatusCheckbox('Done'); 
-    
-    document.getElementById('f_apptDateTime').value = nowDateTime;
-    document.getElementById('f_planDo').value = '';
+    currentFormStatus = 'Done';
+
 
     addMedicationRow({date: todayDateOnly});
     
@@ -4201,15 +4295,10 @@ async function saveRecord(){
   const idc10 = document.getElementById('f_idc10').value;
   
   const visitDateTimeVal = document.getElementById('f_visitDateTime').value;
-  const doingDateTimeVal = document.getElementById('f_doingDateTime').value;
-  const statusVal = currentFormStatus;
-  
+
   const procSelVal = procSelect.value;
   const doingVal = procSelVal === 'custom' ? procDoing.value.trim() : procSelVal;
-
-  const isAppt = (statusVal === 'Appt');
-  const apptDateTimeVal = isAppt ? document.getElementById('f_apptDateTime').value : '';
-  const planDoVal = isAppt ? document.getElementById('f_planDo').value.trim() : '';
+  const doingDateTimeVal = visitDateTimeVal;   // the first procedure always takes the visit's own date
 
   const medItems = getPrescriptionData();
   const medicationString = stringifyPrescription(medItems);
@@ -4234,13 +4323,19 @@ async function saveRecord(){
     idc10: idc10,
     treatment: treatment,
     teeth: document.getElementById('f_teeth').value.trim(),
-    timeLast: apptDateTimeVal ? formatDateDisplay(apptDateTimeVal) : '',
-    planDo: planDoVal,
+    timeLast: wasEditing ? (allRecords[editingIndex].timeLast || '') : '',   // set from the ជំហាន (Step) panel's "Appointment" steps instead
+    planDo: wasEditing ? (allRecords[editingIndex].planDo || '') : '',
+    planTeeth: wasEditing ? (allRecords[editingIndex].planTeeth || '') : '',
     doing: doingVal,
     doingDateTime: doingDateTimeVal ? formatDateDisplay(doingDateTimeVal) : '',
     medication: medicationString,
-    status: statusVal
+    // steps power the ជំហាន (Step) timeline; a new record starts with one step from the fields
+    // above, an edit keeps whatever steps were already recorded (added/removed only via that panel)
+    steps: wasEditing && editingOriginalRecord && editingOriginalRecord.steps
+      ? editingOriginalRecord.steps
+      : JSON.stringify([{ id: genStepId(), name: doingVal, datetime: doingDateTimeVal ? formatDateDisplay(doingDateTimeVal) : '', note: '' }])
   };
+  rec.status = recomputeStatusFromSteps(rec);   // Status always follows the Step / Procedure list, never set separately
 
   const payload = {...rec};
   if(wasEditing && editingOriginalRecord){
@@ -4967,7 +5062,6 @@ const PAGE_META = {
   inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
   xray:         { title: 'បញ្ចីថតធ្មេញ', sub: 'X-ray image gallery' },
   org:          { title: 'រចនាសម្ព័ន្ធ', sub: 'Organization structure' },
-  expenses:     { title: 'បញ្ជីចំណាយ', sub: 'Expenses' },
   study:        { title: 'មាតិកាសិក្សា', sub: 'Study library' }
 };
 const PAGE_KEY = 'dental_emr_page';
@@ -6789,97 +6883,6 @@ async function fetchStudentPhotoFiles(silent){
 }
 function studentPhotosMaybeFetch(){ if(Date.now() - studentPhotoFetchedAt > COL_STALE_MS) fetchStudentPhotoFiles(true); }
 
-
-/* ==========================================================
-   LAB PRICE LIST (Settings) — price per tooth by crown/bridge type,
-   used to auto-calculate the cost when sending a mold to the lab
-   ========================================================== */
-let labPrices = [];
-let labPriceFetching = false;
-
-function loadLabPrices(){
-  try{ const a = JSON.parse(localStorage.getItem('kep_dental_labprices_v1')); if(Array.isArray(a)) labPrices = a; }catch(e){}
-}
-function saveLabPricesLocal(){ try{ localStorage.setItem('kep_dental_labprices_v1', JSON.stringify(labPrices)); }catch(e){} }
-function findLabPrice(id){ return labPrices.find(x => x.id === id); }
-function genLabPriceId(){ return 'LP' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
-
-function pushLabPrice(action, item){
-  const data = action === 'collectionDelete'
-    ? { sheet: 'LabPrices', id: item.id }
-    : { sheet: 'LabPrices', id: item.id, type: item.type, price: item.price, updated: item.updated };
-  pushToSheet(action, data);
-}
-
-async function fetchLabPrices(silent){
-  if(!webAppUrl || labPriceFetching) return;
-  labPriceFetching = true;
-  try{
-    await flushPendingQueue();
-    const url = webAppUrl + (webAppUrl.includes('?') ? '&' : '?') + 'sheet=LabPrices&_=' + Date.now();
-    const res = await fetch(url);
-    const json = await res.json();
-    if(!(json && json.status === 'success' && json.sheet === 'LabPrices' && Array.isArray(json.data))) return;
-    const pendingIds = new Set(getPendingQueue()
-      .filter(q => q && q.action === 'collectionUpsert' && q.data && q.data.sheet === 'LabPrices')
-      .map(q => q.data.id));
-    const server = json.data.map(r => ({ id: cleanStr(r.id), type: cleanStr(r.type), price: Number(r.price) || 0, updated: cleanStr(r.updated) })).filter(x => x.id && x.type);
-    const merged = server.filter(x => !pendingIds.has(x.id));
-    labPrices.forEach(x => { if(pendingIds.has(x.id)) merged.push(x); });
-    labPrices = merged;
-    saveLabPricesLocal();
-    if(currentSettingTab === 'labprice') renderLabPriceList();
-    populateLabTypeSelect();
-  }catch(e){ /* silent: this is a background refresh */ }
-  finally{ labPriceFetching = false; }
-}
-
-function renderLabPriceList(){
-  const c = document.getElementById('labPriceListContainer');
-  if(!labPrices.length){
-    c.innerHTML = `<div class="kh" style="text-align:center;color:var(--ink-dim);padding:14px;">មិនទាន់មានតម្លៃ Lab ទេ — បន្ថែមខាងលើ</div>`;
-    return;
-  }
-  c.innerHTML = labPrices.slice().sort((a, b) => a.type.localeCompare(b.type)).map(it => `
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;background:#fff;padding:7px 12px;border-radius:6px;margin-bottom:5px;border:1px solid var(--border-soft);">
-      <span class="kh" style="font-size:12.5px;font-weight:600;flex:1;min-width:0;">${esc(it.type)}</span>
-      <span class="mono" style="font-size:12px;color:var(--ink-soft);">$</span>
-      <input type="number" min="0" step="0.01" class="mono" data-labprice-id="${esc(it.id)}" value="${it.price}" style="width:76px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;">
-      <button type="button" class="btn btn-danger btn-sm" style="padding:2px 8px;font-size:11px;" data-labprice-del="${esc(it.id)}">✕</button>
-    </div>`).join('');
-  c.querySelectorAll('[data-labprice-id]').forEach(inp=>{
-    inp.addEventListener('change', ()=>{
-      const it = findLabPrice(inp.dataset.labpriceId);
-      if(!it) return;
-      it.price = Number(inp.value) || 0;
-      it.updated = new Date().toISOString();
-      saveLabPricesLocal();
-      pushLabPrice('collectionUpsert', it);
-      populateLabTypeSelect();
-    });
-  });
-  c.querySelectorAll('[data-labprice-del]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.dataset.labpriceDel;
-      const it = findLabPrice(id);
-      promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + (it ? it.type : 'តម្លៃ Lab'), ()=>{
-        labPrices = labPrices.filter(x => x.id !== id);
-        saveLabPricesLocal(); renderLabPriceList(); populateLabTypeSelect();
-        pushLabPrice('collectionDelete', { id });
-      });
-    });
-  });
-}
-
-function populateLabTypeSelect(){
-  const sel = document.getElementById('lab_type');
-  if(!sel) return;
-  const cur = sel.value;
-  sel.innerHTML = labPrices.slice().sort((a, b) => a.type.localeCompare(b.type))
-    .map(it => `<option value="${esc(it.id)}">${esc(it.type)} ($${it.price.toFixed(2)}/tooth)</option>`).join('');
-  if([...sel.options].some(o => o.value === cur)) sel.value = cur;
-}
-
 (function initStudyLibrary(){
   COL_NAMES.forEach(n=>{
     colLoad(n);
@@ -7915,295 +7918,12 @@ function openExamForm(prefill){
   setTimeout(()=> URL.revokeObjectURL(url), 120000);
 }
 
-
-/* ==========================================================
-   EXPENSES (បញ្ជីចំណាយ) — general clinic expense log; Dental Lab
-   submissions from a patient record are recorded here automatically
-   ========================================================== */
-function expTodayYMD(){
-  const d = new Date();
-  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-}
-const EXPENSE_TYPES = ['DL (Dental Lab)', 'សម្ភារៈ (Supplies)', 'ជួសជុល (Repair)', 'ថ្នាំ (Medicine)', 'ផ្សេងៗ (Other)'];
-
-let expenses = [];
-let expDeleted = new Set();
-let expSearchTerm = '';
-let expTypeFilter = '';
-let expFetching = false;
-let expEditingId = null;
-
-function loadExpenses(){
-  try{ const a = JSON.parse(localStorage.getItem('kep_dental_expenses_v1')); if(Array.isArray(a)) expenses = a; }catch(e){}
-  try{ const d = JSON.parse(localStorage.getItem('kep_dental_expenses_deleted_v1')); if(Array.isArray(d)) expDeleted = new Set(d); }catch(e){}
-}
-function saveExpenses(){ try{ localStorage.setItem('kep_dental_expenses_v1', JSON.stringify(expenses)); }catch(e){} }
-function saveExpDeleted(){ try{ localStorage.setItem('kep_dental_expenses_deleted_v1', JSON.stringify([...expDeleted])); }catch(e){} }
-function findExpItem(id){ return expenses.find(x => x.id === id); }
-function genExpId(){ return 'EXP' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
-
-function normalizeExpItem(r){
-  return {
-    id: cleanStr(r.id), date: normalizeExpiry(r.date), type: cleanStr(r.type),
-    description: cleanStr(r.description), patientName: cleanStr(r.patientName),
-    amount: Number(r.amount) || 0, updated: cleanStr(r.updated)
-  };
-}
-
-function setExpStatus(text, tone, autoClear){
-  const el = document.getElementById('expSyncStatus');
-  if(!el) return;
-  el.textContent = text || '';
-  el.className = 'inv-status kh' + (tone ? ' ' + tone : '');
-  clearTimeout(setExpStatus._t);
-  if(autoClear) setExpStatus._t = setTimeout(()=>{ el.textContent = ''; el.className = 'inv-status kh'; }, 3000);
-}
-
-function expMatches(it){
-  if(expTypeFilter && it.type !== expTypeFilter) return false;
-  if(expSearchTerm){
-    const hay = [it.description, it.patientName, it.type].join(' ').toLowerCase();
-    if(!hay.includes(expSearchTerm.toLowerCase())) return false;
-  }
-  return true;
-}
-
-function renderExpenses(){
-  const items = expenses;
-  const now = new Date();
-  const monthKey = now.getFullYear() + '-' + now.getMonth();
-  const monthItems = items.filter(it=>{ const d = parseAnyDate(it.date); return d && (d.getFullYear() + '-' + d.getMonth()) === monthKey; });
-  const monthTotal = monthItems.reduce((s, it) => s + it.amount, 0);
-  const monthDL = monthItems.filter(it => it.type.indexOf('DL') === 0).reduce((s, it) => s + it.amount, 0);
-
-  document.getElementById('expKpis').innerHTML =
-    kpiCard('',      '<path d="M12 1v22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', '$' + monthTotal.toFixed(2), 'ចំណាយសរុបខែនេះ', {page:'expenses'}) +
-    kpiCard('coral', '<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>', '$' + monthDL.toFixed(2), 'ចំណាយ Lab ខែនេះ', {page:'expenses'}) +
-    kpiCard('blue',  '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', items.length, 'កំណត់ត្រាសរុប', {page:'expenses'});
-
-  const types = [...new Set([...EXPENSE_TYPES, ...items.map(i => i.type).filter(Boolean)])];
-  if(expTypeFilter && !types.includes(expTypeFilter)) expTypeFilter = '';
-  const sel = document.getElementById('expTypeFilter');
-  sel.innerHTML = '<option value="">ប្រភេទទាំងអស់</option>' + types.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  sel.value = expTypeFilter;
-
-  const rows = items.filter(expMatches).sort((a, b) => (parseAnyDate(b.date) || 0) - (parseAnyDate(a.date) || 0));
-  const body = document.getElementById('expBody');
-  if(!rows.length){
-    body.innerHTML = `<tr><td colspan="6" style="padding:0;"><div class="empty-state kh" style="border:none;">${
-      items.length ? 'មិនមានកំណត់ត្រាត្រូវនឹងតម្រងនេះទេ<br><span style="opacity:.7">No matches</span>'
-                   : 'មិនទាន់មានចំណាយទេ · ចុច ＋ បន្ថែមចំណាយ<br><span style="opacity:.7">No expenses yet</span>'}</div></td></tr>`;
-    return;
-  }
-  body.innerHTML = rows.map(it => `<tr class="emr-tr" data-id="${esc(it.id)}">
-    <td data-label="កាលបរិច្ឆេទ" class="mono">${colDate(it.date)}</td>
-    <td data-label="ប្រភេទ" class="kh">${esc(it.type) || '—'}</td>
-    <td data-label="ការពិពណ៌នា" class="kh">${esc(it.description) || '—'}</td>
-    <td data-label="អ្នកជំងឺ" class="kh">${esc(it.patientName) || '—'}</td>
-    <td data-label="ចំនួនទឹកប្រាក់" class="mono">$${it.amount.toFixed(2)}</td>
-    <td class="inv-actions"><button type="button" class="inv-btn del" data-act="del" title="លុប" aria-label="លុប">🗑</button></td>
-  </tr>`).join('');
-}
-
-function pushExpense(action, item){
-  const data = action === 'collectionDelete'
-    ? { sheet: 'Expenses', id: item.id }
-    : { sheet: 'Expenses', id: item.id, date: item.date, type: item.type, description: item.description, patientName: item.patientName, amount: item.amount, updated: item.updated };
-  pushToSheet(action, data);
-}
-
-async function fetchExpenses(silent){
-  if(!webAppUrl || expFetching) return;
-  expFetching = true;
-  if(!silent) setExpStatus('កំពុង Sync...', '');
-  try{
-    await flushPendingQueue();
-    const url = webAppUrl + (webAppUrl.includes('?') ? '&' : '?') + 'sheet=Expenses&_=' + Date.now();
-    const res = await fetch(url);
-    const json = await res.json();
-    if(!(json && json.status === 'success' && json.sheet === 'Expenses' && Array.isArray(json.data))){
-      setExpStatus('⚠️ Apps Script មិនទាន់គាំទ្រ Expenses (សូមដាក់កូដថ្មីក្នុង Code.gs)', 'warn');
-      return;
-    }
-    const pendingIds = new Set(getPendingQueue()
-      .filter(q => q && q.action === 'collectionUpsert' && q.data && q.data.sheet === 'Expenses')
-      .map(q => q.data.id));
-    const server = json.data.map(normalizeExpItem).filter(x => x.id);
-    const serverIds = new Set(server.map(x => x.id));
-    const merged = server.filter(x => !expDeleted.has(x.id) && !pendingIds.has(x.id));
-    expenses.forEach(x => { if(pendingIds.has(x.id)) merged.push(x); });
-    expenses = merged;
-    [...expDeleted].forEach(id => { if(!serverIds.has(id)) expDeleted.delete(id); });
-    saveExpDeleted(); saveExpenses(); renderExpenses();
-    setExpStatus('✓ Sync ជោគជ័យ', 'ok', true);
-  }catch(e){
-    if(!silent) setExpStatus('⚠️ Sync មិនជោគជ័យ', 'warn', true);
-  }finally{
-    expFetching = false;
-  }
-}
-
-function openExpEdit(id){
-  const it = findExpItem(id);
-  promptForPin('សូមបញ្ចូល PIN ដើម្បីកែសម្រួល · ' + (it ? (it.description || it.type) : 'ចំណាយ'), ()=> openExpForm(id));
-}
-function deleteExpItem(id){
-  const it = findExpItem(id); if(!it) return;
-  showConfirm(`លុបចំណាយ "${esc(it.description || it.type)}" ចេញ?`, ()=>{
-    expenses = expenses.filter(x => x.id !== id);
-    expDeleted.add(id);
-    saveExpDeleted(); saveExpenses(); renderExpenses();
-    pushExpense('collectionDelete', { id });
-    closeExpForm();
-  });
-}
-function openExpForm(id){
-  expEditingId = id || null;
-  const it = id ? findExpItem(id) : null;
-  document.getElementById('expFormTitle').textContent = (it ? 'កែសម្រួល' : 'បន្ថែម') + 'ចំណាយ · ' + (it ? 'Edit' : 'New');
-  document.getElementById('expTypeList').innerHTML = EXPENSE_TYPES.map(t => `<option value="${esc(t)}">`).join('');
-  document.getElementById('exp_date').value = it ? it.date : expTodayYMD();
-  document.getElementById('exp_type').value = it ? it.type : EXPENSE_TYPES[4];
-  document.getElementById('exp_description').value = it ? it.description : '';
-  document.getElementById('exp_patientName').value = it ? it.patientName : '';
-  document.getElementById('exp_amount').value = it ? it.amount : '';
-  document.getElementById('expFormError').textContent = '';
-  document.getElementById('expDeleteBtn').classList.toggle('hidden', !it);
-  history.pushState({ modal: 'expForm' }, '', '#expForm');
-  document.getElementById('expFormOverlay').classList.remove('hidden');
-  setTimeout(()=> document.getElementById('exp_description').focus(), 60);
-}
-function closeExpForm(){
-  document.getElementById('expFormOverlay').classList.add('hidden');
-  if(window.location.hash === '#expForm') history.replaceState(null, null, window.location.pathname);
-  expEditingId = null;
-}
-function saveExpForm(){
-  const amount = Number(document.getElementById('exp_amount').value);
-  const err = document.getElementById('expFormError');
-  if(!(amount >= 0)){ err.textContent = '⚠️ សូមបញ្ចូលចំនួនទឹកប្រាក់'; document.getElementById('exp_amount').focus(); return; }
-  const fields = {
-    date: document.getElementById('exp_date').value || expTodayYMD(),
-    type: cleanStr(document.getElementById('exp_type').value) || 'ផ្សេងៗ (Other)',
-    description: cleanStr(document.getElementById('exp_description').value),
-    patientName: cleanStr(document.getElementById('exp_patientName').value),
-    amount, updated: new Date().toISOString()
-  };
-  let item;
-  if(expEditingId && findExpItem(expEditingId)){
-    item = Object.assign(findExpItem(expEditingId), fields);
-  }else{
-    item = Object.assign({ id: genExpId() }, fields);
-    expenses.push(item);
-  }
-  saveExpenses(); renderExpenses();
-  pushExpense('collectionUpsert', item);
-  closeExpForm();
-}
-
-/* ---------- Send to Lab (auto-creates an Expense entry) ---------- */
-let sendLabPatientName = '';
-function countTeeth(str){ return String(str || '').split(',').map(s => s.trim()).filter(Boolean).length; }
-function updateSendLabTotal(){
-  const n = countTeeth(document.getElementById('lab_teeth').value);
-  const lp = findLabPrice(document.getElementById('lab_type').value);
-  const total = lp ? lp.price * n : 0;
-  document.getElementById('lab_total').textContent = '$' + total.toFixed(2);
-  document.getElementById('lab_calc_note').textContent = lp ? `(${n} ធ្មេញ × $${lp.price.toFixed(2)})` : (labPrices.length ? '' : '⚠️ សូមកំណត់តម្លៃ Lab ក្នុង Settings ជាមុនសិន');
-}
-function openSendLabDialog(patientName, teethPrefill){
-  sendLabPatientName = patientName;
-  document.getElementById('lab_teeth').value = teethPrefill || '';
-  document.getElementById('lab_date').value = expTodayYMD();
-  document.getElementById('sendLabError').textContent = '';
-  populateLabTypeSelect();
-  updateSendLabTotal();
-  history.pushState({ modal: 'sendLab' }, '', '#sendLab');
-  document.getElementById('sendLabOverlay').classList.remove('hidden');
-}
-function closeSendLabDialog(){
-  document.getElementById('sendLabOverlay').classList.add('hidden');
-  if(window.location.hash === '#sendLab') history.replaceState(null, null, window.location.pathname);
-}
-
-(function initExpenses(){
-  loadExpenses();
-  renderExpenses();
-  loadLabPrices();
-
-  document.getElementById('expTypeFilter').addEventListener('change', (e)=>{ expTypeFilter = e.target.value; renderExpenses(); });
-  document.getElementById('expSearch').addEventListener('input', (e)=>{ expSearchTerm = e.target.value; renderExpenses(); });
-  document.getElementById('expAddBtn').addEventListener('click', ()=> openExpForm(null));
-  document.getElementById('expSyncBtn').addEventListener('click', ()=> fetchExpenses(false));
-  document.getElementById('expBody').addEventListener('click', (e)=>{
-    const tr = e.target.closest('tr[data-id]'); if(!tr) return;
-    const id = tr.dataset.id;
-    const btn = e.target.closest('[data-act]');
-    if(btn && btn.dataset.act === 'del'){
-      const it = findExpItem(id);
-      promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + (it ? (it.description || it.type) : 'ចំណាយ'), ()=> deleteExpItem(id));
-    }else{
-      openExpEdit(id);
-    }
-  });
-  document.getElementById('closeExpForm').addEventListener('click', closeExpForm);
-  document.getElementById('expCancelBtn').addEventListener('click', closeExpForm);
-  document.getElementById('expSaveBtn').addEventListener('click', saveExpForm);
-  document.getElementById('expDeleteBtn').addEventListener('click', ()=>{ if(expEditingId) deleteExpItem(expEditingId); });
-  document.getElementById('expFormOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'expFormOverlay') closeExpForm(); });
-  document.querySelector('.sb-item[data-page="expenses"]').addEventListener('click', ()=>{ renderExpenses(); fetchExpenses(true); });
-
-  document.getElementById('addLabPriceBtn').addEventListener('click', ()=>{
-    const typeInp = document.getElementById('newLabPriceType');
-    const priceInp = document.getElementById('newLabPriceAmount');
-    const type = cleanStr(typeInp.value);
-    const price = Number(priceInp.value) || 0;
-    if(!type) return;
-    const item = { id: genLabPriceId(), type, price, updated: new Date().toISOString() };
-    labPrices.push(item); saveLabPricesLocal(); renderLabPriceList(); populateLabTypeSelect();
-    pushLabPrice('collectionUpsert', item);
-    typeInp.value = ''; priceInp.value = '';
-  });
-
-  document.getElementById('lab_teeth').addEventListener('input', updateSendLabTotal);
-  document.getElementById('lab_type').addEventListener('change', updateSendLabTotal);
-  document.getElementById('closeSendLab').addEventListener('click', closeSendLabDialog);
-  document.getElementById('sendLabCancelBtn').addEventListener('click', closeSendLabDialog);
-  document.getElementById('sendLabOverlay').addEventListener('click', (e)=>{ if(e.target.id === 'sendLabOverlay') closeSendLabDialog(); });
-  document.getElementById('sendLabConfirmBtn').addEventListener('click', ()=>{
-    const teeth = cleanStr(document.getElementById('lab_teeth').value);
-    const lp = findLabPrice(document.getElementById('lab_type').value);
-    const err = document.getElementById('sendLabError');
-    if(!teeth){ err.textContent = '⚠️ សូមបញ្ចូលលេខធ្មេញ'; return; }
-    if(!lp){ err.textContent = '⚠️ សូមជ្រើសប្រភេទគ្រាប់ធ្មេញ (កំណត់ក្នុង Clinic Settings > Lab Price)'; return; }
-    const n = countTeeth(teeth);
-    const amount = lp.price * n;
-    const date = document.getElementById('lab_date').value || expTodayYMD();
-    const item = {
-      id: genExpId(), date, type: 'DL (Dental Lab)',
-      description: `ធ្មេញ ${teeth} · ${lp.type}`,
-      patientName: sendLabPatientName, amount, updated: new Date().toISOString()
-    };
-    expenses.push(item); saveExpenses(); renderExpenses();
-    pushExpense('collectionUpsert', item);
-    closeSendLabDialog();
-  });
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape'){
-      if(!document.getElementById('expFormOverlay').classList.contains('hidden')) closeExpForm();
-      if(!document.getElementById('sendLabOverlay').classList.contains('hidden')) closeSendLabDialog();
-    }
-  });
-})();
-
 // ចាប់ផ្តើមដំណើរការ
 populateAllSelectDropdowns();
 loadLocalRecords();
 flushPendingQueue();
 fetchFromSheet(true);
 fetchInventory(true);
-fetchExpenses(true);
-fetchLabPrices(true);
 </script>
 </body>
 </html>
