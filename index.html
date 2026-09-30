@@ -516,6 +516,7 @@
   .emr-status.doing { background: #E1EFFF; color: #0B5ED7; border: 1px solid #0B5ED740; }
   .emr-status.missing { background: #F8D7DA; color: #721C24; border: 1px solid #721C2440; }
   .emr-status.labo { background: #EDE7FA; color: #5B3FB8; border: 1px solid #5B3FB840; }
+  .emr-status.normal { background: #EEF1F5; color: #44546B; border: 1px solid #44546B40; }
 
   /* Form Layout */
   .form-grid{display:grid;grid-template-columns:1fr;gap:12px;}
@@ -618,12 +619,10 @@
 
   @media print {
       body.printing-disease-list { background: #fff !important; padding: 0 !important; margin: 0 !important; }
-      body.printing-disease-list > *:not(#diseaseListOverlay) { display: none !important; }
-      body.printing-disease-list #diseaseListOverlay { position: static; display: block !important; padding: 0; background: none; }
-      body.printing-disease-list #diseaseListOverlay .modal { max-width: 100%; height: auto; border: none; box-shadow: none; margin: 0; }
-      body.printing-disease-list #diseaseListOverlay .modal-head { display: none !important; }
-      body.printing-disease-list #diseaseListOverlay .modal-body { padding: 0; overflow: visible; }
-      body.printing-disease-list #diseaseListOverlay button { display: none !important; }
+      body.printing-disease-list * { visibility: hidden !important; }
+      body.printing-disease-list #page-diseaselist, body.printing-disease-list #page-diseaselist * { visibility: visible !important; }
+      body.printing-disease-list #page-diseaselist { position: absolute !important; left: 0; top: 0; width: 100%; margin: 0 !important; padding: 12px !important; background: #fff; }
+      body.printing-disease-list #page-diseaselist button { display: none !important; }
       
       body.printing-disease-list .dl-table { font-size: 9px; width: 100%; min-width: auto; }
       body.printing-disease-list .dl-table th, 
@@ -758,7 +757,11 @@
   .sb-badge.warn{background:var(--coral);color:#fff;}
 
   .sb-foot{flex:none;padding:8px 10px 12px;border-top:1px solid var(--sb-line);}
-  .sb-clinic{padding:8px 12px 6px;font-size:12px;line-height:1.35;color:#DCE8FA;font-weight:600;}
+  body:not(.lock-preview) #sbLockBtn{display:none;}
+  #sbSyncBtn{justify-content:center;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);border-radius:10px;color:#fff;}
+  #sbSyncBtn:hover{background:rgba(255,255,255,.16);}
+  #sbSyncBtn .sb-label{flex:none;color:#fff;font-weight:600;}
+  .sb-clinic{padding:8px 12px 6px;font-size:12px;line-height:1.35;color:#DCE8FA;font-weight:600;text-align:center;}
   .sb-foot .sb-item{padding:8px 12px;font-size:12.5px;}
   .sb-foot .sb-ico{width:18px;height:18px;}
   #sbCollapseBtn .sb-ico{transition:transform .18s ease;}
@@ -1103,7 +1106,7 @@
   #reportOverlay.report-embedded .modal-body{padding:0;max-height:none;overflow:visible;}
   @media (max-width:1024px){ .appt-grid{grid-template-columns:1fr;} }
 
-  @media print{ body:not(.printing-panel):not(.printing-full-report) .app-shell{display:none !important;} }
+  @media print{ body:not(.printing-panel):not(.printing-full-report):not(.printing-disease-list) .app-shell{display:none !important;} }
   @media (prefers-reduced-motion:reduce){ .sidebar,.sb-item,#sbCollapseBtn .sb-ico{transition:none !important;} }
 
   /* collapsed rail (desktop) */
@@ -1196,21 +1199,17 @@
         <div class="sb-group-label kh">ការងារប្រចាំថ្ងៃ</div>
         <button type="button" class="sb-item active" data-page="dashboard" title="ផ្ទាំងសរុប · Dashboard">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
-          <span class="sb-label kh">ផ្ទាំងសរុប<small>Dashboard</small></span>
+          <span class="sb-label kh">ផ្ទាំងសរុប<small>Dashboard</small></span><span class="sb-badge" id="sbBadgeDashboardAppt" hidden>0</span>
         </button>
         <button type="button" class="sb-item" data-page="patients" title="អ្នកជំងឺ · Patients">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span class="sb-label kh">អ្នកជំងឺ<small>Patients</small></span><span class="sb-badge quiet" id="sbBadgePatients" hidden>0</span>
         </button>
-        <button type="button" class="sb-item" data-page="appointments" title="ការណាត់ជួប · Appointments">
-          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
-          <span class="sb-label kh">ការណាត់ជួប<small>Appointments</small></span><span class="sb-badge" id="sbBadgeAppt" hidden>0</span>
-        </button>
         <button type="button" class="sb-item" data-page="xray" title="បញ្ចីថតធ្មេញ · Dental X-ray">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
           <span class="sb-label kh">បញ្ចីថតធ្មេញ<small>Dental X-ray</small></span><span class="sb-badge quiet" id="sbBadgeXray" hidden>0</span>
         </button>
-        <button type="button" class="sb-item" id="sbDhis2Btn" title="បញ្ជីជំងឺ DHIS2 · Disease list">
+        <button type="button" class="sb-item" id="sbDhis2Btn" data-page="diseaselist" title="បញ្ជីជំងឺ DHIS2 · Disease list">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h4"/></svg>
           <span class="sb-label kh">បញ្ជីជំងឺ DHIS2<small>Disease list</small></span>
         </button>
@@ -1527,6 +1526,48 @@
       </section>
 
       <!-- Organization Structure -->
+      <section class="page" id="page-diseaselist" data-page="diseaselist" hidden>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; position: sticky; left: 0;">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ខែ · Month</label>
+          <select id="dlFilterMonth" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
+            <option value="">ទាំងអស់ · All</option>
+            <option value="1">01</option><option value="2">02</option><option value="3">03</option>
+            <option value="4">04</option><option value="5">05</option><option value="6">06</option>
+            <option value="7">07</option><option value="8">08</option><option value="9">09</option>
+            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          </select>
+          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ឆ្នាំ · Year</label>
+          <select id="dlFilterYear" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
+            <option value="">ទាំងអស់ · All</option>
+          </select>
+          <button class="btn btn-primary btn-sm kh" onclick="applyDiseaseListFilter()">🔍 ត្រង · Filter</button>
+          
+          <div id="dlSummaryBadges" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-left: 6px;">
+            <span class="dl-summary-badge kh" style="color:var(--primary-dark); border-color:var(--primary-soft); background:var(--primary-softer);">
+              សរុប: <span class="val" id="dlSumTotal">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--primary-dark);">
+              ប្រុស: <span class="val" id="dlSumMale">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--coral-dark);">
+              ស្រី: <span class="val" id="dlSumFemale">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--amber-dark);">
+              ក្មេង (≤15): <span class="val" id="dlSumKids">0</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListPDF()" style="background-color: var(--coral); border-color: var(--coral);">📄 Export PDF</button>
+          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListExcel()">📊 Export Excel</button>
+        </div>
+      </div>
+      <div id="diseaseListTableContainer" style="overflow-x: auto; border: 1px solid var(--border); border-radius: 8px;">
+      </div>
+      </section>
+
       <section class="page" id="page-org" data-page="org" hidden>
         <div class="org-grid" id="orgGrid">
           <article class="org-card" data-id="head">
@@ -2074,57 +2115,6 @@
 <!-- Report Page Modal -->
 
 
-<!-- Disease List Modal (DHIS2) -->
-<div class="overlay hidden" id="diseaseListOverlay" style="z-index: 105;">
-  <div class="modal" style="max-width: 95vw; height: 90vh; display: flex; flex-direction: column;">
-    <div class="modal-head">
-      <h2 class="kh">បញ្ជីជំងឺ (DHIS2)</h2>
-      <button class="x" id="closeDiseaseList">✕</button>
-    </div>
-    <div class="modal-body" style="flex: 1; overflow: auto; padding: 16px;">
-      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; position: sticky; left: 0;">
-        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
-          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ខែ · Month</label>
-          <select id="dlFilterMonth" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
-            <option value="">ទាំងអស់ · All</option>
-            <option value="1">01</option><option value="2">02</option><option value="3">03</option>
-            <option value="4">04</option><option value="5">05</option><option value="6">06</option>
-            <option value="7">07</option><option value="8">08</option><option value="9">09</option>
-            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-          </select>
-          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ឆ្នាំ · Year</label>
-          <select id="dlFilterYear" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
-            <option value="">ទាំងអស់ · All</option>
-          </select>
-          <button class="btn btn-primary btn-sm kh" onclick="applyDiseaseListFilter()">🔍 ត្រង · Filter</button>
-          
-          <div id="dlSummaryBadges" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-left: 6px;">
-            <span class="dl-summary-badge kh" style="color:var(--primary-dark); border-color:var(--primary-soft); background:var(--primary-softer);">
-              សរុប: <span class="val" id="dlSumTotal">0</span>
-            </span>
-            <span class="dl-summary-badge kh" style="color:var(--primary-dark);">
-              ប្រុស: <span class="val" id="dlSumMale">0</span>
-            </span>
-            <span class="dl-summary-badge kh" style="color:var(--coral-dark);">
-              ស្រី: <span class="val" id="dlSumFemale">0</span>
-            </span>
-            <span class="dl-summary-badge kh" style="color:var(--amber-dark);">
-              ក្មេង (≤15): <span class="val" id="dlSumKids">0</span>
-            </span>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 10px;">
-          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListPDF()" style="background-color: var(--coral); border-color: var(--coral);">📄 Export PDF</button>
-          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListExcel()">📊 Export Excel</button>
-        </div>
-      </div>
-      <div id="diseaseListTableContainer" style="overflow-x: auto; border: 1px solid var(--border); border-radius: 8px;">
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
 /* ==========================================================
    កូដ PIN សម្ងាត់ (២៣០១០១ / ២៣១០១០)
@@ -2386,7 +2376,6 @@ window.addEventListener('popstate', function(e) {
     else if (hash === '#toothHistory') document.getElementById('toothHistoryModalOverlay').classList.remove('hidden');
     else if (hash === '#xrayGallery') document.getElementById('xrayGalleryOverlay').classList.remove('hidden');
     else if (hash === '#xrayUpload') document.getElementById('xrayModalOverlay').classList.remove('hidden');
-    else if (hash === '#diseaseList') document.getElementById('diseaseListOverlay').classList.remove('hidden');
 });
 
 const DELETED_STORE_KEY = 'kep_dental_deletedIdentifiers_v3';
@@ -2736,40 +2725,52 @@ function savePendingQueue(queue){
 }
 
 let isFlushingQueue = false;
+const SYNC_CONCURRENCY = 5;   // pending writes sent this many at a time instead of one-by-one — the #1 cause of slow sync when several edits queue up
+
 async function flushPendingQueue(){
   if(isFlushingQueue || !navigator.onLine || !webAppUrl) return;
-  const queue = getPendingQueue();
-  if(queue.length === 0) return;
+  if(getPendingQueue().length === 0) return;
 
   isFlushingQueue = true;
   const badge = document.getElementById('syncBadge');
-  badge.textContent = `កំពុង Sync (${queue.length})...`;
 
-  while(queue.length > 0){
-    const item = queue[0];
-    try{
-      await fetch(webAppUrl, {
+  let pending = getPendingQueue();
+  while(pending.length > 0){
+    badge.textContent = `កំពុង Sync (${pending.length})...`;
+    const batch = pending.slice(0, SYNC_CONCURRENCY);
+    const results = await Promise.allSettled(batch.map(item =>
+      fetch(webAppUrl, {
         method:'POST',
         mode:'no-cors',
         headers:{'Content-Type':'text/plain;charset=utf-8'},
         body: JSON.stringify(item)
-      });
-      const cur = getPendingQueue();
-      if(cur.length && JSON.stringify(cur[0]) === JSON.stringify(item)) cur.shift();
-      savePendingQueue(cur);
-      queue.splice(0, queue.length, ...cur);
-    } catch(err){
-      break;
-    }
+      })
+    ));
+
+    const succeededIds = new Set();
+    let anyFailed = false;
+    results.forEach((res, idx) => {
+      if(res.status === 'fulfilled') succeededIds.add(batch[idx]._qid);
+      else anyFailed = true;
+    });
+
+    // re-read the persisted queue fresh — picks up anything pushed while this batch was in flight,
+    // and removes exactly the items that went through
+    const cur = getPendingQueue();
+    savePendingQueue(cur.filter(x => !succeededIds.has(x._qid)));
+    pending = getPendingQueue();
+
+    if(anyFailed) break;   // stop here; whatever's left (including this batch's failures) retries on the next flush
   }
 
   isFlushingQueue = false;
-  badge.textContent = '✓ ស្វ័យប្រវត្តិរួចរាល់';
+  badge.textContent = pending.length ? '⚠️ Sync មិនទាន់ចប់' : '✓ ស្វ័យប្រវត្តិរួចរាល់';
   setTimeout(()=>{ badge.textContent = 'Sync'; }, 2000);
 }
 
+let pushToSheetSeq = 0;
 function pushToSheet(action, data){
-  const payload = { action, data, timestamp: Date.now() };
+  const payload = { action, data, timestamp: Date.now(), _qid: Date.now() + '_' + (++pushToSheetSeq) };
   const queue = getPendingQueue();
   queue.push(payload);
   savePendingQueue(queue);
@@ -3433,11 +3434,14 @@ function renderList(){
       }
     }
     
-    let st = p.latest.status === 'Doing' ? 'Appt' : (p.latest.status || 'Missing');
+    let st = recomputeStatusFromSteps(p.latest);   // always derived fresh from the step list, never a possibly-stale stored value
     let cardClass = '';
     let badgeStyle = '';
 
-    if (isMissedAppt || st === 'Missing') {
+    // Red is reserved for a genuinely missed appointment (a scheduled date that's already passed).
+    // Having no special step recorded yet (canonical "Missing") is the normal, unremarkable case for
+    // a patient mid-treatment — it should not by itself make the card look alarming.
+    if (isMissedAppt) {
         cardClass = ' has-missing-appt';
         badgeStyle = 'background:var(--coral-soft); color:var(--coral-dark); border-color:rgba(228,87,76,0.4);';
     } else if (p.hasActiveAppt || st === 'Appt') {
@@ -3791,6 +3795,27 @@ function stepKind(name){
    recorded for them, e.g. created before the Step panel existed) have no real "last procedure
    step" to read a kind from — for those, trust whatever status was already stored instead of
    guessing from `doing`'s free text, which would otherwise mislabel almost all of them as Missing. */
+/* canonical 4-value status (Done/Appt/Labo/Missing) — used for storage and everywhere else in the
+   app that filters/counts by status (chips, dashboard stats). A plain procedure step (Access Cavity,
+   Obturation...) as the last entry is not itself a status, so it maps to Missing here. */
+function recomputeStatusFromSteps(record){
+  let steps = [];
+  if(record && record.steps){
+    try{ const a = JSON.parse(record.steps); if(Array.isArray(a) && a.length) steps = a; }catch(e){}
+  }
+  if(steps.length){
+    const k = stepKind(steps[steps.length - 1].name);
+    if(k === 'done') return 'Done';
+    if(k === 'appt') return 'Appt';
+    if(k === 'labo') return 'Labo';
+    return 'Missing';
+  }
+  return record && record.status === 'Doing' ? 'Appt' : ((record && record.status) || 'Missing');
+}
+
+/* display info for the Clinical Notes table — the label is literally the last step's own
+   procedure name (e.g. "Obturation", "Access Cavity") when that step isn't itself a status
+   (Done/Appointment/Labo); `kind` drives the highlight color, `datetime` is that step's own time. */
 function getStatusDisplayInfo(record){
   let steps = [];
   if(record && record.steps){
@@ -3799,15 +3824,14 @@ function getStatusDisplayInfo(record){
   if(steps.length){
     const last = steps[steps.length - 1];
     const k = stepKind(last.name);
-    const status = k === 'done' ? 'Done' : k === 'appt' ? 'Appt' : k === 'labo' ? 'Labo' : 'Missing';
-    return { status, datetime: last.datetime || '' };
+    const label = k === 'done' ? 'Done' : k === 'appt' ? 'Appointment' : k === 'labo' ? 'Labo' : (cleanStr(last.name) || 'Missing');
+    return { label, datetime: last.datetime || '', kind: k };
   }
   const legacyStatus = record && record.status === 'Doing' ? 'Appt' : ((record && record.status) || 'Missing');
   const legacyDatetime = (record && (record.doingDateTime || record.timestamp)) || '';
-  return { status: legacyStatus, datetime: legacyDatetime };
-}
-function recomputeStatusFromSteps(record){
-  return getStatusDisplayInfo(record).status;
+  const legacyKind = legacyStatus === 'Done' ? 'done' : legacyStatus === 'Appt' ? 'appt' : legacyStatus === 'Labo' ? 'labo' : 'missing';
+  const legacyLabel = legacyStatus === 'Appt' ? 'Appointment' : legacyStatus;
+  return { label: legacyLabel, datetime: legacyDatetime, kind: legacyKind };
 }
 /* "Next Step" (timeLast/planDo, shown in the Clinical Notes table) now comes from the most
    recent Appointment-kind step instead of the old separate form field */
@@ -3825,8 +3849,7 @@ function applyNextStepFromSteps(record){
 }
 function genStepId(){ return 'ST' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
 
-const STATUS_LABELS = { Appt: 'Appointment', Done: 'Done', Labo: 'Labo', Missing: 'Missing' };
-const STATUS_CLASSES = { Appt: 'doing', Done: 'done', Labo: 'labo', Missing: 'missing' };
+const STATUS_CLASSES = { done: 'done', appt: 'doing', labo: 'labo', missing: 'missing', normal: 'normal' };
 
 function renderClinicalNotesHTML(records) {
   const rows = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
@@ -3844,10 +3867,9 @@ function renderClinicalNotesHTML(records) {
         <tbody>
           ${rows.map(r => {
             const info = getStatusDisplayInfo(r);   // always derived fresh — from the last real step if there's step history, else the record's own stored status
-            const label = STATUS_LABELS[info.status] || info.status;
-            const cls = STATUS_CLASSES[info.status] || 'missing';
+            const cls = STATUS_CLASSES[info.kind] || 'normal';
             const dtText = info.datetime ? formatDateDisplay(info.datetime) : '';
-            const statusText = (info.status !== 'Missing' && dtText) ? `${label} (${dtText})` : label;
+            const statusText = (info.label !== 'Missing' && dtText) ? `${info.label} (${dtText})` : info.label;
             return `
             <tr class="emr-tr" onclick="openDoDetail('${r._id}')">
               <td data-label="កាលបរិច្ឆេទ (Date)" class="mono" style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">${formatDateDisplay(r.timestamp).split(' ')[0]}</td>
@@ -4096,7 +4118,7 @@ function exportAllToPdf() {
         <td class="kh">${r.diagnosis||'—'}</td>
         <td class="kh">${r.treatment||'—'}</td>
         <td class="mono">${r.teeth||'—'}</td>
-        <td class="kh">${STATUS_LABELS[getStatusDisplayInfo(r).status] || getStatusDisplayInfo(r).status}</td>
+        <td class="kh">${getStatusDisplayInfo(r).label}</td>
       </tr>
     `;
   }).join('');
@@ -4873,25 +4895,18 @@ async function uploadXrayImage(){
 /* =========================================
    មុខងារសម្រាប់បញ្ជីជំងឺ (Disease List)
    ========================================= */
-document.getElementById('closeDiseaseList').addEventListener('click', () => {
-    document.getElementById('diseaseListOverlay').classList.add('hidden');
-    if (window.location.hash === '#diseaseList') history.replaceState(null, null, window.location.pathname);
-});
-document.getElementById('diseaseListOverlay').addEventListener('click', (e) => { 
-    if(e.target.id === 'diseaseListOverlay') {
-        document.getElementById('diseaseListOverlay').classList.add('hidden');
-        if (window.location.hash === '#diseaseList') history.replaceState(null, null, window.location.pathname);
-    }
-});
-
 function openDiseaseListModal() {
-    history.pushState({ modal: 'diseaseList' }, '', '#diseaseList');
+    // "modal" in name only, kept for existing callers — this now just navigates to the page
+    showPage('diseaselist');
     populateDiseaseListYearOptions();
     document.getElementById('dlFilterMonth').value = '';
     document.getElementById('dlFilterYear').value = '';
     renderDiseaseListTable(allRecords);
-    document.getElementById('diseaseListOverlay').classList.remove('hidden');
 }
+document.querySelector('.sb-item[data-page="diseaselist"]').addEventListener('click', () => {
+    populateDiseaseListYearOptions();
+    renderDiseaseListTable(allRecords);
+});
 
 function populateDiseaseListYearOptions() {
     const yearSel = document.getElementById('dlFilterYear');
@@ -5100,6 +5115,7 @@ const PAGE_META = {
   inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
   xray:         { title: 'បញ្ចីថតធ្មេញ', sub: 'X-ray image gallery' },
   org:          { title: 'រចនាសម្ព័ន្ធ', sub: 'Organization structure' },
+  diseaselist:  { title: 'បញ្ជីជំងឺ DHIS2', sub: 'Disease list' },
   study:        { title: 'មាតិកាសិក្សា', sub: 'Study library' }
 };
 const PAGE_KEY = 'dental_emr_page';
@@ -5153,8 +5169,8 @@ function getPatientStatusKey(p, startOfToday){
     const d = parseAnyDate(p.latest.timeLast);
     if(d && d < startOfToday) missedAppt = true;
   }
-  const st = p.latest.status === 'Doing' ? 'Appt' : (p.latest.status || 'Missing');
-  if(missedAppt || st === 'Missing') return 'missing';
+  const st = recomputeStatusFromSteps(p.latest);
+  if(missedAppt) return 'missing';
   if(p.hasActiveAppt || st === 'Appt') return 'appt';
   if(st === 'Labo') return 'labo';
   return 'done';
@@ -5259,10 +5275,9 @@ function renderShell(){
   allRecords.forEach(r=>{ if(cleanStr(r.name)) names.add(patientKey(r)); });
 
   setBadge('sbBadgePatients', names.size, '');
-  const attention = b.today.length + b.missed.length;
-  setBadge('sbBadgeAppt', attention, b.missed.length ? 'warn' : 'amber');
-  const apptBtn = document.querySelector('.sb-item[data-page="appointments"]');
-  if(apptBtn) apptBtn.title = `ការណាត់ជួប · ថ្ងៃនេះ ${b.today.length} · ហួសកំណត់ ${b.missed.length}`;
+  setBadge('sbBadgeDashboardAppt', b.today.length, 'amber');
+  const dashBtn = document.querySelector('.sb-item[data-page="dashboard"]');
+  if(dashBtn) dashBtn.title = `ផ្ទាំងសរុប · ណាត់ជួបថ្ងៃនេះ ${b.today.length} · ហួសកំណត់ ${b.missed.length}`;
 
   document.getElementById('dashKpis').innerHTML =
     kpiCard('',      '<path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', names.size, 'អ្នកជំងឺសរុប', {page:'patients'}) +
@@ -5308,7 +5323,6 @@ function renderShellMeta(){
   });
 
   // modal-style items (Reports / DHIS2 / Clinic settings) just close the drawer on phones
-  document.getElementById('sbDhis2Btn').addEventListener('click', ()=>{ closeSidebarDrawer(); openDiseaseListModal(); });
   ['settingsBtn'].forEach(id=> document.getElementById(id).addEventListener('click', closeSidebarDrawer));
 
   // search always lands on the Patients page
