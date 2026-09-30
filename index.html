@@ -515,6 +515,7 @@
   .emr-status.done { background: #E0F2E9; color: #198754; border: 1px solid #19875440; }
   .emr-status.doing { background: #E1EFFF; color: #0B5ED7; border: 1px solid #0B5ED740; }
   .emr-status.missing { background: #F8D7DA; color: #721C24; border: 1px solid #721C2440; }
+  .emr-status.labo { background: #EDE7FA; color: #5B3FB8; border: 1px solid #5B3FB840; }
 
   /* Form Layout */
   .form-grid{display:grid;grid-template-columns:1fr;gap:12px;}
@@ -2914,8 +2915,12 @@ function renderPlanningList(){
     </div>`).join('');
   c.querySelectorAll('[data-plan-del]').forEach(btn=>{
     btn.addEventListener('click', ()=>{
-      planningItems.splice(Number(btn.dataset.planDel), 1);
-      renderPlanningList();
+      const idx = Number(btn.dataset.planDel);
+      const it = planningItems[idx];
+      promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ធ្មេញ ' + (it ? it.tooth : ''), ()=>{
+        planningItems.splice(idx, 1);
+        renderPlanningList();
+      });
     });
   });
 }
@@ -3516,7 +3521,6 @@ function renderDoDetailBody(r){
       <div class="left-action">
         <button class="btn btn-danger btn-sm" id="doDetailDelBtn">🗑 លុប Delete</button>
       </div>
-      <button class="btn btn-outline btn-sm" id="doDetailFullBtn">🦷 Full record</button>
       <button class="btn btn-success btn-sm kh" id="doDetailSaveBtn">💾 Save</button>
       <button class="btn btn-primary btn-sm" id="doDetailEditBtn">✏️ Edit</button>
     </div>
@@ -3525,16 +3529,14 @@ function renderDoDetailBody(r){
   document.getElementById('ddNewStepDT').value = getLocalNowDateTime();
 
   document.querySelectorAll('.dd-step-del').forEach(btn=>{
-    btn.addEventListener('click', ()=> deleteStep(r._id, btn.dataset.stepId));
+    btn.addEventListener('click', ()=>{
+      promptForPin('សូមបញ្ចូល PIN ដើម្បីលុបជំហាននេះ', ()=> deleteStep(r._id, btn.dataset.stepId));
+    });
   });
   document.getElementById('ddAddStepBtn').addEventListener('click', ()=> addStep(r._id));
   document.getElementById('doDetailDelBtn').addEventListener('click', ()=>{
     document.getElementById('doDetailOverlay').classList.add('hidden');
     deleteSingleRecordById(r._id);
-  });
-  document.getElementById('doDetailFullBtn').addEventListener('click', ()=>{
-    document.getElementById('doDetailOverlay').classList.add('hidden');
-    openPatientRecord(r.name);
   });
   document.getElementById('doDetailEditBtn').addEventListener('click', ()=>{
     document.getElementById('doDetailOverlay').classList.add('hidden');
@@ -3687,6 +3689,9 @@ function openToothHistoryModal(toothNum, patientName){
 
 function deletePatient(patientName){
   if(!patientName) return;
+  promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + patientName, ()=> confirmDeletePatient(patientName));
+}
+function confirmDeletePatient(patientName){
   showConfirm(`តើលោកអ្នកពិតជាចង់លុបកំណត់ត្រាទាំងអស់របស់អ្នកជំងឺ "${patientName}" មែនទេ?\nសកម្មភាពនេះមិនអាចត្រឡប់ក្រោយបានឡើយ!`, ()=>{
     const normalized = cleanStr(patientName).toLowerCase();
     deletedIdentifiers.add(normalized);
@@ -3708,6 +3713,7 @@ function deleteSingleRecordById(recordId){
   const diagStr = recToDelete.treatment || recToDelete.diagnosis || '';
   const teethStr = recToDelete.teeth ? ` (ធ្មេញ ${recToDelete.teeth})` : '';
 
+  promptForPin('សូមបញ្ចូល PIN ដើម្បីលុប · ' + (diagStr || 'កំណត់ត្រា'), ()=>{
   showConfirm(`តើលោកអ្នកពិតជាចង់លុបកំណត់ត្រា "${diagStr}${teethStr} - ${dateStr}" នេះមែនទេ?`, ()=>{
     const pName = cleanStr(recToDelete.name).toLowerCase();
     const itemKey = `${pName}_${cleanStr(recToDelete.timestamp)}_${cleanStr(recToDelete.treatment || recToDelete.diagnosis)}`;
@@ -3732,6 +3738,7 @@ function deleteSingleRecordById(recordId){
 
     closeFormModal();
     if(activePatientContext) openPatientRecord(activePatientContext);
+  });
   });
 }
 
@@ -3779,15 +3786,28 @@ function stepKind(name){
 /* Status always mirrors whichever step is LAST in the list — not the last "special" one.
    A plain procedure step (Access Cavity, Obturation...) as the last entry means Missing
    (still in progress, no explicit status yet); only Appointment/Done/Labo as the very last
-   step set the status to that. */
+   step set the status to that.
+   Records that only have the legacy single-step fallback (no real `steps` history was ever
+   recorded for them, e.g. created before the Step panel existed) have no real "last procedure
+   step" to read a kind from — for those, trust whatever status was already stored instead of
+   guessing from `doing`'s free text, which would otherwise mislabel almost all of them as Missing. */
+function getStatusDisplayInfo(record){
+  let steps = [];
+  if(record && record.steps){
+    try{ const a = JSON.parse(record.steps); if(Array.isArray(a) && a.length) steps = a; }catch(e){}
+  }
+  if(steps.length){
+    const last = steps[steps.length - 1];
+    const k = stepKind(last.name);
+    const status = k === 'done' ? 'Done' : k === 'appt' ? 'Appt' : k === 'labo' ? 'Labo' : 'Missing';
+    return { status, datetime: last.datetime || '' };
+  }
+  const legacyStatus = record && record.status === 'Doing' ? 'Appt' : ((record && record.status) || 'Missing');
+  const legacyDatetime = (record && (record.doingDateTime || record.timestamp)) || '';
+  return { status: legacyStatus, datetime: legacyDatetime };
+}
 function recomputeStatusFromSteps(record){
-  const steps = stepsArray(record);
-  if(!steps.length) return 'Missing';
-  const k = stepKind(steps[steps.length - 1].name);
-  if(k === 'done') return 'Done';
-  if(k === 'appt') return 'Appt';
-  if(k === 'labo') return 'Labo';
-  return 'Missing';
+  return getStatusDisplayInfo(record).status;
 }
 /* "Next Step" (timeLast/planDo, shown in the Clinical Notes table) now comes from the most
    recent Appointment-kind step instead of the old separate form field */
@@ -3805,6 +3825,9 @@ function applyNextStepFromSteps(record){
 }
 function genStepId(){ return 'ST' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase(); }
 
+const STATUS_LABELS = { Appt: 'Appointment', Done: 'Done', Labo: 'Labo', Missing: 'Missing' };
+const STATUS_CLASSES = { Appt: 'doing', Done: 'done', Labo: 'labo', Missing: 'missing' };
+
 function renderClinicalNotesHTML(records) {
   const rows = [...records].sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0));
   return `
@@ -3812,27 +3835,26 @@ function renderClinicalNotesHTML(records) {
       <table class="emr-table" style="table-layout:fixed;">
         <thead>
           <tr>
-            <th style="width:14%;">កាលបរិច្ឆេទ<br>(Date)</th>
-            <th style="width:9%;">ធ្មេញ<br>(Tooth)</th>
-            <th style="width:33%;">ការព្យាបាល<br>(Treatment)</th>
-            <th style="width:31%;">ជំហានបន្ទាប់<br>(Next Step)</th>
-            <th style="width:13%;text-align:center;">ស្ថានភាព<br>(Status)</th>
+            <th style="width:16%;">កាលបរិច្ឆេទ<br>(Date)</th>
+            <th style="width:12%;">ធ្មេញ<br>(Tooth)</th>
+            <th style="width:40%;">ការព្យាបាល<br>(Treatment)</th>
+            <th style="width:32%;text-align:center;">ស្ថានភាព<br>(Status)</th>
           </tr>
         </thead>
         <tbody>
           ${rows.map(r => {
-            const liveStatus = recomputeStatusFromSteps(r);   // always derived fresh from the step list — never trusts a possibly-stale stored value
+            const info = getStatusDisplayInfo(r);   // always derived fresh — from the last real step if there's step history, else the record's own stored status
+            const label = STATUS_LABELS[info.status] || info.status;
+            const cls = STATUS_CLASSES[info.status] || 'missing';
+            const dtText = info.datetime ? formatDateDisplay(info.datetime) : '';
+            const statusText = (info.status !== 'Missing' && dtText) ? `${label} (${dtText})` : label;
             return `
             <tr class="emr-tr" onclick="openDoDetail('${r._id}')">
               <td data-label="កាលបរិច្ឆេទ (Date)" class="mono" style="font-size:11.5px;color:var(--ink-soft);font-weight:600;">${formatDateDisplay(r.timestamp).split(' ')[0]}</td>
               <td data-label="ធ្មេញ (Tooth)" class="mono" style="font-weight:800;color:var(--primary-dark);font-size:13px;">${r.teeth || '—'}</td>
               <td data-label="ការព្យាបាល (Treatment)" class="kh" style="font-weight:700;color:var(--ink);font-size:13px;">${r.treatment || '—'}</td>
-              <td data-label="ជំហានបន្ទាប់ (Next Step)" class="kh" style="font-size:12px;">
-                ${r.timeLast ? `<div class="mono" style="color:var(--amber-dark);font-weight:700;margin-bottom:4px;">🗓️ ${formatDateDisplay(r.timeLast).split(' ')[0]}</div>` : ''}
-                ${r.planDo ? `<div style="color:var(--ink-soft);line-height:1.4;">📋 ${r.planDo}</div>` : (!r.timeLast ? '<div style="color:var(--ink-dim);">—</div>' : '')}
-              </td>
               <td data-label="ស្ថានភាព (Status)" style="text-align:center;">
-                <div class="emr-status ${liveStatus==='Done'?'done':(liveStatus==='Appt'?'doing':'missing')}">${liveStatus}</div>
+                <div class="emr-status ${cls}" style="white-space:normal;line-height:1.4;">${esc(statusText)}</div>
               </td>
             </tr>
           `; }).join('')}
@@ -4074,7 +4096,7 @@ function exportAllToPdf() {
         <td class="kh">${r.diagnosis||'—'}</td>
         <td class="kh">${r.treatment||'—'}</td>
         <td class="mono">${r.teeth||'—'}</td>
-        <td class="kh">${r.status === 'Doing' ? 'Appt' : (r.status || 'Missing')}</td>
+        <td class="kh">${STATUS_LABELS[getStatusDisplayInfo(r).status] || getStatusDisplayInfo(r).status}</td>
       </tr>
     `;
   }).join('');
