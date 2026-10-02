@@ -1286,21 +1286,13 @@
       <!-- Dashboard -->
       <section class="page" id="page-dashboard" data-page="dashboard">
         <div class="kpi-grid" id="dashKpis"></div>
-        <!-- 2. Today Stats -->
-      <div class="card-type-stats-panel" style="margin-top: 15px;">
-        <div class="card-type-stats-head">
-          <h4 class="kh">សរុបថ្ងៃនេះ · Today's Counts</h4>
-          <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
-        </div>
-        <div id="todayStatsRow"></div>
-      </div>
-      <!-- របាយការណ៍ម្សិលមិញ -->
+        <!-- របាយការណ៍ថ្ងៃនេះ និង ម្សិលមិញ (Merged) -->
         <div class="card-type-stats-panel" style="margin-bottom: 20px;">
           <div class="card-type-stats-head">
-            <h4 class="kh">សរុបម្សិលមិញ · Yesterday's Counts</h4>
+            <h4 class="kh">ស្ថិតិប្រចាំថ្ងៃ · Today & Yesterday</h4>
             <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
           </div>
-          <div id="yesterdayStatsRow"></div>
+          <div id="combinedTodayYesterdayStatsRow"></div>
         </div>
         <div class="appt-grid">
           <div class="appt-panel">
@@ -3381,126 +3373,92 @@ function renderLastMonthStats(){
   row.innerHTML = html;
 }
 
-function renderTodayStats(){
+function renderTodayYesterdayStats() {
   const now = new Date();
   const todayKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-
-  const todayRecords = allRecords.filter(r => {
-    let dtStr = r.doingDateTime || r.timestamp; 
-    const d = parseAnyDate(dtStr);
-    if(!d) return false;
-    const dKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    return dKey === todayKey;
-  });
-
-  const totalVisits = todayRecords.length;
-  let male = 0, female = 0;
-  const treatCounts = {};
-  const cardCounts = {};
-
-  todayRecords.forEach(r => {
-    let sex = String(r.sex || '').toUpperCase();
-    if (sex === 'M' || sex.includes('ប្រុស')) male++;
-    else female++;
-
-    let treat = cleanStr(r.treatment);
-    if (treat && treat !== '—') {
-      treatCounts[treat] = (treatCounts[treat] || 0) + 1;
-    }
-
-    let type = cleanStr(r.type) || 'បង់ពេញថ្លៃ';
-    cardCounts[type] = (cardCounts[type] || 0) + 1;
-  });
-
-  const row = document.getElementById('todayStatsRow');
-  if (!row) return;
-
-  if (totalVisits === 0) {
-    row.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--ink-dim);padding:14px;background:var(--surface-2);border-radius:12px;border:1px dashed var(--border);">មិនទាន់មានទិន្នន័យសម្រាប់ថ្ងៃនេះទេ (No data for today)</div>`;
-    return;
-  }
-
-  const sortedTreatments = Object.keys(treatCounts).sort((a,b) => treatCounts[b] - treatCounts[a]);
-  const sortedCards = Object.keys(cardCounts).sort((a,b) => cardCounts[b] - cardCounts[a]);
-
-  let html = `<div class="card-type-stats-grid" style="gap:10px;">`;
-  html += `<div class="type-stat-card" style="background:var(--primary-softer); border-color:var(--primary);"><span class="type-stat-name kh" style="color:var(--primary-dark);">សរុប (Total)</span><div class="type-stat-count" style="color:var(--primary-dark); font-size:22px;">${totalVisits}</div></div>`;
-  html += `<div class="type-stat-card type-red"><span class="type-stat-name kh">ស្រី (Female)</span><div class="type-stat-count" style="font-size:20px;">${female}</div></div>`;
-  html += `<div class="type-stat-card type-blue"><span class="type-stat-name kh">ប្រុស (Male)</span><div class="type-stat-count" style="font-size:20px;">${male}</div></div>`;
-  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
   
-  sortedTreatments.forEach(t => {
-      html += `<div class="type-stat-card type-default" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${t}</span><div class="type-stat-count" style="color:var(--primary-dark);">${treatCounts[t]}</div></div>`;
-  });
-
-  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
-
-  sortedCards.forEach(c => {
-      html += `<div class="type-stat-card ${getCardTypeBadgeClass(c)}" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${c}</span><div class="type-stat-count">${cardCounts[c]}</div></div>`;
-  });
-
-  html += `</div>`;
-  row.innerHTML = html;
-}
-
-function renderYesterdayStats(){
   const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1); 
+  yesterday.setDate(yesterday.getDate() - 1);
   const yesterdayKey = yesterday.getFullYear() + '-' + String(yesterday.getMonth() + 1).padStart(2, '0') + '-' + String(yesterday.getDate()).padStart(2, '0');
 
-  const yesterdayRecords = allRecords.filter(r => {
+  let tTotal = 0, tMale = 0, tFemale = 0;
+  let yTotal = 0, yMale = 0, yFemale = 0;
+  const tTreat = {}, tCard = {};
+  const yTreat = {}, yCard = {};
+
+  allRecords.forEach(r => {
     let dtStr = r.doingDateTime || r.timestamp; 
     const d = parseAnyDate(dtStr);
-    if(!d) return false;
+    if(!d) return;
     const dKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    return dKey === yesterdayKey;
-  });
-
-  const totalVisits = yesterdayRecords.length;
-  let male = 0, female = 0;
-  const treatCounts = {};
-  const cardCounts = {};
-
-  yesterdayRecords.forEach(r => {
-    let sex = String(r.sex || '').toUpperCase();
-    if (sex === 'M' || sex.includes('ប្រុស')) male++;
-    else female++;
-
-    let treat = cleanStr(r.treatment);
-    if (treat && treat !== '—') {
-      treatCounts[treat] = (treatCounts[treat] || 0) + 1;
+    
+    if (dKey === todayKey) {
+      tTotal++;
+      let sex = String(r.sex || '').toUpperCase();
+      if (sex === 'M' || sex.includes('ប្រុស')) tMale++; else tFemale++;
+      let treat = cleanStr(r.treatment);
+      if (treat && treat !== '—') tTreat[treat] = (tTreat[treat] || 0) + 1;
+      let type = cleanStr(r.type) || 'បង់ពេញថ្លៃ';
+      tCard[type] = (tCard[type] || 0) + 1;
+    } else if (dKey === yesterdayKey) {
+      yTotal++;
+      let sex = String(r.sex || '').toUpperCase();
+      if (sex === 'M' || sex.includes('ប្រុស')) yMale++; else yFemale++;
+      let treat = cleanStr(r.treatment);
+      if (treat && treat !== '—') yTreat[treat] = (yTreat[treat] || 0) + 1;
+      let type = cleanStr(r.type) || 'បង់ពេញថ្លៃ';
+      yCard[type] = (yCard[type] || 0) + 1;
     }
-
-    let type = cleanStr(r.type) || 'បង់ពេញថ្លៃ';
-    cardCounts[type] = (cardCounts[type] || 0) + 1;
   });
 
-  const row = document.getElementById('yesterdayStatsRow');
+  const row = document.getElementById('combinedTodayYesterdayStatsRow');
   if (!row) return;
 
-  if (totalVisits === 0) {
-    row.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--ink-dim);padding:14px;background:var(--surface-2);border-radius:12px;border:1px dashed var(--border);">មិនទាន់មានទិន្នន័យសម្រាប់ម្សិលមិញទេ (No data for yesterday)</div>`;
+  if (tTotal === 0 && yTotal === 0) {
+    row.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--ink-dim);padding:14px;background:var(--surface-2);border-radius:12px;border:1px dashed var(--border);">មិនទាន់មានទិន្នន័យសម្រាប់ថ្ងៃនេះ និងម្សិលមិញទេ</div>`;
     return;
   }
 
-  const sortedTreatments = Object.keys(treatCounts).sort((a,b) => treatCounts[b] - treatCounts[a]);
-  const sortedCards = Object.keys(cardCounts).sort((a,b) => cardCounts[b] - cardCounts[a]);
+  const allTreats = Array.from(new Set([...Object.keys(tTreat), ...Object.keys(yTreat)])).sort((a,b) => ((tTreat[b]||0)+(yTreat[b]||0)) - ((tTreat[a]||0)+(yTreat[a]||0)));
+  const allCards = Array.from(new Set([...Object.keys(tCard), ...Object.keys(yCard)])).sort((a,b) => ((tCard[b]||0)+(yCard[b]||0)) - ((tCard[a]||0)+(yCard[a]||0)));
 
-  let html = `<div class="card-type-stats-grid" style="gap:10px;">`;
-  html += `<div class="type-stat-card" style="background:var(--primary-softer); border-color:var(--primary);"><span class="type-stat-name kh" style="color:var(--primary-dark);">សរុប (Total)</span><div class="type-stat-count" style="color:var(--primary-dark); font-size:22px;">${totalVisits}</div></div>`;
-  html += `<div class="type-stat-card type-red"><span class="type-stat-name kh">ស្រី (Female)</span><div class="type-stat-count" style="font-size:20px;">${female}</div></div>`;
-  html += `<div class="type-stat-card type-blue"><span class="type-stat-name kh">ប្រុស (Male)</span><div class="type-stat-count" style="font-size:20px;">${male}</div></div>`;
-  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+  // ទម្រង់កូដសម្រាប់ពុះកាតជាពីរ
+  const splitHtml = (label, tCount, yCount, mainColor) => `
+    <div class="type-stat-card" style="border:1.5px solid var(--border);background:var(--surface);display:flex;flex-direction:column;padding:12px;cursor:default;">
+      <span class="type-stat-name kh" style="font-weight:700;font-size:12px;color:${mainColor || 'var(--ink)'};margin-bottom:10px;">${label}</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="text-align:center; flex:1;">
+          <div class="kh" style="font-size:9.5px;color:var(--ink-dim);font-weight:700;margin-bottom:3px;">ម្សិលមិញ</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:800;color:#16A34A;">${yCount}</div>
+        </div>
+        <div style="width:1.5px;height:32px;background:var(--border-soft);margin:0 8px;"></div>
+        <div style="text-align:center; flex:1;">
+          <div class="kh" style="font-size:9.5px;color:var(--ink-dim);font-weight:700;margin-bottom:3px;">ថ្ងៃនេះ</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:800;color:#0B5ED7;">${tCount}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  let html = `<div class="card-type-stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px;">`;
   
-  sortedTreatments.forEach(t => {
-      html += `<div class="type-stat-card type-default" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${t}</span><div class="type-stat-count" style="color:var(--primary-dark);">${treatCounts[t]}</div></div>`;
-  });
-
-  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
-
-  sortedCards.forEach(c => {
-      html += `<div class="type-stat-card ${getCardTypeBadgeClass(c)}" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${c}</span><div class="type-stat-count">${cardCounts[c]}</div></div>`;
-  });
+  html += splitHtml('សរុប (Total)', tTotal, yTotal, 'var(--primary-dark)');
+  html += splitHtml('ស្រី (Female)', tFemale, yFemale, '#A43227');
+  html += splitHtml('ប្រុស (Male)', tMale, yMale, '#0B4B91');
+  
+  if (allTreats.length > 0) {
+      html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+      allTreats.forEach(t => {
+          html += splitHtml(t, tTreat[t] || 0, yTreat[t] || 0, 'var(--ink)');
+      });
+  }
+  
+  if (allCards.length > 0) {
+      html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+      allCards.forEach(c => {
+          html += splitHtml(c, tCard[c] || 0, yCard[c] || 0, 'var(--ink-soft)');
+      });
+  }
 
   html += `</div>`;
   row.innerHTML = html;
@@ -4908,7 +4866,7 @@ function saveSettings(){
 
 function renderAll(){ 
   renderPatientDemographics(); 
-  renderTodayStats();
+  renderTodayYesterdayStats();
   renderYesterdayStats();
   renderThisMonthStats();
   renderLastMonthStats();
@@ -5451,7 +5409,7 @@ function showPage(name){
   try{ sessionStorage.setItem(PAGE_KEY, name); }catch(e){}
 
   if (name === 'dashboard') {
-      renderTodayStats();
+      renderTodayYesterdayStats();
       renderYesterdayStats();
   }
 
