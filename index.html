@@ -1205,13 +1205,18 @@
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span class="sb-label kh">អ្នកជំងឺ<small>Patients</small></span><span class="sb-badge quiet" id="sbBadgePatients" hidden>0</span>
         </button>
+	<!-- ប៊ូតុងរបាយការណ៍ថ្មី -->
+        <button type="button" class="sb-item" data-page="report" title="របាយការណ៍ · Reports">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          <span class="sb-label kh">របាយការណ៍<small>Reports</small></span>
+        </button>
         <button type="button" class="sb-item" data-page="xray" title="បញ្ចីថតធ្មេញ · Dental X-ray">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
           <span class="sb-label kh">បញ្ចីថតធ្មេញ<small>Dental X-ray</small></span><span class="sb-badge quiet" id="sbBadgeXray" hidden>0</span>
         </button>
         <button type="button" class="sb-item" id="sbDhis2Btn" data-page="diseaselist" title="បញ្ជីជំងឺ DHIS2 · Disease list">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h4"/></svg>
-          <span class="sb-label kh">បញ្ជីជំងឺ DHIS2<small>Disease list</small></span>
+          <span class="sb-label kh">បញ្ជីជំងឺ DHIS2<small>DHIS2 List</small></span>
         </button>
       </div>
       <div class="sb-group">
@@ -1301,6 +1306,31 @@
           </div>
         </div>
 
+       
+      </section>
+
+      <!-- Patients -->
+      <section class="page" id="page-patients" data-page="patients" hidden>
+        <div class="page-tools">
+          <div class="chips kh" id="patientFilters" role="group" aria-label="តម្រងស្ថានភាព">
+            <button type="button" class="chip active" data-f="all">ទាំងអស់ <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="appt"><i class="dot amber"></i>ណាត់ជួប <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="missing"><i class="dot coral"></i>ខកខាន <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="labo"><i class="dot violet"></i>Labo <span class="chip-n">0</span></button>
+            <button type="button" class="chip" data-f="done"><i class="dot teal"></i>រួចរាល់ <span class="chip-n">0</span></button>
+            <button type="button" class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="Print" style="background-color: var(--coral); border-color: var(--coral); margin-left:4px;">📄 Print</button>
+          </div>
+          <span class="mono" id="listCount" style="font-size:12px;color:var(--ink-dim)"></span>
+        </div>
+        <div class="record-list" id="recordList"></div>
+      </section><!-- Reports Page ថ្មី -->
+      <section class="page" id="page-report" data-page="report" hidden>
+        <div class="page-tools">
+          <div class="inv-tools">
+             <span class="kh" style="font-size: 14px; font-weight: bold; color: var(--primary-dark);">ផ្ទាំងរបាយការណ៍</span>
+          </div>
+        </div>
+        
         <div class="dash-report-head">
           <h3 class="kh">របាយការណ៍ · Report</h3>
         </div>
@@ -1332,7 +1362,14 @@
           <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
         </div>
         <div id="thisMonthStatsRow"></div>
-      </div>
+      </div><!-- របាយការណ៍ខែមុន -->
+              <div class="card-type-stats-panel" style="margin-top: 15px;">
+                <div class="card-type-stats-head">
+                  <h4 class="kh">របាយការណ៍ខែមុន · Last Month's Report</h4>
+                  <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+                </div>
+                <div id="lastMonthStatsRow"></div>
+              </div>
 
       <!-- 3. Demographics Stats -->
       <div class="card-type-stats-panel" style="margin-top: 15px;">
@@ -1368,23 +1405,7 @@
   </div>
 </div>
       </section>
-
-      <!-- Patients -->
-      <section class="page" id="page-patients" data-page="patients" hidden>
-        <div class="page-tools">
-          <div class="chips kh" id="patientFilters" role="group" aria-label="តម្រងស្ថានភាព">
-            <button type="button" class="chip active" data-f="all">ទាំងអស់ <span class="chip-n">0</span></button>
-            <button type="button" class="chip" data-f="appt"><i class="dot amber"></i>ណាត់ជួប <span class="chip-n">0</span></button>
-            <button type="button" class="chip" data-f="missing"><i class="dot coral"></i>ខកខាន <span class="chip-n">0</span></button>
-            <button type="button" class="chip" data-f="labo"><i class="dot violet"></i>Labo <span class="chip-n">0</span></button>
-            <button type="button" class="chip" data-f="done"><i class="dot teal"></i>រួចរាល់ <span class="chip-n">0</span></button>
-            <button type="button" class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="Print" style="background-color: var(--coral); border-color: var(--coral); margin-left:4px;">📄 Print</button>
-          </div>
-          <span class="mono" id="listCount" style="font-size:12px;color:var(--ink-dim)"></span>
-        </div>
-        <div class="record-list" id="recordList"></div>
-      </section>
-
+	
       <!-- Appointments -->
       <section class="page" id="page-appointments" data-page="appointments" hidden>
         <div class="page-tools">
@@ -3283,6 +3304,74 @@ function renderThisMonthStats(){
   row.innerHTML = html;
 }
 
+function renderLastMonthStats(){
+  const now = new Date();
+  let year = now.getFullYear();
+  let month = now.getMonth(); // នេះគឺជាខែមុន ព្រោះ getMonth() ចាប់ផ្តើមពី 0
+
+  if (month === 0) {
+    month = 12;
+    year = year - 1;
+  }
+
+  const lastMonthKey = year + '-' + String(month).padStart(2, '0');
+
+  const lastMonthRecords = allRecords.filter(r => {
+    let dtStr = r.doingDateTime || r.timestamp; 
+    const d = parseAnyDate(dtStr);
+    return d && (d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0')) === lastMonthKey;
+  });
+
+  const totalVisits = lastMonthRecords.length;
+  let male = 0, female = 0;
+  const treatCounts = {};
+  const cardCounts = {};
+
+  lastMonthRecords.forEach(r => {
+    let sex = String(r.sex || '').toUpperCase();
+    if (sex === 'M' || sex.includes('ប្រុស')) male++;
+    else female++;
+
+    let treat = cleanStr(r.treatment);
+    if (treat && treat !== '—') {
+      treatCounts[treat] = (treatCounts[treat] || 0) + 1;
+    }
+
+    let type = cleanStr(r.type) || 'បង់ពេញថ្លៃ';
+    cardCounts[type] = (cardCounts[type] || 0) + 1;
+  });
+
+  const row = document.getElementById('lastMonthStatsRow');
+  if (!row) return;
+
+  if (totalVisits === 0) {
+    row.innerHTML = `<div style="text-align:center;font-size:12px;color:var(--ink-dim);padding:14px;background:var(--surface-2);border-radius:12px;border:1px dashed var(--border);">មិនទាន់មានទិន្នន័យសម្រាប់ខែមុនទេ (No data for last month)</div>`;
+    return;
+  }
+
+  const sortedTreatments = Object.keys(treatCounts).sort((a,b) => treatCounts[b] - treatCounts[a]);
+  const sortedCards = Object.keys(cardCounts).sort((a,b) => cardCounts[b] - cardCounts[a]);
+
+  let html = `<div class="card-type-stats-grid" style="gap:10px;">`;
+  html += `<div class="type-stat-card" style="background:var(--primary-softer); border-color:var(--primary);"><span class="type-stat-name kh" style="color:var(--primary-dark);">សរុប (Total)</span><div class="type-stat-count" style="color:var(--primary-dark); font-size:22px;">${totalVisits}</div></div>`;
+  html += `<div class="type-stat-card type-red"><span class="type-stat-name kh">ស្រី (Female)</span><div class="type-stat-count" style="font-size:20px;">${female}</div></div>`;
+  html += `<div class="type-stat-card type-blue"><span class="type-stat-name kh">ប្រុស (Male)</span><div class="type-stat-count" style="font-size:20px;">${male}</div></div>`;
+  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+  
+  sortedTreatments.forEach(t => {
+      html += `<div class="type-stat-card type-default" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${t}</span><div class="type-stat-count" style="color:var(--primary-dark);">${treatCounts[t]}</div></div>`;
+  });
+
+  html += `<div style="grid-column: 1 / -1; height: 1px; background: var(--border-soft); margin: 5px 0;"></div>`;
+
+  sortedCards.forEach(c => {
+      html += `<div class="type-stat-card ${getCardTypeBadgeClass(c)}" style="display:flex;flex-direction:column;justify-content:center;"><span class="type-stat-name kh" style="font-weight:600;font-size:10.5px;">${c}</span><div class="type-stat-count">${cardCounts[c]}</div></div>`;
+  });
+
+  html += `</div>`;
+  row.innerHTML = html;
+}
+
 function renderTodayStats(){
   const now = new Date();
   const todayKey = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
@@ -4616,6 +4705,7 @@ function renderAll(){
   renderPatientDemographics(); 
   renderTodayStats();
   renderThisMonthStats();
+  renderLastMonthStats();
   renderCardTypeStats(); 
   renderTreatmentStats(); 
   renderAppointments(); 
@@ -5111,6 +5201,7 @@ if(storedUrl && storedUrl !== DEFAULT_WEB_APP_URL) {
 const PAGE_META = {
   dashboard:    { title: 'ផ្ទាំងសរុប', sub: 'Dashboard' },
   patients:     { title: 'អ្នកជំងឺ',        sub: 'Patients' },
+  report:       { title: 'របាយការណ៍',      sub: 'Reports' }, // បន្ថែមបន្ទាត់នេះ
   appointments: { title: 'ការណាត់ជួប',      sub: 'Appointments' },
   inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
   xray:         { title: 'បញ្ចីថតធ្មេញ', sub: 'X-ray image gallery' },
@@ -5151,7 +5242,16 @@ function showPage(name){
   document.getElementById('pageTitle').textContent = PAGE_META[name].title;
   document.getElementById('pageSub').textContent = name === 'dashboard'
     ? 'Dashboard · ' + formatHeaderDate() : PAGE_META[name].sub;
-  try{ sessionStorage.setItem(PAGE_KEY, name); }catch(e){}
+  try{ sessionStorage.setItem(PAGE_KEY, name); }catch(e){}// បន្ថែមកូដចាប់ពីត្រង់នេះ...
+  if (name === 'report') {
+      renderTodayStats();
+      renderThisMonthStats();
+      renderLastMonthStats();
+      renderPatientDemographics();
+      renderCardTypeStats();
+      renderTreatmentStats();
+  }
+  // ...ដល់ត្រង់នេះ
   closeSidebarDrawer();
   window.scrollTo(0,0);
 }
