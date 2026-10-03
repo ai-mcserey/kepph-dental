@@ -5921,32 +5921,51 @@ function renderShell(){
   const dashBtn = document.querySelector('.sb-item[data-page="dashboard"]');
   if(dashBtn) dashBtn.title = `ផ្ទាំងសរុប · ណាត់ជួបថ្ងៃនេះ ${b.today.length} · ហួសកំណត់ ${b.missed.length}`;
 
-  const pair1 = `<div style="display:flex;flex-direction:column;gap:12px;height:100%;">` +
-    kpiCard('',      '<path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', names.size, 'អ្នកជំងឺសរុប', {page:'patients'}) +
-    kpiCard('',      '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>', allRecords.length, 'ករណីសរុប', {page:'patients'}) +
-    `</div>`;
-    
-  const pair2 = `<div style="display:flex;flex-direction:column;gap:12px;height:100%;">` +
-    kpiCard('', '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', todaySet.size, 'អ្នកជំងឺថ្ងៃនេះ', {page:'patients'}) +
-    kpiCard('blue',  '<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>', todayVisits, 'ករណីជំងឺថ្ងៃនេះ', {page:'patients'}) +
-    `</div>`;
+  // កូដសម្រាប់បង្កើត Card ពុះជា២ (Split Card)
+  const splitCard = (icon, title, count1, lbl1, count2, lbl2, pageTarget) => `
+    <div class="kpi" data-goto="${pageTarget}" style="flex-direction:column; align-items:flex-start; gap:12px; padding:14px;">
+      <div style="display:flex; align-items:center; gap:10px; width:100%;">
+        <span class="kpi-ico" style="width:36px;height:36px;background:var(--primary-softer);color:var(--primary-dark);"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;">${icon}</svg></span>
+        <span class="kh" style="font-weight:700; font-size:13.5px; color:var(--ink);">${title}</span>
+      </div>
+      <div style="display:flex; width:100%; justify-content:space-between; align-items:center; background:var(--surface-2); padding:10px 8px; border-radius:10px; border:1px solid var(--border-soft);">
+         <div style="flex:1; text-align:center;">
+            <div class="kpi-val" style="font-size:20px; color:var(--primary-dark);">${count1}</div>
+            <div class="kh" style="font-size:10px; color:var(--ink-dim); margin-top:4px;">${lbl1}</div>
+         </div>
+         <div style="width:1px; height:24px; background:var(--border);"></div>
+         <div style="flex:1; text-align:center;">
+            <div class="kpi-val" style="font-size:20px; color:var(--primary-dark);">${count2}</div>
+            <div class="kh" style="font-size:10px; color:var(--ink-dim); margin-top:4px;">${lbl2}</div>
+         </div>
+      </div>
+    </div>`;
 
-  const pair3 = `<div style="display:flex;flex-direction:column;gap:12px;height:100%;">` +
-    kpiCard('', '<path d="M21 10H3"/><path d="M21 6H3"/><path d="M21 14H3"/><path d="M21 18H3"/>', weekSet.size, 'អ្នកជំងឺសប្តាហ៍នេះ', {page:'patients'}) +
-    kpiCard('blue', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>', weekVisits, 'ករណីជំងឺសប្តាហ៍នេះ', {page:'patients'}) +
-    `</div>`;
+  const card1 = splitCard('<path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', 'ស្ថិតិសរុប', names.size, 'អ្នកជំងឺ (Patients)', allRecords.length, 'ករណី (Cases)', 'patients');
+  const card2 = splitCard('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', 'ថ្ងៃនេះ', todaySet.size, 'អ្នកជំងឺ (Patients)', todayVisits, 'ករណី (Cases)', 'patients');
+  const card3 = splitCard('<path d="M21 10H3"/><path d="M21 6H3"/><path d="M21 14H3"/><path d="M21 18H3"/>', 'សប្តាហ៍នេះ', weekSet.size, 'អ្នកជំងឺ (Patients)', weekVisits, 'ករណី (Cases)', 'patients');
+  const card4 = splitCard('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', 'ខែនេះ', monthSet.size, 'អ្នកជំងឺ (Patients)', monthVisits, 'ករណី (Cases)', 'patients');
+  
+  const card5 = `
+    <div class="kpi" data-goto="appointments" style="flex-direction:column; align-items:flex-start; gap:12px; padding:14px; border-color:var(--amber-soft);">
+      <div style="display:flex; align-items:center; gap:10px; width:100%;">
+        <span class="kpi-ico" style="width:36px;height:36px;background:var(--amber-soft);color:var(--amber-dark);"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg></span>
+        <span class="kh" style="font-weight:700; font-size:13.5px; color:var(--ink);">ការណាត់ជួប</span>
+      </div>
+      <div style="display:flex; width:100%; justify-content:space-between; align-items:center; background:var(--surface-2); padding:10px 8px; border-radius:10px; border:1px solid var(--border-soft);">
+         <div style="flex:1; text-align:center;">
+            <div class="kpi-val" style="font-size:20px; color:var(--amber-dark);">${b.today.length}</div>
+            <div class="kh" style="font-size:10px; color:var(--ink-dim); margin-top:4px;">ថ្ងៃនេះ (Today)</div>
+         </div>
+         <div style="width:1px; height:24px; background:var(--border);"></div>
+         <div style="flex:1; text-align:center;">
+            <div class="kpi-val" style="font-size:20px; color:var(--coral-dark);">${b.missed.length}</div>
+            <div class="kh" style="font-size:10px; color:var(--coral-dark); margin-top:4px;">ហួសកំណត់ (Missed)</div>
+         </div>
+      </div>
+    </div>`;
 
-  const pair4 = `<div style="display:flex;flex-direction:column;gap:12px;height:100%;">` +
-    kpiCard('', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', monthSet.size, 'អ្នកជំងឺខែនេះ', {page:'patients'}) +
-    kpiCard('blue', '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>', monthVisits, 'ករណីជំងឺខែនេះ', {page:'patients'}) +
-    `</div>`;
-
-  const pair5 = `<div style="display:flex;flex-direction:column;gap:12px;height:100%;">` +
-    kpiCard('amber', '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/>', b.today.length, 'ណាត់ជួបថ្ងៃនេះ', {page:'appointments', f:'today'}) +
-    kpiCard('coral', '<path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>', b.missed.length, 'ហួសកំណត់ណាត់', {page:'appointments', f:'missed'}) +
-    `</div>`;
-
-  document.getElementById('dashKpis').innerHTML = pair1 + pair2 + pair3 + pair4 + pair5;
+  document.getElementById('dashKpis').innerHTML = card1 + card2 + card3 + card4 + card5;
 
   renderApptPage(b);
   renderShellMeta();
