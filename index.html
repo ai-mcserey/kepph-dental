@@ -5266,7 +5266,6 @@ function exportMonthlyReportPDF() {
         return;
     }
 
-    // Filter records by selected month/year
     const records = allRecords.filter(r => {
         let dtStr = r.doingDateTime || r.timestamp; 
         const d = parseAnyDate(dtStr);
@@ -5276,7 +5275,6 @@ function exportMonthlyReportPDF() {
 
     const monthName = KHMER_MONTHS[parseInt(month, 10) - 1];
     
-    // Helper to calculate row stats
     const getStats = (recs) => {
         let u15 = 0, o15 = 0, female = 0;
         recs.forEach(r => {
@@ -5285,16 +5283,15 @@ function exportMonthlyReportPDF() {
                 if (ageNum < 15) u15++;
                 else o15++;
             } else {
-                o15++; // default to adult if unknown
+                o15++;
             }
             let sex = String(r.sex || '').toUpperCase();
             if (sex === 'F' || sex.includes('ស្រី')) female++;
         });
-        return { u15, o15, female, total: recs.length };
+        return { u15: u15 || '', o15: o15 || '', female: female || '', total: recs.length };
     };
 
-    // Treatment mapping
-    const rows = [
+    const rowsConfig = [
         { label: "វះកាត់-ចង់ថ្គាម", match: "វះកាត់ ចង់ថ្គាម" },
         { label: "វះកាត់-វះបួស", match: "វះកាត់ វះបួស" },
         { label: "ដកធ្មេញ-ព្រៃ", match: "ដកធ្មេញ ព្រៃ" },
@@ -5303,103 +5300,139 @@ function exportMonthlyReportPDF() {
         { label: "ប៉ះធ្មេញ-Amalgam", match: "ប៉ះធ្មេញ Amalgam" },
         { label: "ប៉ះធ្មេញ-Composite", match: "ប៉ះធ្មេញ Composite" },
         { label: "ថតធ្មេញ XRay", match: "ថតធ្មេញ X-ray" },
-        { label: "ព្យាបាលរន្ធឫសធ្មេញ RCT", match: "ព្យាបាលធ្មេញ (RCT)" },
+        { label: "ព្យាបាលរន្ធឬសធ្មេញ RCT", match: "ព្យាបាលធ្មេញ (RCT)" },
         { label: "កោសកំបោរ Scalling", match: "សំអាតកំបោរ Scaling" },
         { label: "បិតការពារ Sealant", match: "បិតការពារ Sealant" },
-        { label: "ប្រើហ្វ្លុយអរ Vanish", match: "ភ្លុយអរ Varnish or Gel" },
+        { label: "ប្រើភ្លុយអរ Vanish", match: "ភ្លុយអរ Varnish or Gel" },
         { label: "ដាក់ធ្មេញ-ជាប់", match: "ដាក់ធ្មេញ ជាប់" },
         { label: "ដាក់ធ្មេញ-ដោះបាន", match: "ដាក់ធ្មេញ ដោះ" }
     ];
 
-    let tU15 = 0, tO15 = 0, tFemale = 0;
-    
-    let tableHtml = rows.map((row, idx) => {
+    let sumU15 = 0, sumO15 = 0, sumFemale = 0;
+
+    let tableHtml = rowsConfig.map((row, idx) => {
         const filteredTx = records.filter(r => cleanStr(r.treatment) === row.match || cleanStr(r.treatment).includes(row.match));
         const st = getStats(filteredTx);
-        tU15 += st.u15; tO15 += st.o15; tFemale += st.female;
-        
+        if (typeof st.u15 === 'number') sumU15 += st.u15;
+        if (typeof st.o15 === 'number') sumO15 += st.o15;
+        if (typeof st.female === 'number') sumFemale += st.female;
+
         return `<tr>
-            <td style="text-align: center; border: 1px solid #000;">${idx + 7}</td>
-            <td class="kh" style="border: 1px solid #000; padding-left: 5px;">${row.label}</td>
-            <td style="text-align: center; border: 1px solid #000;">${st.u15 || ''}</td>
-            <td style="text-align: center; border: 1px solid #000;">${st.o15 || ''}</td>
-            <td style="text-align: center; border: 1px solid #000;">${st.female || ''}</td>
+            <td style="text-align: center; border: 1px solid #000; padding: 4px;">${idx + 1}</td>
+            <td class="kh" style="border: 1px solid #000; padding: 4px 8px;">${row.label}</td>
+            <td style="text-align: center; border: 1px solid #000; padding: 4px;">${st.u15}</td>
+            <td style="text-align: center; border: 1px solid #000; padding: 4px;">${st.o15}</td>
+            <td style="text-align: center; border: 1px solid #000; padding: 4px;">${st.female}</td>
         </tr>`;
     }).join('');
 
-    // Summary Rows
-    const stTotal = getStats(records);
-    const stUnpaid = getStats(records.filter(r => r.status !== 'Done')); // Approximate for មិនមកបញ្ចប់
-    const stPaid = getStats(records.filter(r => cleanStr(r.type) === 'បង់ពេញថ្លៃ'));
-    const stEquity = getStats(records.filter(r => cleanStr(r.type).includes('មូលនិធិសមធម៌')));
-    const stNSSF = getStats(records.filter(r => cleanStr(r.type).includes('ប.ស.ស') || cleanStr(r.type).includes('បសស')));
+    const totalPatientsMap = new Map();
+    records.forEach(r => totalPatientsMap.set(patientKey(r), r));
+    const totalPatientsCount = totalPatientsMap.size;
+
+    const notFinishedCount = records.filter(r => r.status !== 'Done').length;
+    const paidCount = records.filter(r => cleanStr(r.type) === 'បង់ពេញថ្លៃ').length;
+    const equityCount = records.filter(r => cleanStr(r.type).includes('មូលនិធិសមធម៌')).length;
+    const nssfCount = records.filter(r => cleanStr(r.type).includes('ប.ស.ស') || cleanStr(r.type).includes('បសស')).length;
+    const freeCount = records.filter(r => cleanStr(r.type).includes('លើកលែង')).length;
 
     let html = `
-    <div class="print-sheet" style="padding: 10mm; background: #fff; color: #000; font-family: 'Noto Sans Khmer', sans-serif;">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
-            <div style="text-align: center; width: 150px;">
-                <img src="${document.querySelector('.brand-mark svg') ? 'data:image/svg+xml;base64,' + btoa(new XMLSerializer().serializeToString(document.querySelector('.brand-mark svg')).replace(/#ffffff/g, '#000')) : ''}" style="width: 60px; height: 60px; background: var(--primary-soft); border-radius: 50%; padding: 10px;" />
-                <div class="kh" style="font-weight: bold; font-size: 13px; margin-top: 5px;">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</div>
+    <div class="print-sheet" style="padding: 10mm; background: #fff; color: #000; font-family: 'Noto Sans Khmer', 'Inter', sans-serif; font-size: 12px; line-height: 1.4;">
+        
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+            <div style="text-align: center; width: 180px; font-weight: bold; font-size: 13px;">
+                <div>មន្ទីរពេទ្យបង្អែកខេត្តកែប</div>
+                <div style="margin-top:2px;">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</div>
             </div>
             <div style="text-align: center; flex: 1;">
-                <h2 class="kh" style="margin: 0; font-size: 18px; color: #000;">ព្រះរាជាណាចក្រកម្ពុជា<br>ជាតិ សាសនា ព្រះមហាក្សត្រ</h2>
-                <h3 class="kh" style="margin: 20px 0 0 0; font-size: 16px; color: #000;">របាយការណ៍ប្រចាំខែ ${monthName} ឆ្នាំ ${year}</h3>
+                <div style="font-weight: bold; font-size: 14px;">ព្រះរាជាណាចក្រកម្ពុជា</div>
+                <div style="font-weight: bold; font-size: 13px; margin-top: 2px;">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                <div style="margin-top: 8px; border-bottom: 1px solid #000; width: 120px; display: inline-block;"></div>
             </div>
-            <div style="width: 150px;"></div>
+            <div style="width: 180px;"></div>
         </div>
 
-        <div class="kh" style="font-weight: bold; font-size: 14px; margin-bottom: 5px;">1-សរុបសកម្មភាពការងារ</div>
-        <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+        <!-- Title -->
+        <div style="text-align: center; margin: 15px 0 20px 0;">
+            <h3 class="kh" style="margin: 0; font-size: 16px; font-weight: bold; text-transform: uppercase;">របាយការណ៍ប្រចាំខែ ${monthName} ឆ្នាំ ${year}</h3>
+        </div>
+
+        <!-- Section 1 -->
+        <div class="kh" style="font-weight: bold; font-size: 13px; margin-bottom: 6px;">1-សរុបសកម្មភាពការងារ</div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
             <thead>
-                <tr style="background-color: #0df; font-weight: bold;">
-                    <th style="border: 1px solid #000; width: 40px; padding: 5px;">ល.រ</th>
-                    <th class="kh" style="border: 1px solid #000; padding: 5px;">ប្រភេទ</th>
-                    <th class="kh" style="border: 1px solid #000; width: 80px; padding: 5px;">អាយុ &lt;15 ឆ្នាំ</th>
-                    <th class="kh" style="border: 1px solid #000; width: 80px; padding: 5px;">អាយុ &ge; 15 ឆ្នាំ</th>
-                    <th class="kh" style="border: 1px solid #000; width: 80px; padding: 5px;">ស្រី</th>
+                <tr style="background-color: #f2f2f2; font-weight: bold; text-align: center;">
+                    <th style="border: 1px solid #000; width: 40px; padding: 6px;">ល.រ</th>
+                    <th class="kh" style="border: 1px solid #000; padding: 6px; text-align: left;">ប្រភេទ</th>
+                    <th class="kh" style="border: 1px solid #000; width: 110px; padding: 6px;">អាយុ &lt; 15 ឆ្នាំ</th>
+                    <th class="kh" style="border: 1px solid #000; width: 110px; padding: 6px;">អាយុ &ge; 15 ឆ្នាំ</th>
+                    <th class="kh" style="border: 1px solid #000; width: 80px; padding: 6px;">ស្រី</th>
                 </tr>
             </thead>
             <tbody>
                 ${tableHtml}
-                <tr style="background-color: #0df; font-weight: bold;">
-                    <td style="border: 1px solid #000; text-align: center;">21</td>
-                    <td class="kh" style="border: 1px solid #000; padding-left: 5px;">សរុប</td>
-                    <td style="border: 1px solid #000; text-align: center;">${tU15}</td>
-                    <td style="border: 1px solid #000; text-align: center;">${tO15}</td>
-                    <td style="border: 1px solid #000; text-align: center;">${tFemale}</td>
+                <tr style="font-weight: bold;">
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">សរុប</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;">${sumU15}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;">${sumO15}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;">${sumFemale}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center;">22</td>
-                    <td class="kh" style="border: 1px solid #000; padding-left: 5px; background-color: #ddd;">អ្នកជំងឺសរុប</td>
-                    <td style="border: 1px solid #000; text-align: center; background-color: #0df;" colspan="3">${stTotal.total}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px; font-weight: bold;">អ្នកជំងឺសរុបរួម</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px; font-weight: bold;" colspan="3">${totalPatientsCount}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center;">23</td>
-                    <td class="kh" style="border: 1px solid #000; padding-left: 5px;">មិនអនុញ្ញាតគិតលុយ (មិនមកបញ្ចប់ការព្យាបាល)</td>
-                    <td style="border: 1px solid #000; text-align: center;" colspan="3">${stUnpaid.total || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">មិនអនុញ្ញាតឱ្យចេញ (មិនមកបញ្ចប់ព្យាបាល)</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${notFinishedCount || ''}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center;">24</td>
-                    <td class="kh" style="border: 1px solid #000; padding-left: 5px;">បញ្ជូនចេញ</td>
-                    <td style="border: 1px solid #000; text-align: center;" colspan="3"></td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">បញ្ជូនចេញ</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3"></td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center;">25</td>
-                    <td class="kh" style="border: 1px solid #000; padding-left: 5px;">បង់លុយ</td>
-                    <td style="border: 1px solid #000; text-align: center;" colspan="3">${stPaid.total || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">បង់លុយ</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${paidCount || ''}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center;">26</td>
-                    <td class="kh" style="border: 1px solid #000; padding-left: 5px;">មូលនិធិសមធម៌</td>
-                    <td style="border: 1px solid #000; text-align: center;" colspan="3">${stEquity.total || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">មូលនិធិសរុប (សមធម៌)</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${equityCount || ''}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center;">27</td>
-                    <td class="kh" style="border: 1px solid #000; padding-left: 5px;">ប.ស.ស</td>
-                    <td style="border: 1px solid #000; text-align: center;" colspan="3">${stNSSF.total || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">ប.ស.ស</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${nssfCount || ''}</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">លើកលែងបង់ថ្លៃ</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${freeCount || ''}</td>
                 </tr>
             </tbody>
         </table>
+
+        <!-- Section 2 -->
+        <div class="kh" style="font-weight: bold; font-size: 13px; margin: 20px 0 6px 0;">2. មតិយោបល់និងសំណូមពរ</div>
+        <div style="border: 1px solid #000; min-height: 50px; padding: 8px; border-radius: 4px;"></div>
+
+        <!-- Signatures -->
+        <div style="display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 12px;">
+            <div style="flex: 1;">
+                <div class="kh" style="font-weight: bold;">បានពិនិត្យនិងឯកភាព</div>
+                <div class="kh" style="margin-top: 60px; font-weight: bold;">នាយផ្នែក</div>
+            </div>
+            <div style="flex: 1;">
+                <div class="kh" style="font-weight: bold;">អ្នកធ្វើរបាយការណ៍</div>
+                <div class="kh" style="margin-top: 40px; font-weight: bold;">នាយសាល</div>
+            </div>
+        </div>
+
     </div>
     `;
 
