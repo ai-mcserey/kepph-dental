@@ -5305,7 +5305,8 @@ function exportMonthlyReportPDF() {
         { label: "បិតការពារ Sealant", match: "បិតការពារ Sealant" },
         { label: "ប្រើភ្លុយអរ Vanish", match: "ភ្លុយអរ Varnish or Gel" },
         { label: "ដាក់ធ្មេញ-ជាប់", match: "ដាក់ធ្មេញ ជាប់" },
-        { label: "ដាក់ធ្មេញ-ដោះបាន", match: "ដាក់ធ្មេញ ដោះ" }
+        { label: "ដាក់ធ្មេញ-ដោះបាន", match: "ដាក់ធ្មេញ ដោះ" },
+        { label: "ពិគ្រោះជំងឺ", match: "ពិគ្រោះជំងឺ" }
     ];
 
     let sumU15 = 0, sumO15 = 0, sumFemale = 0;
@@ -5318,118 +5319,192 @@ function exportMonthlyReportPDF() {
         if (typeof st.female === 'number') sumFemale += st.female;
 
         return `<tr>
-            <td style="text-align: center; border: 1px solid #000; padding: 4px;">${idx + 1}</td>
-            <td class="kh" style="border: 1px solid #000; padding: 4px 8px;">${row.label}</td>
-            <td style="text-align: center; border: 1px solid #000; padding: 4px;">${st.u15}</td>
-            <td style="text-align: center; border: 1px solid #000; padding: 4px;">${st.o15}</td>
-            <td style="text-align: center; border: 1px solid #000; padding: 4px;">${st.female}</td>
+            <td style="text-align: center; border: 1px solid #000; padding: 3px 4px;">${idx + 1}</td>
+            <td class="kh" style="border: 1px solid #000; padding: 3px 8px;">${row.label}</td>
+            <td style="text-align: right; border: 1px solid #000; padding: 3px 8px; font-weight: bold;">${st.o15}</td>
+            <td style="text-align: right; border: 1px solid #000; padding: 3px 8px; font-weight: bold;">${st.u15}</td>
+            <td style="text-align: right; border: 1px solid #000; padding: 3px 8px; font-weight: bold;">${st.female}</td>
         </tr>`;
     }).join('');
 
     const totalPatientsMap = new Map();
-    records.forEach(r => totalPatientsMap.set(patientKey(r), r));
-    const totalPatientsCount = totalPatientsMap.size;
+    let totalU15PatientsMap = new Map();
+    let totalCasesFemale = 0;
+    let totalPatientsFemale = 0;
+    let totalU15PatientsFemale = 0;
 
-    const notFinishedCount = records.filter(r => r.status !== 'Done').length;
+    records.forEach(r => {
+        totalPatientsMap.set(patientKey(r), r);
+        let sex = String(r.sex || '').toUpperCase();
+        let isFemale = sex === 'F' || sex.includes('ស្រី');
+        if (isFemale) totalCasesFemale++;
+
+        let ageNum = parseInt(r.age, 10);
+        if (!isNaN(ageNum) && ageNum < 15) {
+            totalU15PatientsMap.set(patientKey(r), r);
+        }
+    });
+
+    const uniquePatientsMap = new Map();
+    records.forEach(r => {
+        const pk = patientKey(r);
+        if (!uniquePatientsMap.has(pk)) {
+            let sex = String(r.sex || '').toUpperCase();
+            let isFemale = sex === 'F' || sex.includes('ស្រី');
+            let ageNum = parseInt(r.age, 10);
+            uniquePatientsMap.set(pk, { isFemale, isU15: !isNaN(ageNum) && ageNum < 15 });
+        }
+    });
+
+    uniquePatientsMap.forEach(info => {
+        if (info.isFemale) {
+            totalPatientsFemale++;
+            if (info.isU15) totalU15PatientsFemale++;
+        }
+    });
+
+    const totalCasesCount = records.length;
+    const totalPatientsCount = totalPatientsMap.size;
+    const totalU15PatientsCount = totalU15PatientsMap.size;
+
+    let notFinishedCount = 0;
+    records.forEach(r => {
+        let hasMiss = false;
+        if (r.steps) {
+            try {
+                const arr = JSON.parse(r.steps);
+                if (Array.isArray(arr)) {
+                    hasMiss = arr.some(st => String(st.name || '').toLowerCase().includes('miss') || String(st.note || '').toLowerCase().includes('miss'));
+                }
+            } catch(e) {}
+        }
+        if (hasMiss || String(r.status || '').toLowerCase().includes('miss')) {
+            notFinishedCount++;
+        }
+    });
+
     const paidCount = records.filter(r => cleanStr(r.type) === 'បង់ពេញថ្លៃ').length;
     const equityCount = records.filter(r => cleanStr(r.type).includes('មូលនិធិសមធម៌')).length;
     const nssfCount = records.filter(r => cleanStr(r.type).includes('ប.ស.ស') || cleanStr(r.type).includes('បសស')).length;
     const freeCount = records.filter(r => cleanStr(r.type).includes('លើកលែង')).length;
 
     let html = `
-    <div class="print-sheet" style="padding: 10mm; background: #fff; color: #000; font-family: 'Noto Sans Khmer', 'Inter', sans-serif; font-size: 12px; line-height: 1.4;">
+    <style>
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 6mm;
+            }
+        }
+    </style>
+    <div class="print-sheet" style="padding: 4mm 6mm; background: #fff; color: #000; font-family: 'Noto Sans Khmer', 'Inter', sans-serif; font-size: 11.5px; line-height: 1.35;">
         
         <!-- Header -->
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-            <div style="text-align: center; width: 180px; font-weight: bold; font-size: 13px;">
-                <div>មន្ទីរពេទ្យបង្អែកខេត្តកែប</div>
-                <div style="margin-top:2px;">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</div>
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+            <div style="text-align: left; width: 220px; font-weight: bold; font-size: 12px;">
+                <div class="kh">មន្ទីរពេទ្យខេត្តកែប</div>
+                <div class="kh" style="margin-top: 1px;">ផ្នែកសេវាជំងឺមាត់ធ្មេញ</div>
             </div>
             <div style="text-align: center; flex: 1;">
-                <div style="font-weight: bold; font-size: 14px;">ព្រះរាជាណាចក្រកម្ពុជា</div>
-                <div style="font-weight: bold; font-size: 13px; margin-top: 2px;">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
-                <div style="margin-top: 8px; border-bottom: 1px solid #000; width: 120px; display: inline-block;"></div>
+                <div class="kh" style="font-weight: bold; font-size: 13px;">ព្រះរាជាណាចក្រកម្ពុជា</div>
+                <div class="kh" style="font-weight: bold; font-size: 12px; margin-top: 1px;">ជាតិ សាសនា ព្រះមហាក្សត្រ</div>
+                <div style="margin-top: 3px; border-bottom: 1px solid #000; width: 90px; display: inline-block;"></div>
             </div>
-            <div style="width: 180px;"></div>
+            <div style="width: 220px;"></div>
         </div>
 
         <!-- Title -->
-        <div style="text-align: center; margin: 15px 0 20px 0;">
-            <h3 class="kh" style="margin: 0; font-size: 16px; font-weight: bold; text-transform: uppercase;">របាយការណ៍ប្រចាំខែ ${monthName} ឆ្នាំ ${year}</h3>
+        <div style="text-align: center; margin: 6px 0 10px 0;">
+            <h3 class="kh" style="margin: 0; font-size: 15px; font-weight: bold; text-transform: uppercase;">
+                របាយការណ៍ប្រចាំខែ ${monthName} ឆ្នាំ ${year}
+            </h3>
         </div>
 
         <!-- Section 1 -->
-        <div class="kh" style="font-weight: bold; font-size: 13px; margin-bottom: 6px;">1-សរុបសកម្មភាពការងារ</div>
-        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+        <div class="kh" style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">1-សរុបសកម្មភាពការងារ</div>
+        <table style="width: 100%; border-collapse: collapse; font-size: 11.2px;">
             <thead>
                 <tr style="background-color: #f2f2f2; font-weight: bold; text-align: center;">
-                    <th style="border: 1px solid #000; width: 40px; padding: 6px;">ល.រ</th>
-                    <th class="kh" style="border: 1px solid #000; padding: 6px; text-align: left;">ប្រភេទ</th>
-                    <th class="kh" style="border: 1px solid #000; width: 110px; padding: 6px;">អាយុ &lt; 15 ឆ្នាំ</th>
-                    <th class="kh" style="border: 1px solid #000; width: 110px; padding: 6px;">អាយុ &ge; 15 ឆ្នាំ</th>
-                    <th class="kh" style="border: 1px solid #000; width: 80px; padding: 6px;">ស្រី</th>
+                    <th style="border: 1px solid #000; width: 32px; padding: 3.5px;">ល.រ</th>
+                    <th class="kh" style="border: 1px solid #000; padding: 3.5px; text-align: left;">ប្រភេទករណីព្យាបាល</th>
+                    <th class="kh" style="border: 1px solid #000; width: 95px; padding: 3.5px;">អាយុ &ge; 15 ឆ្នាំ</th>
+                    <th class="kh" style="border: 1px solid #000; width: 95px; padding: 3.5px;">អាយុ &lt; 15 ឆ្នាំ</th>
+                    <th class="kh" style="border: 1px solid #000; width: 70px; padding: 3.5px;">ស្រី</th>
                 </tr>
             </thead>
             <tbody>
                 ${tableHtml}
                 <tr style="font-weight: bold;">
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
-                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">សរុប</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;">${sumU15}</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;">${sumO15}</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;">${sumFemale}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px;">សរុប</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;">${sumO15}</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;">${sumU15}</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;">${sumFemale}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
-                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px; font-weight: bold;">អ្នកជំងឺសរុបរួម</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px; font-weight: bold;" colspan="3">${totalPatientsCount}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px; font-weight: bold;">សរុបព្យាបាល (ករណី)</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="2">${totalCasesCount}</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;">${totalCasesFemale}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
-                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">មិនអនុញ្ញាតឱ្យចេញ (មិនមកបញ្ចប់ព្យាបាល)</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${notFinishedCount || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px; font-weight: bold;">សរុបអ្នកជំងឺ (នាក់)</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="2">${totalPatientsCount}</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;">${totalPatientsFemale}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
-                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">បញ្ជូនចេញ</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3"></td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px; font-weight: bold;">សរុបអ្នកជំងឺអាយុ &lt; 15 ឆ្នាំ (នាក់)</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="2">${totalU15PatientsCount}</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;">${totalU15PatientsFemale}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
-                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">បង់លុយ</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${paidCount || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px;">មិនអនុញ្ញាតឱ្យចេញ (មិនមកបញ្ចប់ព្យាបាល)</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="3">${notFinishedCount || ''}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
-                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">មូលនិធិសរុប (សមធម៌)</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${equityCount || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px;">បញ្ជូនចេញ</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="3"></td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
-                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">ប.ស.ស</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${nssfCount || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px;">បង់លុយ</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="3">${paidCount || ''}</td>
                 </tr>
                 <tr>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;"></td>
-                    <td class="kh" style="border: 1px solid #000; padding: 5px 8px;">លើកលែងបង់ថ្លៃ</td>
-                    <td style="border: 1px solid #000; text-align: center; padding: 5px;" colspan="3">${freeCount || ''}</td>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px;">មូលនិធិសរុប (សមធម៌)</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="3">${equityCount || ''}</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px;">ប.ស.ស</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="3">${nssfCount || ''}</td>
+                </tr>
+                <tr>
+                    <td style="border: 1px solid #000; text-align: center; padding: 3px;"></td>
+                    <td class="kh" style="border: 1px solid #000; padding: 3px 8px;">លើកលែងបង់ថ្លៃ</td>
+                    <td style="border: 1px solid #000; text-align: right; padding: 3px 8px; font-weight: bold;" colspan="3">${freeCount || ''}</td>
                 </tr>
             </tbody>
         </table>
 
         <!-- Section 2 -->
-        <div class="kh" style="font-weight: bold; font-size: 13px; margin: 20px 0 6px 0;">2. មតិយោបល់និងសំណូមពរ</div>
-        <div style="border: 1px solid #000; min-height: 50px; padding: 8px; border-radius: 4px;"></div>
+        <div class="kh" style="font-weight: bold; font-size: 12px; margin: 10px 0 4px 0;">2. មតិយោបល់និងសំណូមពរ</div>
+        <div style="border: 1px solid #000; min-height: 48px; padding: 6px; border-radius: 4px;"></div>
 
         <!-- Signatures -->
-        <div style="display: flex; justify-content: space-between; margin-top: 30px; text-align: center; font-size: 12px;">
+        <div style="display: flex; justify-content: space-between; margin-top: 15px; text-align: center; font-size: 11.5px;">
             <div style="flex: 1;">
                 <div class="kh" style="font-weight: bold;">បានពិនិត្យនិងឯកភាព</div>
-                <div class="kh" style="margin-top: 60px; font-weight: bold;">នាយផ្នែក</div>
+                <div class="kh" style="margin-top: 55px; font-weight: bold;">នាយផ្នែក</div>
             </div>
             <div style="flex: 1;">
                 <div class="kh" style="font-weight: bold;">អ្នកធ្វើរបាយការណ៍</div>
-                <div class="kh" style="margin-top: 40px; font-weight: bold;">នាយសាល</div>
+                <div class="kh" style="margin-top: 35px; font-weight: bold;">នាយសាល</div>
             </div>
         </div>
 
