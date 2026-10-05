@@ -354,6 +354,14 @@
   .dd-step-note{font-size:11.5px;color:var(--ink-dim);margin-top:3px;}
   .dd-step-del{width:22px;height:22px;flex-shrink:0;border-radius:50%;border:none;background:var(--coral-soft);color:var(--coral-dark);cursor:pointer;font-size:11px;margin-top:5px;}
   .dd-step-del:hover{background:#f0b8b1;}
+  .dd-step-actions{display:flex;gap:6px;flex-shrink:0;}
+  .dd-step-edit{width:22px;height:22px;flex-shrink:0;border-radius:50%;border:none;background:var(--primary-soft);color:var(--primary-dark);cursor:pointer;font-size:11px;margin-top:5px;}
+  .dd-step-edit:hover{background:var(--primary-softer);outline:1px solid var(--primary);}
+  .dd-step-editbox{flex:1;min-width:0;display:grid;gap:6px;background:var(--primary-softer);border:1px dashed var(--primary);border-radius:10px;padding:8px;}
+  .dd-step-editbox select, .dd-step-editbox input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:7px;font-size:12.5px;background:var(--surface);color:var(--ink);}
+  .dd-step-editbox .dd-edit-foot{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:11px;color:var(--ink-dim);}
+  .dd-autosave{font-size:11px;color:#16A34A;font-weight:700;opacity:0;transition:opacity .2s;}
+  .dd-autosave.show{opacity:1;}
   .dd-addstep{margin-top:6px;padding-top:14px;border-top:1px dashed var(--border-soft);display:flex;flex-direction:column;gap:8px;}
   .dd-addstep-head{font-size:12.5px;font-weight:700;color:var(--ink-soft);}
   .dd-addstep select, .dd-addstep input{padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:12.5px;}
@@ -552,6 +560,51 @@
   @media(max-width:640px){ .appointment-fields-grid{ grid-template-columns: 1fr; } }
 
   .med-table-wrapper{ background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px; }
+  /* ===== EMR prescription (Rx) card ===== */
+  .rx-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+  .rx-card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;background:linear-gradient(90deg,var(--primary-softer),var(--surface));border-bottom:1px solid var(--border);}
+  .rx-title{display:flex;align-items:center;gap:10px;}
+  .rx-symbol{width:34px;height:34px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;background:var(--primary-dark);color:#fff;font-size:20px;font-weight:700;font-family:Georgia,serif;flex-shrink:0;}
+  .rx-title-main{font-size:13px;font-weight:700;color:var(--ink);}
+  .rx-title-sub{font-size:10.5px;color:var(--ink-dim);margin-top:1px;}
+  .rx-table{padding:0 12px;}
+  .rx-head, .rx-row{display:grid;grid-template-columns:28px minmax(160px,2.2fr) minmax(170px,1.6fr) 70px 140px 30px;gap:8px;align-items:center;}
+  .rx-head{font-size:10px;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.03em;padding:8px 0;border-bottom:1.5px solid var(--border);}
+  .rx-row{padding:8px 0;border-bottom:1px solid var(--border-soft);}
+  .rx-row:last-child{border-bottom:none;}
+  #medTableBody{counter-reset:rx;}
+  .rx-no{counter-increment:rx;width:24px;height:24px;border-radius:50%;background:var(--primary-soft);color:var(--primary-dark);font:700 11px 'IBM Plex Mono',monospace;display:inline-flex;align-items:center;justify-content:center;}
+  .rx-no::before{content:counter(rx);}
+  .rx-row .med-input{width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:8px;font-size:12.5px;background:#fff;color:var(--ink);}
+  .rx-row .med-row-name{font-weight:700;}
+  .rx-row .med-row-qty{text-align:center;font-family:'IBM Plex Mono',monospace;}
+  .rx-dose{display:flex;gap:5px;flex-wrap:wrap;}
+  .rx-tog{position:relative;display:inline-flex;align-items:center;cursor:pointer;margin:0;}
+  .rx-tog input{position:absolute;opacity:0;pointer-events:none;}
+  .rx-tog span{display:inline-block;padding:5px 9px;border-radius:999px;border:1.5px solid var(--border);background:var(--surface-2);color:var(--ink-dim);font-size:11.5px;font-weight:600;line-height:1.2;user-select:none;}
+  .rx-tog input:checked + span{background:var(--primary-dark);border-color:var(--primary-dark);color:#fff;}
+  .rx-tog input:focus-visible + span{outline:2px solid var(--primary);outline-offset:1px;}
+  .rx-del{width:26px;height:26px;border-radius:50%;border:none;background:var(--coral-soft);color:var(--coral-dark);cursor:pointer;font-size:12px;}
+  .rx-del:hover{background:#f0b8b1;}
+  .rx-empty{display:none;text-align:center;font-size:12px;color:var(--ink-dim);padding:16px 8px;}
+  .rx-empty span{font-size:11px;opacity:.75;}
+  #medTableBody:empty + .rx-empty{display:block;}
+  .rx-card .quick-med-pills{margin:0;padding:10px 12px;border-top:1px dashed var(--border);background:var(--surface-2);align-items:center;}
+  .rx-quick-label{font-size:11px;color:var(--ink-dim);font-weight:700;margin-right:2px;}
+  .rx-card .q-pill{background:#fff;}
+  .rx-lbl{display:none;}
+  @media (max-width:760px){
+    .rx-head{display:none;}
+    .rx-row{grid-template-columns:28px 90px minmax(0,1fr) 30px;grid-template-areas:"no name name del" "no dose dose dose" "no qty date date";row-gap:8px;padding:10px 0;}
+    .rx-row > .rx-no{grid-area:no;align-self:start;margin-top:6px;}
+    .rx-row > .rx-c-name{grid-area:name;}
+    .rx-row > .rx-c-dose{grid-area:dose;}
+    .rx-row > .rx-c-qty{grid-area:qty;}
+    .rx-row > .rx-c-date{grid-area:date;}
+    .rx-row > .rx-del{grid-area:del;align-self:start;margin-top:4px;}
+    .rx-lbl{display:block;font-size:10px;font-weight:700;color:var(--ink-dim);margin-bottom:3px;}
+  }
+
   .med-bar{ position:relative; display:flex; flex-direction:column; gap:9px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 38px 12px 12px; margin-bottom:10px; }
   .med-bar-section-label{ font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--ink-dim); margin-bottom:-3px; }
   .med-bar-clinic{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%; }
@@ -1199,9 +1252,30 @@
     body.printing-panel .dbar-fill{print-color-adjust:exact;-webkit-print-color-adjust:exact;}
   }
 </style>
+<style>
+  /* Isolated print stage: only the cloned content is laid out for print, everything else is display:none.
+     (Printing the whole app with visibility:hidden laid out every hidden page — slow previews,
+     blank pages and a flickering/hanging preview on phones.) */
+  #printStage{display:none;}
+  @media print{
+    html:has(body.print-stage-mode){background:#fff !important;}
+    body.print-stage-mode{background:#fff !important;padding:0 !important;margin:0 !important;}
+    body.print-stage-mode > *:not(#printStage){display:none !important;}
+    body.print-stage-mode #printStage{display:block !important;visibility:visible !important;position:static !important;width:100%;}
+    body.print-stage-mode #printStage *{visibility:visible !important;}
+    #printStage, #printStage *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    #printStage button, #printStage .no-print{display:none !important;}
+    #printStage .card-type-stats-panel{border:none !important;box-shadow:none !important;margin:0 0 10px !important;padding:0 !important;break-inside:avoid;page-break-inside:avoid;}
+    #printStage .print-sheet{padding:0;width:100%;}
+    #printStage.dl .dl-table{font-size:9px;width:100%;min-width:auto;}
+    #printStage.dl .dl-table th, #printStage.dl .dl-table td{padding:4px;border:1px solid #000;white-space:normal;word-break:break-word;}
+  }
+</style>
+<style>#printOverlay{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;background:rgba(11,42,39,0.55) !important;}</style>
 <style id="dynamicPageStyle">@page{ size: A4 portrait; margin: 15mm; }</style>
 </head>
 <body>
+<div id="printStage" aria-hidden="true"></div>
 
 <!-- App Lock Overlay (ការពារពេលបើកកម្មវិធី) -->
 <div id="appLockOverlay">
@@ -1248,18 +1322,14 @@
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
           <span class="sb-label kh">អ្នកជំងឺ<small>Patients</small></span><span class="sb-badge quiet" id="sbBadgePatients" hidden>0</span>
         </button>
+        <button type="button" class="sb-item" data-page="xray" title="ថតធ្មេញ · Dental X-ray">
+          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+          <span class="sb-label kh">ថតធ្មេញ<small>Dental X-ray</small></span><span class="sb-badge quiet" id="sbBadgeXray" hidden>0</span>
+        </button>
 	<!-- ប៊ូតុងរបាយការណ៍ថ្មី -->
         <button type="button" class="sb-item" data-page="report" title="របាយការណ៍ · Reports">
           <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
           <span class="sb-label kh">របាយការណ៍<small>Reports</small></span>
-        </button>
-        <button type="button" class="sb-item" data-page="xray" title="បញ្ចីថតធ្មេញ · Dental X-ray">
-          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
-          <span class="sb-label kh">បញ្ចីថតធ្មេញ<small>Dental X-ray</small></span><span class="sb-badge quiet" id="sbBadgeXray" hidden>0</span>
-        </button>
-        <button type="button" class="sb-item" id="sbDhis2Btn" data-page="diseaselist" title="បញ្ជីជំងឺ DHIS2 · Disease list">
-          <svg class="sb-ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M9 12h6M9 16h4"/></svg>
-          <span class="sb-label kh">បញ្ជីជំងឺ DHIS2<small>DHIS2 List</small></span>
         </button>
       </div>
       <div class="sb-group">
@@ -1368,7 +1438,16 @@
           </div>
         </div>
 
-        <!-- 3. Clinical analytics -->
+        <!-- 3. Daily comparison -->
+        <div class="dash-section-title kh"><span>ប្រៀបធៀបប្រចាំថ្ងៃ · Today vs Yesterday</span></div>
+        <div class="card-type-stats-panel" style="margin-bottom: 20px;">
+          <div class="card-type-stats-head">
+            <h4 class="kh">ស្ថិតិប្រចាំថ្ងៃ · Today & Yesterday</h4>
+            <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
+          </div>
+          <div id="combinedTodayYesterdayStatsRow"></div>
+        </div>
+        <!-- 4. Clinical analytics (bottom) -->
         <div class="dash-section-title kh">
           <span>ស្ថិតិ · Analytics</span>
           <div class="chips kh" id="dashScopeChips" role="group" aria-label="រយៈពេលស្ថិតិ">
@@ -1400,15 +1479,6 @@
           </div>
         </div>
 
-        <!-- 4. Daily comparison -->
-        <div class="dash-section-title kh"><span>ប្រៀបធៀបប្រចាំថ្ងៃ · Today vs Yesterday</span></div>
-        <div class="card-type-stats-panel" style="margin-bottom: 20px;">
-          <div class="card-type-stats-head">
-            <h4 class="kh">ស្ថិតិប្រចាំថ្ងៃ · Today & Yesterday</h4>
-            <button class="btn btn-outline btn-sm kh" onclick="printReportPanel(this)">🖨️ Export PDF</button>
-          </div>
-          <div id="combinedTodayYesterdayStatsRow"></div>
-        </div>
       </section>
 
       <!-- Patients -->
@@ -1421,7 +1491,7 @@
             <button type="button" class="chip" data-f="today"><i class="dot blue"></i>ថ្ងៃនេះ <span class="chip-n">0</span></button>
             <button type="button" class="chip" data-f="yesterday"><i class="dot violet"></i>ម្សិលមិញ <span class="chip-n">0</span></button>
             <button type="button" class="chip" data-f="done"><i class="dot teal"></i>រួចរាល់ <span class="chip-n">0</span></button>
-            <button type="button" class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="Print" style="background-color: var(--coral); border-color: var(--coral); margin-left:4px;">📄 Print</button>
+            <button type="button" class="btn btn-primary btn-sm kh" id="exportAllPdfBtn" title="បញ្ជីជំងឺសរុប" style="background-color: var(--coral); border-color: var(--coral); margin-left:4px;">📄 បញ្ជីជំងឺសរុប</button>
           </div>
           <span class="mono" id="listCount" style="font-size:12px;color:var(--ink-dim)"></span>
         </div>
@@ -1454,11 +1524,12 @@
             <option value="">ទាំងអស់</option>
           </select>
           <button class="btn btn-primary btn-sm kh" onclick="applyReportFilter()">🔍 ត្រង</button>
-          <button class="btn btn-primary btn-sm kh" onclick="exportMonthlyReportPDF()" style="background-color: #16A34A; border-color: #15803D;">📄 PDF</button>
+          <button class="btn btn-primary btn-sm kh" onclick="exportMonthlyReportPDF()" style="background-color: #16A34A; border-color: #15803D;">📄 Report</button>
         </div>
         <div style="display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
           <button class="btn btn-primary btn-sm kh" onclick="openDiseaseListModal()" style="background-color: var(--amber-dark); border-color: var(--amber-dark);">📋 បញ្ជីជំងឺ (DHIS2)</button>
-          <button class="btn btn-outline btn-sm kh" id="printFullReportBtn" title="Print Report" onclick="printFullReport()">🖨️ Print</button>
+          <button class="btn btn-primary btn-sm kh" onclick="exportAllToPdf()" style="background-color: var(--coral); border-color: var(--coral);">📄 បញ្ជីជំងឺសរុប</button>
+          <button class="btn btn-outline btn-sm kh" id="printFullReportBtn" title="View Report" onclick="printFullReport()">👁️ View</button>
         </div>
       </div>
       <!-- Filtered Report Stats (Hidden by default) -->
@@ -1644,50 +1715,6 @@
       </section>
 
       <!-- Organization Structure -->
-      <section class="page" id="page-diseaselist" data-page="diseaselist" hidden>
-      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; position: sticky; left: 0;">
-        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
-          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ខែ</label>
-          <select id="dlFilterMonth" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
-            <option value="">ទាំងអស់</option>
-            <option value="1">01</option><option value="2">02</option><option value="3">03</option>
-            <option value="4">04</option><option value="5">05</option><option value="6">06</option>
-            <option value="7">07</option><option value="8">08</option><option value="9">09</option>
-            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
-          </select>
-          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ឆ្នាំ</label>
-          <select id="dlFilterYear" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
-            <option value="">ទាំងអស់</option>
-          </select>
-          <button class="btn btn-primary btn-sm kh" onclick="applyDiseaseListFilter()">🔍 ត្រង</button>
-          
-          <div id="dlSummaryBadges" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-left: 6px;">
-            <span class="dl-summary-badge kh" style="color:var(--primary-dark); border-color:var(--primary-soft); background:var(--primary-softer);">
-              ករណី: <span class="val" id="dlSumTotal">0</span>
-            </span>
-            <span class="dl-summary-badge kh" style="color:var(--primary-dark); border-color:var(--primary-soft); background:var(--primary-softer);">
-              អ្នកជំងឺ: <span class="val" id="dlSumPatients">0</span>
-            </span>
-            <span class="dl-summary-badge kh" style="color:var(--primary-dark);">
-              ប្រុស: <span class="val" id="dlSumMale">0</span>
-            </span>
-            <span class="dl-summary-badge kh" style="color:var(--coral-dark);">
-              ស្រី: <span class="val" id="dlSumFemale">0</span>
-            </span>
-            <span class="dl-summary-badge kh" style="color:var(--amber-dark);">
-              ក្មេង (≤15): <span class="val" id="dlSumKids">0</span>
-            </span>
-          </div>
-        </div>
-
-        <div style="display: flex; gap: 10px;">
-          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListPDF()" style="background-color: var(--coral); border-color: var(--coral);">📄 Export PDF</button>
-          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListExcel()">📊 Export Excel</button>
-        </div>
-      </div>
-      <div id="diseaseListTableContainer" style="overflow-x: auto; border: 1px solid var(--border); border-radius: 8px;">
-      </div>
-      </section>
 
       <section class="page" id="page-org" data-page="org" hidden>
         <div class="org-grid" id="orgGrid">
@@ -2129,20 +2156,32 @@
           </div>
         </div>
 
-        <!-- Row 6: តារាងចេញថ្នាំ -->
-        <div class="med-table-wrapper">
-          <div class="med-table-header">
-            <label style="margin:0;">💊 តារាងចេញថ្នាំ · Medication Prescription</label>
-            <button type="button" class="btn btn-outline btn-sm" id="addMedRowBtn" style="padding:4px 10px;font-size:11.5px;">＋ បន្ថែមថ្នាំ / Add</button>
+        <!-- Row 6: តារាងចេញថ្នាំ · EMR prescription (Rx) -->
+        <div class="rx-card">
+          <div class="rx-card-head">
+            <div class="rx-title">
+              <span class="rx-symbol">℞</span>
+              <div>
+                <div class="kh rx-title-main">តារាងចេញថ្នាំ · Medication Prescription</div>
+                <div class="kh rx-title-sub">ថ្ងៃចេញ · ឈ្មោះថ្នាំ · ពេលលេប · ចំនួន</div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm kh" id="addMedRowBtn">＋ បន្ថែមថ្នាំ · Add</button>
           </div>
-          <div id="medTableBody"></div>
+          <div class="rx-table">
+            <div class="rx-head kh">
+              <span>#</span><span>ឈ្មោះថ្នាំ · Medicine</span><span>ពេលលេប · Dosing</span><span>ចំនួន · Qty</span><span>ថ្ងៃចេញ · Date</span><span></span>
+            </div>
+            <div id="medTableBody"></div>
+            <div class="rx-empty kh">មិនទាន់មានថ្នាំ — ចុច «＋ បន្ថែមថ្នាំ» ឬជ្រើសពីថ្នាំប្រើញឹកញាប់ខាងក្រោម<br><span>No medication prescribed</span></div>
+          </div>
           <div class="quick-med-pills">
-            <span style="font-size:11px;color:var(--ink-dim);align-self:center;">ថ្នាំប្រើញឹកញាប់៖</span>
-            <span class="q-pill" onclick="quickAddMed('Amoxicillin 500mg', '10')">Amoxicillin (500mg)</span>
-            <span class="q-pill" onclick="quickAddMed('Ibuprofen 400mg', '10')">Ibuprofen (400mg)</span>
-            <span class="q-pill" onclick="quickAddMed('Paracetamol 500mg', '10')">Paracetamol (500mg)</span>
-            <span class="q-pill" onclick="quickAddMed('Metronidazole 500mg', '10')">Metronidazole (500mg)</span>
-            <span class="q-pill" onclick="quickAddMed('Omeprazole 20mg', '10')">Omeprazole (20mg)</span>
+            <span class="kh rx-quick-label">ថ្នាំប្រើញឹកញាប់ · Quick add</span>
+            <span class="q-pill" onclick="quickAddMed('Amoxicillin 500mg', '10')">＋ Amoxicillin 500mg</span>
+            <span class="q-pill" onclick="quickAddMed('Ibuprofen 400mg', '10')">＋ Ibuprofen 400mg</span>
+            <span class="q-pill" onclick="quickAddMed('Paracetamol 500mg', '10')">＋ Paracetamol 500mg</span>
+            <span class="q-pill" onclick="quickAddMed('Metronidazole 500mg', '10')">＋ Metronidazole 500mg</span>
+            <span class="q-pill" onclick="quickAddMed('Omeprazole 20mg', '10')">＋ Omeprazole 20mg</span>
           </div>
         </div>
 
@@ -2195,10 +2234,72 @@
 </div>
 
 <!-- Print modal -->
+<!-- DHIS2 disease list popup -->
+<div class="overlay hidden" id="diseaseListOverlay" style="z-index:105;">
+  <div class="modal" style="max-width:1280px;">
+    <div class="modal-head"><h2 class="kh">📋 បញ្ជីជំងឺ (DHIS2) · Disease list</h2><button class="x" id="closeDiseaseList" aria-label="បិទ">✕</button></div>
+    <div class="modal-body" id="page-diseaselist">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 15px; position: sticky; left: 0;">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px;">
+          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ខែ</label>
+          <select id="dlFilterMonth" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
+            <option value="">ទាំងអស់</option>
+            <option value="1">01</option><option value="2">02</option><option value="3">03</option>
+            <option value="4">04</option><option value="5">05</option><option value="6">06</option>
+            <option value="7">07</option><option value="8">08</option><option value="9">09</option>
+            <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+          </select>
+          <label class="kh mono" style="font-size:12px;color:var(--ink-dim);">ឆ្នាំ</label>
+          <select id="dlFilterYear" class="kh" style="padding:7px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
+            <option value="">ទាំងអស់</option>
+          </select>
+          <button class="btn btn-primary btn-sm kh" onclick="applyDiseaseListFilter()">🔍 ត្រង</button>
+          
+          <div id="dlSummaryBadges" style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-left: 6px;">
+            <span class="dl-summary-badge kh" style="color:var(--primary-dark); border-color:var(--primary-soft); background:var(--primary-softer);">
+              ករណី: <span class="val" id="dlSumTotal">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--primary-dark); border-color:var(--primary-soft); background:var(--primary-softer);">
+              អ្នកជំងឺ: <span class="val" id="dlSumPatients">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--primary-dark);">
+              ប្រុស: <span class="val" id="dlSumMale">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--coral-dark);">
+              ស្រី: <span class="val" id="dlSumFemale">0</span>
+            </span>
+            <span class="dl-summary-badge kh" style="color:var(--amber-dark);">
+              ក្មេង (≤15): <span class="val" id="dlSumKids">0</span>
+            </span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 10px;">
+          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListPDF()" style="background-color: var(--coral); border-color: var(--coral);">📄 Export PDF</button>
+          <button class="btn btn-primary btn-sm kh" onclick="exportDiseaseListExcel()">📊 Export Excel</button>
+        </div>
+      </div>
+      <div id="diseaseListTableContainer" style="overflow-x: auto; border: 1px solid var(--border); border-radius: 8px;">
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay hidden" id="printOverlay">
   <div class="modal">
     <div class="modal-head"><h2 class="kh" id="printOverlayTitle">កំណត់ត្រា · Print Record</h2><button class="x" id="closePrint">✕</button></div>
     <div class="modal-body">
+      <div id="allListFilterBar" class="hidden kh" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;padding:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:10px;">
+        <label class="mono" style="font-size:12px;color:var(--ink-dim);">ខែ</label>
+        <select id="allListMonth" class="kh" style="padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;">
+          <option value="">ទាំងអស់</option>
+          <option value="1">01</option><option value="2">02</option><option value="3">03</option><option value="4">04</option><option value="5">05</option><option value="6">06</option>
+          <option value="7">07</option><option value="8">08</option><option value="9">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
+        </select>
+        <label class="mono" style="font-size:12px;color:var(--ink-dim);">ឆ្នាំ</label>
+        <select id="allListYear" class="kh" style="padding:6px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink);font-size:13px;"><option value="">ទាំងអស់</option></select>
+        <button type="button" class="btn btn-primary btn-sm kh" id="allListApply">🔍 ត្រង</button>
+      </div>
       <div id="printArea"></div>
       <div class="modal-actions">
         <button class="btn btn-primary hidden kh" id="exportAllExcelBtn" style="flex:1;justify-content:center;background-color:#1A6BDB;border-color:#1A6BDB;">📊 Data Excel</button>
@@ -2819,35 +2920,34 @@ procSelect.addEventListener('change', (e) => {
 
 function addMedicationRow(data = {}){
   const host = document.getElementById('medTableBody');
-  const bar = document.createElement('div');
-  bar.className = 'med-bar';
-  bar.setAttribute('data-med-row', '');
+  const row = document.createElement('div');
+  row.className = 'rx-row';
+  row.setAttribute('data-med-row', '');
   const defaultDate = data.date || getLocalTodayYMD();
-  const name = data.name || '';
+  const name = esc(data.name || '');
   const m = data.m !== undefined ? data.m : true;
   const n = data.n !== undefined ? data.n : true;
   const e = data.e !== undefined ? data.e : true;
-  const qty = data.qty || '10';
+  const qty = esc(data.qty || '10');
 
-  bar.innerHTML = `
-    <div class="med-bar-section-label kh">Clinic — ថ្ងៃចេញ / ពេលលេប / ចំនួន</div>
-    <div class="med-bar-clinic">
-      <input type="date" class="med-input med-row-date" value="${defaultDate}">
-      <div class="med-time-checks">
-        <label><input type="checkbox" class="med-row-m" ${m ? 'checked':''}> ព្រឹក</label>
-        <label><input type="checkbox" class="med-row-n" ${n ? 'checked':''}> ថ្ងៃ</label>
-        <label><input type="checkbox" class="med-row-e" ${e ? 'checked':''}> ល្ងាច</label>
-      </div>
-      <input type="text" class="med-input med-row-qty" placeholder="ចំនួន" value="${qty}">
-    </div>
-    <div class="med-bar-divider"></div>
-    <div class="med-bar-section-label kh">Medicine — ឈ្មោះថ្នាំ</div>
-    <div class="med-bar-medicine">
-      <input type="text" class="med-input med-row-name kh" placeholder="ឈ្មោះថ្នាំ (ឧ. Amoxicillin)" value="${name}">
-    </div>
-    <button type="button" class="btn btn-danger btn-sm med-bar-del" title="លុប" aria-label="លុប" onclick="this.closest('[data-med-row]').remove()">✕</button>
+  row.innerHTML = `
+    <span class="rx-no" aria-hidden="true"></span>
+    <div class="rx-c-name"><span class="rx-lbl kh">ឈ្មោះថ្នាំ · Medicine</span>
+      <input type="text" class="med-input med-row-name kh" placeholder="ឈ្មោះថ្នាំ (ឧ. Amoxicillin 500mg)" value="${name}"></div>
+    <div class="rx-c-dose"><span class="rx-lbl kh">ពេលលេប · Dosing</span>
+      <div class="rx-dose kh">
+        <label class="rx-tog"><input type="checkbox" class="med-row-m" ${m ? 'checked':''}><span>ព្រឹក</span></label>
+        <label class="rx-tog"><input type="checkbox" class="med-row-n" ${n ? 'checked':''}><span>ថ្ងៃ</span></label>
+        <label class="rx-tog"><input type="checkbox" class="med-row-e" ${e ? 'checked':''}><span>ល្ងាច</span></label>
+      </div></div>
+    <div class="rx-c-qty"><span class="rx-lbl kh">ចំនួន · Qty</span>
+      <input type="text" class="med-input med-row-qty" inputmode="numeric" placeholder="10" value="${qty}"></div>
+    <div class="rx-c-date"><span class="rx-lbl kh">ថ្ងៃចេញ · Date</span>
+      <input type="date" class="med-input med-row-date mono" value="${defaultDate}"></div>
+    <button type="button" class="rx-del" title="លុបថ្នាំនេះ" aria-label="លុបថ្នាំនេះ" onclick="this.closest('[data-med-row]').remove()">✕</button>
   `;
-  host.appendChild(bar);
+  host.appendChild(row);
+  if(data.focus) row.querySelector('.med-row-name').focus();
 }
 
 function quickAddMed(name, defaultQty){
@@ -2920,7 +3020,7 @@ function parsePrescriptionString(str){
   return items;
 }
 
-document.getElementById('addMedRowBtn').addEventListener('click', () => addMedicationRow());
+document.getElementById('addMedRowBtn').addEventListener('click', () => addMedicationRow({focus: true}));
 
 function getPendingQueue(){
   try{
@@ -3984,6 +4084,7 @@ function openDoDetail(id){
 
   history.pushState({ modal: 'stepdetail' }, '', '#stepdetail');
   document.getElementById('doDetailName').innerHTML = `🦷 ${esc(r.treatment || 'ព្យាបាល')}`;
+  ddEditingStepId = null;
   renderDoDetailBody(r);
   document.getElementById('doDetailOverlay').classList.remove('hidden');
 }
@@ -3997,13 +4098,31 @@ function renderDoDetailBody(r){
     const circleCls = kind === 'done' ? 'dd-circ-done' : kind === 'appt' ? 'dd-circ-appt' : kind === 'labo' ? 'dd-circ-labo' : 'dd-circ-normal';
     const nameCls = kind === 'done' ? 'dd-step-name-done' : kind === 'appt' ? 'dd-step-name-appt' : kind === 'labo' ? 'dd-step-name-labo' : '';
     const canDelete = i > 0;
+    if(ddEditingStepId && st.id === ddEditingStepId){
+      const list = (appCustomLists.procedure || []).slice();
+      if(st.name && !list.includes(st.name)) list.unshift(st.name);
+      const opts = list.map(p => `<option value="${esc(p)}"${p === st.name ? ' selected' : ''}>${esc(p)}</option>`).join('') + '<option value="__custom__">✎ ផ្សេង / Custom…</option>';
+      return `<div class="dd-step-row">
+        <div class="dd-step-circ ${circleCls}">${i + 1}</div>
+        <div class="dd-step-editbox" data-step-id="${esc(st.id)}">
+          <select class="kh dd-edit-name">${opts}</select>
+          <input type="text" class="kh dd-edit-custom" placeholder="សរសេរជំហានផ្សេង / type custom step" style="display:none;">
+          <input type="datetime-local" class="mono dd-edit-dt" value="${toDateTimeLocalValue(st.datetime)}">
+          <input type="text" class="kh dd-edit-note" value="${esc(st.note || '')}" placeholder="ចំណាំ (Note) — ស្រេចចិត្ត">
+          <div class="dd-edit-foot kh"><span>រក្សាទុកដោយស្វ័យប្រវត្តិ · Auto-save</span><button type="button" class="btn btn-primary btn-sm kh dd-edit-done">✓ រួចរាល់</button></div>
+        </div>
+      </div>`;
+    }
     return `<div class="dd-step-row">
       <div class="dd-step-circ ${circleCls}">${i + 1}</div>
       <div class="dd-step-info">
         <span class="dd-step-name kh ${nameCls}">${esc(st.name)}</span> - <span class="mono dd-step-dt">${st.datetime ? formatDateDisplay(st.datetime) : '—'}</span>
         ${st.note ? `<div class="dd-step-note kh">${esc(st.note)}</div>` : ''}
       </div>
-      ${canDelete ? `<button type="button" class="dd-step-del" data-step-id="${esc(st.id)}" title="លុបជំហាននេះ" aria-label="លុបជំហាននេះ">✕</button>` : '<span style="width:22px;flex-shrink:0;"></span>'}
+      <div class="dd-step-actions">
+        <button type="button" class="dd-step-edit" data-step-id="${esc(st.id)}" title="កែជំហាននេះ (PIN)" aria-label="កែជំហាននេះ">✎</button>
+        ${canDelete ? `<button type="button" class="dd-step-del" data-step-id="${esc(st.id)}" title="លុបជំហាននេះ (PIN)" aria-label="លុបជំហាននេះ">✕</button>` : '<span style="width:22px;flex-shrink:0;"></span>'}
+      </div>
     </div>`;
   }).join('');
 
@@ -4018,7 +4137,8 @@ function renderDoDetailBody(r){
     <div class="dd-steps-wrap">${stepRows}</div>
     <div class="dd-addstep">
       <div class="dd-addstep-head kh">+ បន្ថែមជំហានថ្មី · Add Step</div>
-      <select id="ddNewStepProc" class="kh">${procOpts}</select>
+      <select id="ddNewStepProc" class="kh">${procOpts}<option value="__custom__">✎ ផ្សេង / Custom…</option></select>
+      <input type="text" id="ddNewStepCustom" class="kh" placeholder="សរសេរជំហានផ្សេង / type custom step" style="display:none;">
       <input type="datetime-local" id="ddNewStepDT" class="mono">
       <input type="text" id="ddNewStepNote" class="kh" placeholder="ចំណាំ (Note) — ស្រេចចិត្ត">
       <button type="button" class="btn btn-primary btn-sm kh" id="ddAddStepBtn">+ បន្ថែម</button>
@@ -4027,8 +4147,8 @@ function renderDoDetailBody(r){
       <div class="left-action">
         <button class="btn btn-danger btn-sm" id="doDetailDelBtn">🗑 លុប Delete</button>
       </div>
-      <button class="btn btn-success btn-sm kh" id="doDetailSaveBtn">💾 Save</button>
-      <button class="btn btn-primary btn-sm" id="doDetailEditBtn">✏️ Edit</button>
+      <span class="dd-autosave kh" id="ddAutoSaveNote">✓ បានរក្សាទុក</span>
+      <button class="btn btn-primary btn-sm" id="doDetailEditBtn">✏️ Case Edit</button>
     </div>
   `;
 
@@ -4039,6 +4159,38 @@ function renderDoDetailBody(r){
       promptForPin('សូមបញ្ចូល PIN ដើម្បីលុបជំហាននេះ', ()=> deleteStep(r._id, btn.dataset.stepId));
     });
   });
+  document.querySelectorAll('.dd-step-edit').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      promptForPin('សូមបញ្ចូល PIN ដើម្បីកែជំហាននេះ', ()=>{
+        ddEditingStepId = btn.dataset.stepId;
+        const cur = allRecords.find(x=>x._id===r._id || x.code===r._id) || r;
+        renderDoDetailBody(cur);
+      });
+    });
+  });
+  document.querySelectorAll('.dd-step-editbox').forEach(box=>{
+    const stepId = box.dataset.stepId;
+    const sel = box.querySelector('.dd-edit-name'), ci = box.querySelector('.dd-edit-custom');
+    sel.addEventListener('change', ()=>{ ci.style.display = sel.value === '__custom__' ? 'block' : 'none'; if(sel.value === '__custom__') ci.focus(); });
+    const stepName = ()=> sel.value === '__custom__' ? (ci.value || '').trim() : sel.value;
+    const save = ()=> (stepName() ? updateStep(r._id, stepId, {
+      name: stepName(),
+      datetime: box.querySelector('.dd-edit-dt').value ? formatDateDisplay(box.querySelector('.dd-edit-dt').value) : '',
+      note: box.querySelector('.dd-edit-note').value.trim()
+    }) : null);
+    box.querySelectorAll('select, input').forEach(el=> el.addEventListener('change', save));
+    box.querySelector('.dd-edit-done').addEventListener('click', ()=>{
+      const rec = save();
+      ddEditingStepId = null;
+      renderDoDetailBody(rec || r);
+      flashAutoSaved();
+    });
+  });
+  document.getElementById('ddNewStepProc').addEventListener('change', e=>{
+    const ci = document.getElementById('ddNewStepCustom');
+    ci.style.display = e.target.value === '__custom__' ? 'block' : 'none';
+    if(e.target.value === '__custom__') ci.focus();
+  });
   document.getElementById('ddAddStepBtn').addEventListener('click', ()=> addStep(r._id));
   document.getElementById('doDetailDelBtn').addEventListener('click', ()=>{
     document.getElementById('doDetailOverlay').classList.add('hidden');
@@ -4048,10 +4200,41 @@ function renderDoDetailBody(r){
     document.getElementById('doDetailOverlay').classList.add('hidden');
     openForm(r);
   });
-  document.getElementById('doDetailSaveBtn').addEventListener('click', ()=>{
-    document.getElementById('doDetailOverlay').classList.add('hidden');
-    if (window.location.hash === '#detail') history.replaceState(null, null, window.location.pathname);
-  });
+}
+
+let ddEditingStepId = null;
+function toDateTimeLocalValue(str){
+  const d = parseAnyDate(str);
+  if(!d) return '';
+  const p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function flashAutoSaved(){
+  const el = document.getElementById('ddAutoSaveNote');
+  if(!el) return;
+  el.classList.add('show');
+  clearTimeout(flashAutoSaved._t);
+  flashAutoSaved._t = setTimeout(()=> el.classList.remove('show'), 1800);
+}
+/* edit one step in place and save straight away (local + Google Sheet) */
+function updateStep(id, stepId, patch){
+  const idx = allRecords.findIndex(x=>x._id===id || x.code===id);
+  if(idx === -1) return null;
+  const steps = stepsArray(allRecords[idx]);
+  const st = steps.find(s => s.id === stepId);
+  if(!st) return null;
+  Object.assign(st, patch);
+  allRecords[idx].steps = JSON.stringify(steps);
+  allRecords[idx].doing = steps[0].name;
+  allRecords[idx].doingDateTime = steps[0].datetime;
+  allRecords[idx].status = recomputeStatusFromSteps(allRecords[idx]);
+  applyNextStepFromSteps(allRecords[idx]);
+  saveLocalRecords();
+  renderAll();
+  if(activePatientContext) refreshPatientBodyOnly(activePatientContext);
+  pushToSheet('updateRecord', {...allRecords[idx]});
+  flashAutoSaved();
+  return allRecords[idx];
 }
 
 /* re-render the Full Dental Record body in place (e.g. after a step changes its status)
@@ -4075,7 +4258,12 @@ function updateRecordStatus(id, newStatus){
 function addStep(id){
   const idx = allRecords.findIndex(x=>x._id===id || x.code===id);
   if(idx === -1) return;
-  const procSel = document.getElementById('ddNewStepProc').value;
+  let procSel = document.getElementById('ddNewStepProc').value;
+  if(procSel === '__custom__'){
+    const ci = document.getElementById('ddNewStepCustom');
+    procSel = (ci.value || '').trim();
+    if(!procSel){ ci.focus(); return; }
+  }
   if(!procSel) return;
   const dt = document.getElementById('ddNewStepDT').value;
   const note = document.getElementById('ddNewStepNote').value.trim();
@@ -4091,6 +4279,7 @@ function addStep(id){
   if(activePatientContext) refreshPatientBodyOnly(activePatientContext);
   pushToSheet('updateRecord', {...allRecords[idx]});
   renderDoDetailBody(allRecords[idx]);
+  flashAutoSaved();
 }
 
 function deleteStep(id, stepId){
@@ -4106,6 +4295,7 @@ function deleteStep(id, stepId){
   if(activePatientContext) refreshPatientBodyOnly(activePatientContext);
   pushToSheet('updateRecord', {...allRecords[idx]});
   renderDoDetailBody(allRecords[idx]);
+  flashAutoSaved();
 }
 
 function getPatientRecords(name){
@@ -4530,7 +4720,7 @@ function openPatientRecord(name){
     document.getElementById('printOverlayTitle').textContent = 'កំណត់ត្រា · Print Record';
     document.getElementById('printArea').innerHTML = buildPatientPrintHTML(latest, records, treatedTeethSet, realPhone, realSex, realAge, realType);
     document.getElementById('exportAllExcelBtn').classList.add('hidden');
-    document.getElementById('printOverlay').classList.remove('hidden');
+    document.getElementById('allListFilterBar').classList.add('hidden'); document.getElementById('printOverlay').classList.remove('hidden');
   });
 
   activePatientContext = latest.name;
@@ -4603,13 +4793,34 @@ function setPrintMode(mode){
   }
 }
 
+let allListFilteredRecords = null;
+function allListFilterRecords(){
+  const m = document.getElementById('allListMonth').value;
+  const y = document.getElementById('allListYear').value;
+  if(!m && !y) return allRecords.filter(r=>cleanStr(r.name));
+  return allRecords.filter(r => cleanStr(r.name) && recordVisitedWhere(r, d =>
+    (!y || d.getFullYear() === parseInt(y, 10)) && (!m || (d.getMonth() + 1) === parseInt(m, 10))));
+}
+function populateAllListYears(){
+  const sel = document.getElementById('allListYear');
+  const cur = sel.value;
+  const years = new Set();
+  allRecords.forEach(r => recordVisitDates(r).forEach(d => years.add(d.getFullYear())));
+  sel.innerHTML = '<option value="">ទាំងអស់</option>' + [...years].sort((a,b)=>b-a).map(y=>`<option value="${y}">${y}</option>`).join('');
+  sel.value = cur;
+}
 function exportAllToPdf() {
   if(allRecords.length===0){ alert('មិនទាន់មានកំណត់ត្រាសម្រាប់នាំចេញទេ'); return; }
+  populateAllListYears();
   setPrintMode('landscape');
-  document.getElementById('printOverlayTitle').textContent = 'ទិន្នន័យជំងឺ (All Data)';
+  const fm = document.getElementById('allListMonth').value, fy = document.getElementById('allListYear').value;
+  const recs = allListFilterRecords().sort((a,b)=> (parseAnyDate(a.timestamp)||0) - (parseAnyDate(b.timestamp)||0));
+  allListFilteredRecords = recs;
+  const periodLabel = (fm || fy) ? `${fm ? 'ខែ ' + KHMER_MONTHS[parseInt(fm,10)-1] + ' ' : ''}${fy ? 'ឆ្នាំ ' + fy : ''}` : 'ទាំងអស់';
+  document.getElementById('printOverlayTitle').textContent = 'បញ្ជីជំងឺសរុប · ' + periodLabel;
   document.getElementById('exportAllExcelBtn').classList.remove('hidden');
-  
-  let rowsHtml = allRecords.map(r => {
+
+  let rowsHtml = recs.map(r => {
     return `
       <tr>
         <td class="mono">${formatDateDisplay(r.timestamp).split(' ')[0]}</td>
@@ -4624,12 +4835,13 @@ function exportAllToPdf() {
       </tr>
     `;
   }).join('');
+  if(!recs.length) rowsHtml = `<tr><td colspan="9" class="kh" style="text-align:center;padding:18px;color:#777;">មិនមានទិន្នន័យក្នុងខែ/ឆ្នាំនេះទេ · No records for this period</td></tr>`;
 
   document.getElementById('printArea').innerHTML = `
     <div class="print-sheet" style="padding:0;">
       <div style="text-align:center; margin-bottom: 20px;">
-        <h2 class="kh" style="margin:0; font-size: 18px; color: var(--primary-dark);">របាយការណ៍បញ្ជីអ្នកជំងឺទាំងអស់ (All Patient Records)</h2>
-        <div class="mono" style="margin-top:5px; color:#555; font-size:11px;">សរុប: ${allRecords.length} · នាំចេញនៅ: ${getLocalTodayYMD()}</div>
+        <h2 class="kh" style="margin:0; font-size: 18px; color: var(--primary-dark);">បញ្ជីជំងឺសរុប (All Patient Records) — ${periodLabel}</h2>
+        <div class="mono" style="margin-top:5px; color:#555; font-size:11px;">សរុប: ${recs.length} ករណី · ${new Set(recs.map(patientKey)).size} នាក់ · នាំចេញនៅ: ${getLocalTodayYMD()}</div>
       </div>
       <table class="ps-visit-table" style="width:100%; border-collapse:collapse; font-size:10px;">
         <thead>
@@ -4650,7 +4862,7 @@ function exportAllToPdf() {
     </div>
   `;
   
-  document.getElementById('printOverlay').classList.remove('hidden');
+  document.getElementById('allListFilterBar').classList.remove('hidden'); document.getElementById('printOverlay').classList.remove('hidden');
 }
 
 function openForm(editRecord, prefill){
@@ -4925,7 +5137,8 @@ async function saveRecord(){
 }
 
 function exportToExcel(){
-  if(allRecords.length===0){ alert('មិនទាន់មានកំណត់ត្រាសម្រាប់នាំចេញទេ'); return; }
+  const xlRecs = (!document.getElementById('allListFilterBar').classList.contains('hidden') && allListFilteredRecords) ? allListFilteredRecords : allRecords;
+  if(xlRecs.length===0){ alert('មិនទាន់មានកំណត់ត្រាសម្រាប់នាំចេញទេ'); return; }
   
   const headers = ["កាលបរិច្ឆេទ (Date)", "កូដ (Code)", "ឈ្មោះ (Name)", "ភេទ", "អាយុ", "Registration Card", "ទូរស័ព្ទ (Phone)", "Diagnosis (Indication)", "Diagnosis (ICD10)", "Treatment", "លេខធ្មេញ (Teeth)", "នីតិវិធី", "កាលបរិច្ឆេទម៉ោងនីតិវិធី", "ថ្ងៃខែឆ្នាំ និងម៉ោងណាត់", "គម្រោងព្យាបាល", "ថ្នាំ (Medication)", "ស្ថានភាព (Status)"];
   
@@ -4937,7 +5150,7 @@ function exportToExcel(){
     return str;
   };
 
-  const rows = allRecords.map(r => {
+  const rows = xlRecs.map(r => {
     return [
       escapeCsv(formatDateDisplay(r.timestamp)),
       escapeCsv(r.code),
@@ -5084,7 +5297,7 @@ function openDetail(id, fromPatient){
       </div>
     `;
     document.getElementById('exportAllExcelBtn').classList.add('hidden');
-    document.getElementById('printOverlay').classList.remove('hidden');
+    document.getElementById('allListFilterBar').classList.add('hidden'); document.getElementById('printOverlay').classList.remove('hidden');
   });
   document.getElementById('detailOverlay').classList.remove('hidden');
 }
@@ -5149,12 +5362,13 @@ document.getElementById('closeToothHistoryModal').addEventListener('click', ()=>
 document.getElementById('closePatient').addEventListener('click', closePatientModal);
 document.getElementById('exportAllExcelBtn').addEventListener('click', exportToExcel);
 document.getElementById('exportAllPdfBtn').addEventListener('click', exportAllToPdf);
+document.getElementById('allListApply').addEventListener('click', exportAllToPdf);
 document.getElementById('searchInput').addEventListener('input', (e)=>{ searchTerm=e.target.value; renderList(); });
 document.getElementById('f_diagnosis').addEventListener('change', (e)=>{ document.getElementById('f_diagnosis_custom').style.display = e.target.value==='custom' ? 'block':'none'; });
 document.getElementById('f_treatment').addEventListener('change', (e)=>{ document.getElementById('f_treatment_custom').style.display = e.target.value==='custom' ? 'block':'none'; });
 document.getElementById('closePrint').addEventListener('click', ()=>document.getElementById('printOverlay').classList.add('hidden'));
 document.getElementById('closePrintBtn').addEventListener('click', ()=>document.getElementById('printOverlay').classList.add('hidden'));
-document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+document.getElementById('printBtn').addEventListener('click', ()=> runIsolatedPrint(cloneForPrint(document.getElementById('printArea')), currentPrintOrientation()));
 document.getElementById('closeSettings').addEventListener('click', ()=>{
     document.getElementById('settingsOverlay').classList.add('hidden');
     if (window.location.hash === '#settings') history.replaceState(null, null, window.location.pathname);
@@ -5400,17 +5614,17 @@ async function uploadXrayImage(){
    មុខងារសម្រាប់បញ្ជីជំងឺ (Disease List)
    ========================================= */
 function openDiseaseListModal() {
-    // "modal" in name only, kept for existing callers — this now just navigates to the page
-    showPage('diseaselist');
+    document.getElementById('diseaseListOverlay').classList.remove('hidden');
     populateDiseaseListYearOptions();
     document.getElementById('dlFilterMonth').value = '';
     document.getElementById('dlFilterYear').value = '';
     renderDiseaseListTable(allRecords);
 }
-document.querySelector('.sb-item[data-page="diseaselist"]').addEventListener('click', () => {
-    populateDiseaseListYearOptions();
-    renderDiseaseListTable(allRecords);
-});
+
+
+function closeDiseaseListModal(){ document.getElementById('diseaseListOverlay').classList.add('hidden'); }
+document.getElementById('closeDiseaseList').addEventListener('click', closeDiseaseListModal);
+document.getElementById('diseaseListOverlay').addEventListener('click', e => { if(e.target.id === 'diseaseListOverlay') closeDiseaseListModal(); });
 
 function populateDiseaseListYearOptions() {
     const yearSel = document.getElementById('dlFilterYear');
@@ -5693,7 +5907,7 @@ function exportMonthlyReportPDF() {
     document.getElementById('printOverlayTitle').textContent = `របាយការណ៍ប្រចាំខែ ${monthName} ឆ្នាំ ${year}`;
     document.getElementById('printArea').innerHTML = html;
     document.getElementById('exportAllExcelBtn').classList.add('hidden');
-    document.getElementById('printOverlay').classList.remove('hidden');
+    document.getElementById('allListFilterBar').classList.add('hidden'); document.getElementById('printOverlay').classList.remove('hidden');
 }
 
 function populateReportYearOptions() {
@@ -5937,12 +6151,120 @@ function renderDiseaseListTable(records) {
       </table>`;
 }
 
+/* ===== Isolated printing =====
+   Clones the content to print into #printStage, prints it, and only cleans up once the
+   print dialog has really closed (afterprint) — on phones window.print() returns immediately,
+   so the old "remove classes right after print()" made the preview re-render in a loop. */
+let __printBusy = false;
+function runStagePrint(node, orientation, stageClass){
+  if(__printBusy) return;
+  __printBusy = true;
+  const stage = document.getElementById('printStage');
+  const pageStyle = document.getElementById('dynamicPageStyle');
+  const prevPageCss = pageStyle.textContent;
+  stage.className = stageClass || '';
+  stage.innerHTML = '';
+  stage.appendChild(node);
+  if(orientation) setPrintMode(orientation);
+  document.body.classList.add('print-stage-mode');
+  let done = false;
+  const cleanup = () => {
+    if(done) return; done = true;
+    window.removeEventListener('afterprint', cleanup);
+    document.body.classList.remove('print-stage-mode');
+    stage.innerHTML = '';
+    pageStyle.textContent = prevPageCss;
+    __printBusy = false;
+  };
+  window.addEventListener('afterprint', cleanup);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    try { window.print(); } catch(e){ cleanup(); return; }
+    // fallback for browsers that never fire afterprint: clean up on the next interaction
+    setTimeout(() => { window.addEventListener('pointerdown', cleanup, { once: true }); }, 1500);
+  }));
+}
+/* Fast path: print inside a small hidden iframe that only holds the printed content + the app CSS.
+   The browser builds the preview from a tiny document instead of the whole 500 KB app,
+   so the preview opens quickly and doesn't freeze. Falls back to the in-page stage if anything fails. */
+let __printCssCache = null;
+function getPrintCss(){
+  if(__printCssCache) return __printCssCache;
+  __printCssCache = [...document.querySelectorAll('head style, head link[rel="stylesheet"]')]
+    .filter(el => el.id !== 'dynamicPageStyle')
+    .map(el => el.outerHTML).join('\n');
+  return __printCssCache;
+}
+function runIsolatedPrint(node, orientation, stageClass){
+  if(__printBusy) return;
+  orientation = orientation || 'portrait';
+  let frame;
+  try{
+    __printBusy = true;
+    frame = document.createElement('iframe');
+    frame.setAttribute('aria-hidden', 'true');
+    frame.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;opacity:0;pointer-events:none;';
+    document.body.appendChild(frame);
+    const margin = orientation === 'landscape' ? '10mm' : '12mm';
+    const doc = frame.contentWindow.document;
+    doc.open();
+    doc.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${document.title}</title>${getPrintCss()}
+<style>
+  @page{ size: A4 ${orientation}; margin: ${margin}; }
+  html, body{ background:#fff !important; margin:0 !important; padding:0 !important; min-height:0 !important; }
+  body{ display:block !important; overflow:visible !important; }
+  *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  button, .no-print{ display:none !important; }
+  .card-type-stats-panel{ border:none !important; box-shadow:none !important; margin:0 0 10px !important; padding:0 !important; break-inside:avoid; page-break-inside:avoid; }
+  .print-sheet{ padding:0; width:100%; }
+  body.dl .dl-table{ font-size:9px; width:100%; min-width:auto; }
+  body.dl .dl-table th, body.dl .dl-table td{ padding:4px; border:1px solid #000; white-space:normal; word-break:break-word; }
+</style></head><body class="${stageClass || ''}">${node.outerHTML}</body></html>`);
+    doc.close();
+  }catch(err){
+    if(frame) frame.remove();
+    __printBusy = false;
+    return runStagePrint(node, orientation, stageClass);
+  }
+  const win = frame.contentWindow;
+  let done = false;
+  const cleanup = () => {
+    if(done) return; done = true;
+    window.removeEventListener('pointerdown', cleanup);
+    setTimeout(() => frame.remove(), 300);
+    __printBusy = false;
+  };
+  const go = () => {
+    try{
+      win.addEventListener('afterprint', cleanup);
+      win.focus();
+      win.print();
+      setTimeout(() => window.addEventListener('pointerdown', cleanup, { once: true }), 1500);
+      setTimeout(cleanup, 5 * 60 * 1000);
+    }catch(err){
+      cleanup();
+      runStagePrint(node, orientation, stageClass);
+    }
+  };
+  // wait (briefly) for fonts and images inside the frame, never more than ~1.5 s
+  const imgs = [...win.document.images].filter(im => !im.complete).map(im => new Promise(r => { im.onload = im.onerror = r; }));
+  const fonts = (win.document.fonts && win.document.fonts.ready) ? win.document.fonts.ready : Promise.resolve();
+  Promise.race([Promise.all([fonts, ...imgs]), new Promise(r => setTimeout(r, 1500))]).then(go, go);
+}
+function currentPrintOrientation(){
+  return /landscape/.test(document.getElementById('dynamicPageStyle').textContent) ? 'landscape' : 'portrait';
+}
+function cloneForPrint(el){
+  const c = el.cloneNode(true);
+  c.removeAttribute('id');
+  c.querySelectorAll('button').forEach(b => b.remove());
+  return c;
+}
+
 function exportDiseaseListPDF() {
-    setPrintMode('landscape');
-    document.body.classList.add('printing-disease-list');
-    window.print();
-    document.body.classList.remove('printing-disease-list');
-    setPrintMode('portrait');
+    const src = document.getElementById('diseaseListTableContainer');
+    const c = cloneForPrint(src);
+    c.removeAttribute('style');
+    runIsolatedPrint(c, 'landscape', 'dl');
 }
 
 function exportDiseaseListExcel() {
@@ -5980,25 +6302,17 @@ function exportDiseaseListExcel() {
 
 /* Print របាយការណ៍ */
 window.printReportPanel = function(btn) {
-    setPrintMode('landscape');
     const panel = btn.closest('.card-type-stats-panel');
-    panel.classList.add('print-isolate');
-    document.body.classList.add('printing-panel');
-    
-    window.print();
-    
-    document.body.classList.remove('printing-panel');
-    panel.classList.remove('print-isolate');
-    setPrintMode('portrait');
+    if(!panel) return;
+    runIsolatedPrint(cloneForPrint(panel), 'landscape');
 };
 
 window.printFullReport = function() {
-    setPrintMode('portrait');
-    document.body.classList.add('printing-full-report');
-    
-    window.print();
-    
-    document.body.classList.remove('printing-full-report');
+    const body = document.querySelector('#reportOverlay .modal-body');
+    if(!body) return;
+    const c = cloneForPrint(body);
+    const top = c.querySelector('#reportTopActions'); if(top) top.remove();
+    runIsolatedPrint(c, 'portrait');
 };
 
 let storedUrl = localStorage.getItem('kep_dental_webapp_url');
@@ -6019,9 +6333,8 @@ const PAGE_META = {
   report:       { title: 'របាយការណ៍',      sub: 'Reports' }, // បន្ថែមបន្ទាត់នេះ
   appointments: { title: 'ការណាត់ជួប',      sub: 'Appointments' },
   inventory:    { title: 'ឃ្លាំងសម្ភារៈ',   sub: 'Inventory' },
-  xray:         { title: 'បញ្ចីថតធ្មេញ', sub: 'X-ray image gallery' },
+  xray:         { title: 'ថតធ្មេញ', sub: 'X-ray image gallery' },
   org:          { title: 'រចនាសម្ព័ន្ធ', sub: 'Organization structure' },
-  diseaselist:  { title: 'បញ្ជីជំងឺ DHIS2', sub: 'Disease list' },
   study:        { title: 'មាតិកាសិក្សា', sub: 'Study library' }
 };
 const PAGE_KEY = 'dental_emr_page';
