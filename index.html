@@ -228,7 +228,7 @@
   .appt-row{display:flex;align-items:center;gap:12px;padding:9px 6px;border-radius:9px;cursor:pointer;border-bottom:1px solid var(--border-soft);}
   .appt-row:last-child{border-bottom:none;}
   .appt-row:hover{background:var(--surface-2);}
-  .appt-time{text-align:center;min-width:85px;flex-shrink:0;}
+  .appt-time{text-align:center;min-width:92px;flex-shrink:0;}
   .appt-time .mono{font-size:11.5px;font-weight:700;color:var(--primary-dark);}
   .appt-day{font-size:9px;color:var(--ink-dim);margin-top:1px;}
   .appt-main{flex:1;min-width:0;}
@@ -809,7 +809,11 @@
   .link-btn:hover{text-decoration:underline;}
 
   /* dashboard KPIs */
-  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-bottom:16px;}
+  @media (max-width:1180px){ .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));} .kpi-grid > :last-child:nth-child(odd){grid-column:1 / -1;} }
+  .appt-daytag{display:inline-block;font-family:inherit;font-size:9.5px;font-weight:700;line-height:1.4;padding:0 6px;border-radius:999px;background:var(--surface-2);color:var(--ink-soft);margin-bottom:2px;}
+  .appt-daytag.today{background:var(--primary-soft);color:var(--primary-dark);}
+  .appt-daytag.tomorrow{background:var(--amber-soft);color:var(--amber-dark);}
   .kpi{flex:1;
     display:flex;align-items:center;gap:14px;text-align:left;cursor:pointer;
     padding:14px 16px;border-radius:14px;border:1px solid var(--border-soft);
@@ -2547,11 +2551,8 @@ const CARD_BAR_COLORS = { 'type-red':'var(--coral)', 'type-blue':'#0B5ED7', 'typ
 function dashScopedRecords(){
   if(dashStatScope === 'all') return allRecords;
   const now = new Date();
-  return allRecords.filter(r=>{
-    const d = parseAnyDate(r.doingDateTime || r.timestamp);
-    if(!d || d.getFullYear() !== now.getFullYear()) return false;
-    return dashStatScope === 'year' || d.getMonth() === now.getMonth();
-  });
+  return allRecords.filter(r=> recordVisitedWhere(r, d =>
+    d.getFullYear() === now.getFullYear() && (dashStatScope === 'year' || d.getMonth() === now.getMonth())));
 }
 function dashScopeLabel(){
   return dashStatScope === 'month' ? 'ខែនេះ' : dashStatScope === 'year' ? 'ឆ្នាំនេះ' : 'ទាំងអស់';
@@ -2696,6 +2697,11 @@ function parseAnyDate(str){
   if(!str) return null;
   const s = cleanStr(str);
   if(!s) return null;
+
+  if(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:?\d{2})$/i.test(s)){
+    const iso = new Date(s);
+    if(!isNaN(iso.getTime())) return iso;
+  }
 
   let m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})(?:[T\s](\d{1,2}):(\d{1,2}))?(?:\s*(AM|PM))?/i);
   if(m){
@@ -3192,41 +3198,109 @@ function getWeekRange(now){
   return {monday, sunday};
 }
 
+/* ===== Shared visit / appointment helpers (dashboard + appointments page) =====
+   A treatment record can span several visits (steps). Every non-appointment, non-labo step
+   is a real visit on its own date; old records without steps fall back to doingDateTime/timestamp. */
+function recordVisitDates(r){
+  const out = [], seen = new Set();
+  const push = dt => { if(!dt) return; const k = dt.toDateString(); if(seen.has(k)) return; seen.add(k); out.push(dt); };
+  let st = [];
+  if(r && r.steps){ try{ const a = JSON.parse(r.steps); if(Array.isArray(a)) st = a; }catch(e){} }
+  st.forEach(step=>{
+    const k = stepKind(step.name);
+    if(k === 'appt' || k === 'labo') return;
+    push(parseAnyDate(step.datetime));
+  });
+  if(!out.length) push(parseAnyDate(r.doingDateTime || r.timestamp));
+  return out;
+}
+function recordVisitedWhere(r, test){ return recordVisitDates(r).some(test); }
+function sameDay(a, b){ return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate(); }
+
+/* the one active appointment of a patient: latest record, not Done, date from its last Appointment step */
+function patientActiveAppt(list){
+  const latest = list.slice().sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0))[0];
+  if(!latest) return null;
+  if(recomputeStatusFromSteps(latest) === 'Done') return null;
+  let apptStr = latest.timeLast, apptNote = latest.planDo;
+  const st = stepsArray(latest);
+  for(let i = st.length - 1; i >= 0; i--){
+    if(stepKind(st[i].name) === 'appt'){ apptStr = st[i].datetime || apptStr; apptNote = st[i].note || apptNote; break; }
+  }
+  if(!apptStr) return null;
+  const d = parseAnyDate(apptStr);
+  return d ? {r: latest, d, note: apptNote} : null;
+}
+function groupRecordsByPatient(){
+  const groups = new Map();
+  allRecords.forEach(r=>{
+    if(!cleanStr(r.name)) return;
+    const k = patientKey(r);
+    if(!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(r);
+  });
+  return groups;
+}
+
 function getAppointments(){
   const now = new Date();
   const y = now.getFullYear(), m = now.getMonth(), d = now.getDate();
-  
   const rangeStart = new Date(y, m, d - 1, 0, 0, 0, 0);
   const rangeEnd = new Date(y, m, d + 1, 23, 59, 59, 999);
+  const inRange = dt => dt && dt >= rangeStart && dt <= rangeEnd;
 
-  const rowsAppt = allRecords.filter(r=>r.timeLast);
+  /* Appointments — same rule as the Appointments page (one per patient, Done skipped) */
   const todayList = [];
-  rowsAppt.forEach(r=>{
-    const dt = parseAnyDate(r.timeLast);
-    if(!dt) return;
-    if(dt >= rangeStart && dt <= rangeEnd) todayList.push({r, d: dt});
+  groupRecordsByPatient().forEach(list=>{
+    const it = patientActiveAppt(list);
+    if(it && inRange(it.d)) todayList.push(it);
   });
   todayList.sort((a,b)=>a.d - b.d);
 
+  /* Procedures — every procedure step (not just the first one) done in the window. */
   const todayProcList = [];
   allRecords.forEach(r=>{
-    let dt = r.doingDateTime ? parseAnyDate(r.doingDateTime) : (parseAnyDate(r.timestamp) || null);
-    if(dt && dt >= rangeStart && dt <= rangeEnd) todayProcList.push({r, d: dt});
+    if(!cleanStr(r.name)) return;
+    const st = stepsArray(r);
+    if(st.length){
+      st.forEach(step=>{
+        const k = stepKind(step.name);
+        if(k === 'appt' || k === 'done') return;
+        const dt = parseAnyDate(step.datetime || r.doingDateTime || r.timestamp);
+        if(inRange(dt)) todayProcList.push({r, d: dt, stepName: step.name});
+      });
+    } else {
+      const dt = parseAnyDate(r.doingDateTime || r.timestamp);
+      if(inRange(dt)) todayProcList.push({r, d: dt});
+    }
   });
   todayProcList.sort((a,b)=>b.d - a.d);
 
   return {todayList, todayProcList};
 }
 
-function renderApptRow(item){
-  const {r,d} = item;
+function dashTimeStr(d){
+  if(d.getHours() === 0 && d.getMinutes() === 0) return '—';
   let hr = d.getHours();
   const ampm = hr >= 12 ? 'PM' : 'AM';
-  hr = hr % 12;
-  if(hr === 0) hr = 12;
-  const timeStr = `${String(hr).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} ${ampm}`;
-  const dayStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
-  const planText = cleanStr(r.planDo) || cleanStr(r.treatment) || cleanStr(r.diagnosis) || 'ពិនិត្យព្យាបាល';
+  hr = hr % 12; if(hr === 0) hr = 12;
+  return `${String(hr).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} ${ampm}`;
+}
+function dashDayLabel(d){
+  const t = new Date(); t.setHours(0,0,0,0);
+  const x = new Date(d); x.setHours(0,0,0,0);
+  const diff = Math.round((x - t) / 86400000);
+  const ds = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
+  const tag = diff === 0 ? 'ថ្ងៃនេះ' : diff === -1 ? 'ម្សិលមិញ' : diff === 1 ? 'ថ្ងៃស្អែក' : '';
+  const cls = diff === 0 ? 'today' : diff === 1 ? 'tomorrow' : '';
+  return tag ? `<span class="appt-daytag kh ${cls}">${tag}</span><br>${ds}` : ds;
+}
+
+function renderApptRow(item){
+  const {r,d} = item;
+  const timeStr = dashTimeStr(d);
+  const dayStr = dashDayLabel(d);
+  const planText = cleanStr(item.note) || cleanStr(r.planDo) || cleanStr(r.treatment) || cleanStr(r.diagnosis) || 'ពិនិត្យព្យាបាល';
 
   return `
     <div class="appt-row" data-name="${encodeURIComponent(r.name)}">
@@ -3246,13 +3320,9 @@ function renderApptRow(item){
 
 function renderProcRow(item){
   const {r,d} = item;
-  let hr = d.getHours();
-  const ampm = hr >= 12 ? 'PM' : 'AM';
-  hr = hr % 12;
-  if(hr === 0) hr = 12;
-  const timeStr = `${String(hr).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')} ${ampm}`;
-  const dayStr = `${d.getFullYear()}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getDate()).padStart(2,'0')}`;
-  const planText = cleanStr(r.doing) || cleanStr(r.treatment) || cleanStr(r.diagnosis) || 'ពិនិត្យព្យាបាល';
+  const timeStr = dashTimeStr(d);
+  const dayStr = dashDayLabel(d);
+  const planText = cleanStr(item.stepName) || cleanStr(r.doing) || cleanStr(r.treatment) || cleanStr(r.diagnosis) || 'ពិនិត្យព្យាបាល';
 
   return `
     <div class="appt-row" data-name="${encodeURIComponent(r.name)}">
@@ -3513,20 +3583,19 @@ function renderTodayYesterdayStats() {
   const tPatientsMap = new Map();
   const yPatientsMap = new Map();
 
+  const dayKeyOf = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   allRecords.forEach(r => {
-    let dtStr = r.doingDateTime || r.timestamp; 
-    const d = parseAnyDate(dtStr);
-    if(!d) return;
-    const dKey = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-    
-    if (dKey === todayKey) {
+    if(!cleanStr(r.name)) return;
+    const keys = recordVisitDates(r).map(dayKeyOf);
+    if (keys.includes(todayKey)) {
       tTotalVisits++;
       tPatientsMap.set(patientKey(r), r);
       let treat = cleanStr(r.treatment);
       if (treat && treat !== '—') tTreat[treat] = (tTreat[treat] || 0) + 1;
       let type = cleanStr(r.type) || 'បង់ពេញថ្លៃ';
       tCard[type] = (tCard[type] || 0) + 1;
-    } else if (dKey === yesterdayKey) {
+    }
+    if (keys.includes(yesterdayKey)) {
       yTotalVisits++;
       yPatientsMap.set(patientKey(r), r);
       let treat = cleanStr(r.treatment);
@@ -3590,7 +3659,7 @@ function renderTodayYesterdayStats() {
     </div>
   `;
 
-  let html = `<div class="card-type-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:12px;">`;
+  let html = `<div class="card-type-stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(135px, 1fr)); gap:12px;">`;
   
   html += splitHtml('សរុបជំងឺ (Total)', tTotalPatients, yTotalPatients, 'var(--primary-dark)');
   html += splitHtml('សរុបករណី (Case)', tTotalVisits, yTotalVisits, 'var(--primary-dark)');
@@ -5605,11 +5674,15 @@ function exportMonthlyReportPDF() {
         <div style="display: flex; justify-content: space-between; margin-top: 15px; text-align: center; font-size: 11.5px;">
             <div style="flex: 1;">
                 <div class="kh" style="font-weight: bold;">បានពិនិត្យនិងឯកភាព</div>
-                <div class="kh" style="margin-top: 55px; font-weight: bold;">នាយផ្នែក</div>
+                <div style="height: 55px; display: flex; align-items: center; justify-content: center;"><img src="data:image/png;base64,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" alt="ហត្ថលេខា" style="height: 48px; width: auto; display: block;"></div>
+                <div class="kh" style="font-weight: bold;">នាយផ្នែក</div>
+                <div class="kh" style="margin-top: 4px; font-weight: bold;">ទន្តបណ្ឌិត មុនី ច័ន្ទសិរី</div>
             </div>
             <div style="flex: 1;">
                 <div class="kh" style="font-weight: bold;">អ្នកធ្វើរបាយការណ៍</div>
-                <div class="kh" style="margin-top: 35px; font-weight: bold;">នាយសាល</div>
+                <div style="height: 55px; display: flex; align-items: center; justify-content: center;"><img src="data:image/png;base64,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" alt="ហត្ថលេខានាយសាល" style="height: 46px; width: auto; display: block;"></div>
+                <div class="kh" style="font-weight: bold;">នាយសាល</div>
+                <div class="kh" style="margin-top: 4px; font-weight: bold;">ទន្តគិ. ថន ជូលន់</div>
             </div>
         </div>
 
@@ -6043,23 +6116,11 @@ function computeApptBuckets(){
   const endToday = new Date(startToday.getTime() + 86400000 - 1);
   const missedFrom = new Date(startToday.getTime() - MISSED_WINDOW_DAYS * 86400000);
 
-  const groups = new Map();
-  allRecords.forEach(r=>{
-    if(!cleanStr(r.name)) return;
-    const k = patientKey(r);
-    if(!groups.has(k)) groups.set(k, []);
-    groups.get(k).push(r);
-  });
-
   const missed = [], today = [], upcoming = [];
-  groups.forEach(list=>{
-    const latest = list.slice().sort((a,b)=> (parseAnyDate(b.timestamp)||0) - (parseAnyDate(a.timestamp)||0))[0];
-    if(!latest || !latest.timeLast) return;
-    const st = latest.status === 'Doing' ? 'Appt' : latest.status;
-    if(st === 'Done') return;
-    const d = parseAnyDate(latest.timeLast);
-    if(!d) return;
-    const item = {r: latest, d};
+  groupRecordsByPatient().forEach(list=>{
+    const item = patientActiveAppt(list);
+    if(!item) return;
+    const d = item.d;
     if(d < startToday){ if(d >= missedFrom) missed.push(item); }
     else if(d <= endToday) today.push(item);
     else upcoming.push(item);
@@ -6073,10 +6134,7 @@ function computeApptBuckets(){
 function countTodayVisits(){
   const now = new Date();
   const key = now.getFullYear() + '-' + now.getMonth() + '-' + now.getDate();
-  return allRecords.filter(r=>{
-    const d = parseAnyDate(r.doingDateTime || r.timestamp);
-    return d && (d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate()) === key;
-  }).length;
+  return allRecords.filter(r=> recordVisitedWhere(r, d => (d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate()) === key)).length;
 }
 
 /* ---------- Renderers ---------- */
@@ -6133,14 +6191,12 @@ function renderShell(){
   let todayVisits = 0, weekVisits = 0, monthVisits = 0;
   
   patientRows.forEach(r=>{
-    const d = parseAnyDate(r.doingDateTime || r.timestamp);
-    if(d) {
-        const key = patientKey(r);
-        names.add(key);
-        if(d.toDateString()===todayKey) { todaySet.add(key); todayVisits++; }
-        if(d>=monday && d<=sunday) { weekSet.add(key); weekVisits++; }
-        if((d.getFullYear()+'-'+(d.getMonth()+1))===monthKey) { monthSet.add(key); monthVisits++; }
-    }
+    const key = patientKey(r);
+    names.add(key);
+    const ds = recordVisitDates(r);
+    if(ds.some(d => d.toDateString()===todayKey)) { todaySet.add(key); todayVisits++; }
+    if(ds.some(d => d>=monday && d<=sunday)) { weekSet.add(key); weekVisits++; }
+    if(ds.some(d => (d.getFullYear()+'-'+(d.getMonth()+1))===monthKey)) { monthSet.add(key); monthVisits++; }
   });
 
   setBadge('sbBadgePatients', names.size, '');
@@ -6168,7 +6224,7 @@ function renderShell(){
       </div>
     </div>`;
 
-  const card1 = splitCard('<path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', 'ស្ថិតិសរុប', names.size, 'អ្នកជំងឺ (Patients)', allRecords.length, 'ករណី (Cases)', 'patients');
+  const card1 = splitCard('<path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', 'ស្ថិតិសរុប', names.size, 'អ្នកជំងឺ (Patients)', patientRows.length, 'ករណី (Cases)', 'patients');
   const card2 = splitCard('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>', 'ថ្ងៃនេះ', todaySet.size, 'អ្នកជំងឺ (Patients)', todayVisits, 'ករណី (Cases)', 'patients');
   const card3 = splitCard('<path d="M21 10H3"/><path d="M21 6H3"/><path d="M21 14H3"/><path d="M21 18H3"/>', 'សប្តាហ៍នេះ', weekSet.size, 'អ្នកជំងឺ (Patients)', weekVisits, 'ករណី (Cases)', 'patients');
   const card4 = splitCard('<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>', 'ខែនេះ', monthSet.size, 'អ្នកជំងឺ (Patients)', monthVisits, 'ករណី (Cases)', 'patients');
