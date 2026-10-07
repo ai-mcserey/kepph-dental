@@ -1154,6 +1154,37 @@
   .org-desc-label{font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--ink-dim);text-transform:uppercase;margin-top:16px;}
   .org-desc{font-size:12.5px;line-height:1.7;color:var(--ink-soft);margin-top:6px;white-space:pre-line;text-align:left;min-height:44px;}
   .org-edit-btn{margin-top:18px;}
+  .org-cert-btns{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:0 0 12px;}
+  .org-cert-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;border:1.5px solid var(--border);background:var(--surface-2);color:var(--ink-soft);font-size:12px;font-weight:700;cursor:pointer;}
+  .org-cert-btn:hover{border-color:var(--primary);color:var(--primary-dark);background:var(--primary-softer);}
+  .org-cert-btn .mono{min-width:18px;padding:0 5px;border-radius:999px;background:var(--primary-soft);color:var(--primary-dark);font-size:10.5px;line-height:17px;text-align:center;}
+  .org-cert-btn[data-cert-type="cpd"] .mono{background:var(--amber-soft);color:var(--amber-dark);}
+  #certViewer{display:flex;flex-direction:column;align-items:stretch;justify-content:stretch;padding:0 !important;background:#0a1426 !important;backdrop-filter:none !important;}
+  #certViewer.hidden{display:none;}
+  .cv-top{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top,0px));color:#fff;}
+  .cv-count{font-size:12px;opacity:.8;}
+  .cv-top-btns{display:flex;gap:8px;}
+  .cv-btn{border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .cv-btn:hover{background:rgba(255,255,255,.2);}
+  .cv-btn.on{background:#fff;color:var(--primary-dark);}
+  .cv-btn.danger{border-color:rgba(255,120,110,.6);color:#ffb3ab;}
+  .cv-x{width:40px;padding:8px 0;}
+  .cv-stage{flex:1 1 auto;min-height:0;height:0;position:relative;display:flex;align-items:center;justify-content:center;padding:0 4px 4px;}
+  .cv-scroll{position:absolute;inset:0 4px 4px;overflow:auto;-webkit-overflow-scrolling:touch;display:flex;align-items:center;justify-content:center;touch-action:pan-x pan-y pinch-zoom;}
+  #certViewerImg{width:100%;height:100%;object-fit:contain;display:block;cursor:zoom-in;image-rendering:auto;}
+  .cv-scroll.zoomed{display:block;}
+  .cv-scroll.zoomed #certViewerImg{width:auto;height:auto;max-width:none;max-height:none;min-width:200%;object-fit:initial;cursor:zoom-out;}
+  .cv-loading{position:absolute;color:#fff;opacity:.7;font-size:13px;}
+  .cv-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);color:#fff;opacity:.55;font-size:11px;pointer-events:none;white-space:nowrap;}
+  .cv-empty{color:rgba(255,255,255,.75);text-align:center;font-size:15px;line-height:1.8;}
+  .cv-empty small{opacity:.7;font-size:12px;}
+  .cv-nav{position:absolute;z-index:3;top:50%;transform:translateY(-50%);width:44px;height:64px;border:none;border-radius:12px;background:rgba(255,255,255,.14);color:#fff;font-size:30px;cursor:pointer;}
+  .cv-nav.prev{left:8px;} .cv-nav.next{right:8px;}
+  .cv-edit{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;padding:10px 12px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));background:rgba(0,0,0,.35);}
+  .cv-edit.hidden{display:none;}
+  .cv-url{display:flex;gap:6px;flex:1 1 320px;max-width:520px;}
+  .cv-url input{flex:1;min-width:0;padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.95);font-size:14px;}
+  .cv-msg{flex-basis:100%;text-align:center;color:#ffd9a0;font-size:12px;min-height:16px;}
   @media (max-width:680px){ .org-grid{grid-template-columns:1fr;} }
 
   /* small password prompt (shared look with showConfirm) */
@@ -1272,6 +1303,47 @@
   }
 </style>
 <style>#printOverlay{backdrop-filter:none !important;-webkit-backdrop-filter:none !important;background:rgba(11,42,39,0.55) !important;}</style>
+<style id="trendStyle">
+  .trend-panel{margin-bottom:20px;padding:14px 16px !important;}
+  .trend-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+  .trend-stat{border:1px solid var(--border);border-radius:12px;padding:10px 12px;background:var(--surface-2);}
+  .trend-stat .ts-l{font-size:11px;font-weight:700;color:var(--ink-soft);}
+  .trend-stat .ts-v{font:800 22px/1.15 'IBM Plex Mono',monospace;color:var(--ink);margin-top:5px;}
+  .trend-stat .ts-v.rev{color:#B4690E;}
+  .trend-stat .ts-s{font-size:10.5px;color:var(--ink-dim);margin-top:4px;display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+  .trend-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--ink-soft);font-weight:600;margin:2px 0 6px;}
+  .trend-legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px;}
+  .trend-legend .lg-bar::before{background:var(--primary);}
+  .trend-legend .lg-pat::before{background:var(--primary-dark);height:3px;vertical-align:3px;border-radius:2px;}
+  .trend-legend .lg-rev::before{background:#E8A33D;border-radius:50%;}
+  .trend-chart{position:relative;width:100%;}
+  .trend-chart svg{display:block;width:100%;height:auto;overflow:visible;}
+  .trend-chart .tc-grid{stroke:var(--border-soft);stroke-width:1;}
+  .trend-chart .tc-axis{fill:var(--ink-dim);font:600 10px 'IBM Plex Mono',monospace;}
+  .trend-chart .tc-axis.kh{font-family:'Noto Sans Khmer',sans-serif;}
+  .trend-chart .tc-bar{fill:var(--primary);opacity:.82;}
+  .trend-chart .tc-bar.today{fill:var(--primary-dark);opacity:1;}
+  .trend-chart .tc-bar.sun{opacity:.45;}
+  .trend-chart .tc-val{fill:var(--ink-soft);font:700 9.5px 'IBM Plex Mono',monospace;text-anchor:middle;}
+  .trend-chart .tc-pat{fill:none;stroke:var(--primary-dark);stroke-width:2;stroke-dasharray:4 3;}
+  .trend-chart .tc-rev{fill:none;stroke:#E8A33D;stroke-width:2.5;stroke-linejoin:round;}
+  .trend-chart .tc-rev-area{fill:#E8A33D;opacity:.10;}
+  .trend-chart .tc-dot{fill:#fff;stroke:#E8A33D;stroke-width:2;}
+  .trend-chart .tc-hit{fill:transparent;cursor:pointer;}
+  .trend-chart .tc-hit.on{fill:var(--primary-softer);opacity:.7;}
+  .trend-tip{font-size:11.5px;color:var(--ink-dim);text-align:center;padding:8px 10px;margin-top:6px;border-radius:10px;background:var(--surface-2);border:1px dashed var(--border);min-height:34px;}
+  .trend-tip b{color:var(--ink);font-family:'IBM Plex Mono',monospace;}
+  .trend-tip .rv{color:#B4690E;}
+  .trend-empty{text-align:center;font-size:12px;color:var(--ink-dim);padding:28px 10px;}
+  @media (max-width:900px){ .trend-stats{grid-template-columns:repeat(2,minmax(0,1fr));} }
+  @media (max-width:640px){
+    .trend-panel{padding:12px !important;}
+    .trend-stat .ts-v{font-size:19px;}
+    .trend-chart{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .trend-chart svg{min-width:520px;}
+  }
+  .dd-step-fee{font-size:11px;color:#B4690E;font-weight:700;margin-top:2px;}
+</style>
 <style id="censusStyle">
   /* ===== Daily Census (Today vs Yesterday) — EMR style ===== */
   .census-panel{margin-bottom:20px;padding:0 !important;overflow:hidden;}
@@ -1515,6 +1587,19 @@
 
         <!-- 1. Key indicators -->
         <div class="kpi-grid" id="dashKpis"></div>
+
+        <!-- 1b. 14-day trend -->
+        <div class="dash-section-title kh"><span>📈 និន្នាការ ១៤ ថ្ងៃចុងក្រោយ</span><small>Patient visits &amp; revenue · last 14 days</small></div>
+        <div class="card-type-stats-panel trend-panel">
+          <div class="trend-stats" id="trendStats"></div>
+          <div class="trend-legend kh">
+            <span class="lg-bar">ករណី · Visits</span>
+            <span class="lg-pat">អ្នកជំងឺ · Patients</span>
+            <span class="lg-rev">ចំណូល · Revenue (៛)</span>
+          </div>
+          <div class="trend-chart" id="trendChart"></div>
+          <div class="trend-tip kh" id="trendTip">ចុច ឬដាក់ cursor លើថ្ងៃណាមួយ ដើម្បីមើលព័ត៌មានលម្អិត</div>
+        </div>
 
         <!-- 2. Today's schedule -->
         <div class="dash-section-title kh"><span>កាលវិភាគ · Schedule</span><small>ម្សិលមិញ – ថ្ងៃស្អែក</small></div>
@@ -1823,6 +1908,10 @@
         <div class="org-grid" id="orgGrid">
           <article class="org-card" data-id="head">
             <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-head"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-cert-btns">
+              <button type="button" class="org-cert-btn kh" data-cert-member="head" data-cert-type="degree">🎓 សញ្ញាបត្រ <span class="mono" data-cert-count="head-degree">0</span></button>
+              <button type="button" class="org-cert-btn kh" data-cert-member="head" data-cert-type="cpd">📚 គណៈ <span class="mono" data-cert-count="head-cpd">0</span></button>
+            </div>
             <div class="org-role kh">ប្រធានផ្នែក<small>Department Head</small></div>
             <div class="org-name kh" id="orgName-head">មិនទាន់បំពេញ</div>
             <div class="org-desc-label kh">Job Description</div>
@@ -1831,6 +1920,10 @@
           </article>
           <article class="org-card" data-id="director">
             <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-director"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-cert-btns">
+              <button type="button" class="org-cert-btn kh" data-cert-member="director" data-cert-type="degree">🎓 សញ្ញាបត្រ <span class="mono" data-cert-count="director-degree">0</span></button>
+              <button type="button" class="org-cert-btn kh" data-cert-member="director" data-cert-type="cpd">📚 គណៈ <span class="mono" data-cert-count="director-cpd">0</span></button>
+            </div>
             <div class="org-role kh">នាយសាល<small>Director</small></div>
             <div class="org-name kh" id="orgName-director">មិនទាន់បំពេញ</div>
             <div class="org-desc-label kh">Job Description</div>
@@ -1843,6 +1936,10 @@
         <div class="org-grid org-grid-team" id="orgGridTeam">
           <article class="org-card org-member-card" data-id="member1">
             <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-member1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-cert-btns">
+              <button type="button" class="org-cert-btn kh" data-cert-member="member1" data-cert-type="degree">🎓 សញ្ញាបត្រ <span class="mono" data-cert-count="member1-degree">0</span></button>
+              <button type="button" class="org-cert-btn kh" data-cert-member="member1" data-cert-type="cpd">📚 គណៈ <span class="mono" data-cert-count="member1-cpd">0</span></button>
+            </div>
             <div class="org-member-name kh" id="orgName-member1">មិនទាន់បំពេញ</div>
             <div class="org-title kh" id="orgTitle-member1">មិនទាន់កំណត់តួនាទី</div>
             <div class="org-desc-label kh">Job Description</div>
@@ -1851,6 +1948,10 @@
           </article>
           <article class="org-card org-member-card" data-id="member2">
             <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-member2"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-cert-btns">
+              <button type="button" class="org-cert-btn kh" data-cert-member="member2" data-cert-type="degree">🎓 សញ្ញាបត្រ <span class="mono" data-cert-count="member2-degree">0</span></button>
+              <button type="button" class="org-cert-btn kh" data-cert-member="member2" data-cert-type="cpd">📚 គណៈ <span class="mono" data-cert-count="member2-cpd">0</span></button>
+            </div>
             <div class="org-member-name kh" id="orgName-member2">មិនទាន់បំពេញ</div>
             <div class="org-title kh" id="orgTitle-member2">មិនទាន់កំណត់តួនាទី</div>
             <div class="org-desc-label kh">Job Description</div>
@@ -1859,6 +1960,10 @@
           </article>
           <article class="org-card org-member-card" data-id="member3">
             <div class="org-photo-wrap"><div class="org-photo" id="orgPhoto-member3"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+            <div class="org-cert-btns">
+              <button type="button" class="org-cert-btn kh" data-cert-member="member3" data-cert-type="degree">🎓 សញ្ញាបត្រ <span class="mono" data-cert-count="member3-degree">0</span></button>
+              <button type="button" class="org-cert-btn kh" data-cert-member="member3" data-cert-type="cpd">📚 គណៈ <span class="mono" data-cert-count="member3-cpd">0</span></button>
+            </div>
             <div class="org-member-name kh" id="orgName-member3">មិនទាន់បំពេញ</div>
             <div class="org-title kh" id="orgTitle-member3">មិនទាន់កំណត់តួនាទី</div>
             <div class="org-desc-label kh">Job Description</div>
@@ -2018,6 +2123,33 @@
         <button type="button" class="btn btn-primary kh" id="orgSaveBtn">រក្សាទុក Save</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- Certificates / CPD: big image viewer (view freely, change with PIN) -->
+<div class="overlay hidden" id="certViewer" style="z-index:120;">
+  <div class="cv-top">
+    <span class="cv-count mono" id="certCount"></span>
+    <div class="cv-top-btns">
+      <button type="button" class="cv-btn" id="certEditToggle" title="កែ (PIN)">✎ កែ</button>
+      <button type="button" class="cv-btn cv-x" id="closeCertViewer" aria-label="បិទ">✕</button>
+    </div>
+  </div>
+  <div class="cv-stage" id="certStage">
+    <button type="button" class="cv-nav prev" id="certPrev" aria-label="មុន">‹</button>
+    <div class="cv-scroll" id="certScroll"><img id="certViewerImg" alt=""></div>
+    <div class="cv-loading kh" id="certLoading" style="display:none;">កំពុងបើករូប...</div>
+    <div class="cv-hint kh" id="certHint">ចុចលើរូប ដើម្បីពង្រីក · Tap to zoom</div>
+    <div class="cv-empty kh" id="certEmpty">មិនទាន់មានរូប<br><small>ចុច «✎ កែ» ដើម្បីបន្ថែម (PIN)</small></div>
+    <button type="button" class="cv-nav next" id="certNext" aria-label="បន្ទាប់">›</button>
+  </div>
+  <div class="cv-edit hidden kh" id="certEditBar">
+    <input type="file" accept="image/*" id="cert_file" hidden>
+    <button type="button" class="cv-btn" id="certReplace">📷 ប្តូររូបនេះ</button>
+    <button type="button" class="cv-btn" id="certAdd">＋ បន្ថែមរូប</button>
+    <button type="button" class="cv-btn danger" id="certDelete">🗑 លុបរូបនេះ</button>
+    <div class="cv-url"><input type="text" id="cert_url" autocomplete="off" placeholder="ឬបិទភ្ជាប់តំណ Google Drive (រូបច្បាស់ជាង)"><button type="button" class="cv-btn" id="certUrlApply">✓</button></div>
+    <div class="cv-msg" id="certMsg"></div>
   </div>
 </div>
 
@@ -2819,7 +2951,7 @@ function renderDashHero(){
 // ៣. សរសេរកូដនេះជាន់ពីលើ ដើម្បីប្រាកដថាវាទាញទិន្នន័យទាំងអស់មកបង្ហាញ
 function renderAll(){ 
   renderPatientDemographics(); 
-  renderTodayYesterdayStats();
+  renderTodayYesterdayStats(); renderTrend14();
   renderYesterdayStats();
   renderThisMonthStats();
   renderLastMonthStats();
@@ -3404,6 +3536,28 @@ function getWeekRange(now){
 /* ===== Shared visit / appointment helpers (dashboard + appointments page) =====
    A treatment record can span several visits (steps). Every non-appointment, non-labo step
    is a real visit on its own date; old records without steps fall back to doingDateTime/timestamp. */
+function parseFee(v){
+  const n = parseInt(String(v || '').replace(/[^\d]/g, ''), 10);
+  return isNaN(n) || n <= 0 ? 0 : n;
+}
+function fmtRiel(n){ return Math.round(n).toLocaleString('en-US') + ' ៛'; }
+function fmtRielShort(n){
+  if(n >= 1e6) return (n / 1e6).toFixed(n >= 1e7 ? 0 : 1).replace(/\.0$/, '') + 'M';
+  if(n >= 1e3) return Math.round(n / 1e3) + 'K';
+  return String(Math.round(n));
+}
+/* revenue entries of a record: every step that carries a fee, on that step's date */
+function recordFeeEntries(r){
+  const out = [];
+  stepsArray(r).forEach(st => {
+    const f = parseFee(st.fee);
+    if(!f) return;
+    const d = parseAnyDate(st.datetime || r.doingDateTime || r.timestamp);
+    if(d) out.push({ d, fee: f });
+  });
+  return out;
+}
+
 function recordVisitDates(r){
   const out = [], seen = new Set();
   const push = dt => { if(!dt) return; const k = dt.toDateString(); if(seen.has(k)) return; seen.add(k); out.push(dt); };
@@ -3769,6 +3923,112 @@ function renderLastMonthStats(){
       html += `</div>`;
   }
   row.innerHTML = html;
+}
+
+
+/* ===== 📈 14-day trend: visits (bars), patients (dashed line), revenue (amber line) ===== */
+const KH_DOW = ['អា','ច','អ','ព','ព្រ','សុ','ស'];
+function renderTrend14(){
+  const host = document.getElementById('trendChart');
+  if(!host) return;
+  const dayKey = d => d.getFullYear() + '-' + (d.getMonth()+1) + '-' + d.getDate();
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 27); // 28 days: this period + previous for comparison
+  const days = [];
+  for(let i = 0; i < 28; i++){
+    const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+    days.push({ d, key: dayKey(d), visits: 0, pats: new Set(), rev: 0 });
+  }
+  const byKey = new Map(days.map(x => [x.key, x]));
+  allRecords.forEach(r => {
+    if(!cleanStr(r.name)) return;
+    const pk = patientKey(r);
+    recordVisitDates(r).forEach(d => {
+      const b = byKey.get(dayKey(d));
+      if(b){ b.visits++; b.pats.add(pk); }
+    });
+    recordFeeEntries(r).forEach(e => {
+      const b = byKey.get(dayKey(e.d));
+      if(b) b.rev += e.fee;
+    });
+  });
+  const prev = days.slice(0, 14), cur = days.slice(14);
+  const sum = (arr, f) => arr.reduce((a, x) => a + f(x), 0);
+  const curVisits = sum(cur, x => x.visits), prevVisits = sum(prev, x => x.visits);
+  const curRev = sum(cur, x => x.rev), prevRev = sum(prev, x => x.rev);
+  const curPats = new Set(); cur.forEach(x => x.pats.forEach(p => curPats.add(p)));
+  const workDays = cur.filter(x => x.visits > 0).length;
+  const busiest = cur.reduce((a, x) => x.visits > a.visits ? x : a, cur[0]);
+  const fmtD = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+  const pct = (c, p) => {
+    if(!p) return c ? '<span class="cd up">▲ ថ្មី</span>' : '<span class="cd same">= 0</span>';
+    const v = Math.round((c - p) / p * 100);
+    return v > 0 ? `<span class="cd up">▲ ${v}%</span>` : v < 0 ? `<span class="cd down">▼ ${Math.abs(v)}%</span>` : '<span class="cd same">= 0%</span>';
+  };
+
+  document.getElementById('trendStats').innerHTML = `
+    <div class="trend-stat"><div class="ts-l kh">ករណីសរុប · Visits</div><div class="ts-v">${curVisits}</div>
+      <div class="ts-s kh">${pct(curVisits, prevVisits)} ធៀប ១៤ ថ្ងៃមុន</div></div>
+    <div class="trend-stat"><div class="ts-l kh">អ្នកជំងឺ · Patients</div><div class="ts-v">${curPats.size}</div>
+      <div class="ts-s kh">ខុសៗគ្នា ក្នុង ១៤ ថ្ងៃ</div></div>
+    <div class="trend-stat"><div class="ts-l kh">មធ្យម/ថ្ងៃធ្វើការ · Avg/day</div><div class="ts-v">${workDays ? (curVisits / workDays).toFixed(1) : '0'}</div>
+      <div class="ts-s kh">${workDays} ថ្ងៃមានអ្នកជំងឺ${busiest.visits ? ` · ច្រើនបំផុត ${fmtD(busiest.d)} (${busiest.visits})` : ''}</div></div>
+    <div class="trend-stat"><div class="ts-l kh">ចំណូល · Revenue</div><div class="ts-v rev">${curRev ? fmtRielShort(curRev) : '0'} <span style="font-size:12px;">៛</span></div>
+      <div class="ts-s kh">${curRev || prevRev ? pct(curRev, prevRev) + ' ធៀប ១៤ ថ្ងៃមុន' : 'បញ្ចូលថ្លៃសេវាក្នុង Step'}</div></div>`;
+
+  // ---- SVG chart ----
+  const W = 760, H = 230, L = 34, R = 50, T = 18, B = 40;
+  const pw = W - L - R, ph = H - T - B, n = cur.length, slot = pw / n, bw = Math.min(30, slot * 0.58);
+  const niceMax = v => { if(v <= 4) return 4; const p = Math.pow(10, Math.floor(Math.log10(v))); const m = v / p; return (m <= 2 ? 2 : m <= 5 ? 5 : 10) * p; };
+  const vMax = niceMax(Math.max(1, ...cur.map(x => x.visits)));
+  const rMaxRaw = Math.max(...cur.map(x => x.rev));
+  const rMax = rMaxRaw ? niceMax(rMaxRaw) : 0;
+  const x = i => L + slot * i + slot / 2;
+  const yV = v => T + ph - (v / vMax) * ph;
+  const yR = v => T + ph - (rMax ? v / rMax : 0) * ph;
+  let g = '';
+  for(let k = 0; k <= 4; k++){
+    const yy = T + ph * k / 4;
+    g += `<line class="tc-grid" x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}"/>`;
+    g += `<text class="tc-axis" x="${L - 6}" y="${yy + 3}" text-anchor="end">${Math.round(vMax * (4 - k) / 4)}</text>`;
+    if(rMax) g += `<text class="tc-axis" x="${W - R + 6}" y="${yy + 3}" text-anchor="start" style="fill:#B4690E">${fmtRielShort(rMax * (4 - k) / 4)}</text>`;
+  }
+  let bars = '', labels = '', hits = '';
+  cur.forEach((b, i) => {
+    const isToday = i === n - 1, isSun = b.d.getDay() === 0;
+    const h = (b.visits / vMax) * ph;
+    if(b.visits){
+      bars += `<rect class="tc-bar${isToday ? ' today' : ''}${isSun ? ' sun' : ''}" x="${x(i) - bw/2}" y="${T + ph - h}" width="${bw}" height="${h}" rx="4"/>`;
+      bars += `<text class="tc-val" x="${x(i)}" y="${T + ph - h - 4}">${b.visits}</text>`;
+    }
+    labels += `<text class="tc-axis" x="${x(i)}" y="${H - B + 15}" text-anchor="middle"${isToday ? ' style="fill:var(--primary-dark)"' : ''}>${fmtD(b.d)}</text>`;
+    labels += `<text class="tc-axis kh" x="${x(i)}" y="${H - B + 29}" text-anchor="middle"${isSun ? ' style="fill:var(--coral)"' : ''}>${isToday ? 'ថ្ងៃនេះ' : KH_DOW[b.d.getDay()]}</text>`;
+    hits += `<rect class="tc-hit" data-i="${i}" x="${L + slot * i}" y="${T}" width="${slot}" height="${ph}"/>`;
+  });
+  const patPath = cur.map((b, i) => `${i ? 'L' : 'M'}${x(i)},${yV(b.pats.size)}`).join(' ');
+  let rev = '';
+  if(rMax){
+    const pts = cur.map((b, i) => [x(i), yR(b.rev)]);
+    const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0]},${p[1]}`).join(' ');
+    rev = `<path class="tc-rev-area" d="${line} L${pts[n-1][0]},${T + ph} L${pts[0][0]},${T + ph} Z"/><path class="tc-rev" d="${line}"/>` +
+          pts.map((p, i) => cur[i].rev ? `<circle class="tc-dot" cx="${p[0]}" cy="${p[1]}" r="3.5"/>` : '').join('');
+  }
+  host.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="និន្នាការ ១៤ ថ្ងៃ">
+    ${g}<g>${hits}</g>${bars}<path class="tc-pat" d="${patPath}"/>${rev}${labels}</svg>`;
+
+  const tip = document.getElementById('trendTip');
+  const show = i => {
+    const b = cur[i];
+    host.querySelectorAll('.tc-hit').forEach(h => h.classList.toggle('on', +h.dataset.i === i));
+    const dn = ['អាទិត្យ','ច័ន្ទ','អង្គារ','ពុធ','ព្រហស្បតិ៍','សុក្រ','សៅរ៍'][b.d.getDay()];
+    tip.innerHTML = `ថ្ងៃ${dn} ${fmtD(b.d)}/${b.d.getFullYear()} · ករណី <b>${b.visits}</b> · អ្នកជំងឺ <b>${b.pats.size}</b> · ចំណូល <b class="rv">${fmtRiel(b.rev)}</b>`;
+  };
+  host.querySelectorAll('.tc-hit').forEach(h => {
+    h.addEventListener('mouseenter', () => show(+h.dataset.i));
+    h.addEventListener('click', () => show(+h.dataset.i));
+  });
+  show(n - 1);
+  requestAnimationFrame(() => { host.scrollLeft = host.scrollWidth; }); // phones: start on today
 }
 
 function renderTodayYesterdayStats() {
@@ -4198,6 +4458,7 @@ function renderDoDetailBody(r){
           <input type="text" class="kh dd-edit-custom" placeholder="សរសេរជំហានផ្សេង / type custom step" style="display:none;">
           <input type="datetime-local" class="mono dd-edit-dt" value="${toDateTimeLocalValue(st.datetime)}">
           <input type="text" class="kh dd-edit-note" value="${esc(st.note || '')}" placeholder="ចំណាំ (Note) — ស្រេចចិត្ត">
+          <input type="text" class="mono dd-edit-fee" inputmode="numeric" value="${st.fee ? esc(String(st.fee)) : ''}" placeholder="ថ្លៃសេវា (៛) · Fee">
           <div class="dd-edit-foot kh"><span>រក្សាទុកដោយស្វ័យប្រវត្តិ · Auto-save</span><button type="button" class="btn btn-primary btn-sm kh dd-edit-done">✓ រួចរាល់</button></div>
         </div>
       </div>`;
@@ -4207,6 +4468,7 @@ function renderDoDetailBody(r){
       <div class="dd-step-info">
         <span class="dd-step-name kh ${nameCls}">${esc(st.name)}</span> - <span class="mono dd-step-dt">${st.datetime ? formatDateDisplay(st.datetime) : '—'}</span>
         ${st.note ? `<div class="dd-step-note kh">${esc(st.note)}</div>` : ''}
+        ${st.fee ? `<div class="dd-step-fee mono">💵 ${fmtRiel(st.fee)}</div>` : ''}
       </div>
       <div class="dd-step-actions">
         <button type="button" class="dd-step-edit" data-step-id="${esc(st.id)}" title="កែជំហាននេះ (PIN)" aria-label="កែជំហាននេះ">✎</button>
@@ -4230,6 +4492,7 @@ function renderDoDetailBody(r){
       <input type="text" id="ddNewStepCustom" class="kh" placeholder="សរសេរជំហានផ្សេង / type custom step" style="display:none;">
       <input type="datetime-local" id="ddNewStepDT" class="mono">
       <input type="text" id="ddNewStepNote" class="kh" placeholder="ចំណាំ (Note) — ស្រេចចិត្ត">
+      <input type="text" id="ddNewStepFee" class="mono" inputmode="numeric" placeholder="ថ្លៃសេវា (៛) — ស្រេចចិត្ត · Fee">
       <button type="button" class="btn btn-primary btn-sm kh" id="ddAddStepBtn">+ បន្ថែម</button>
     </div>
     <div class="modal-actions">
@@ -4265,7 +4528,8 @@ function renderDoDetailBody(r){
     const save = ()=> (stepName() ? updateStep(r._id, stepId, {
       name: stepName(),
       datetime: box.querySelector('.dd-edit-dt').value ? formatDateDisplay(box.querySelector('.dd-edit-dt').value) : '',
-      note: box.querySelector('.dd-edit-note').value.trim()
+      note: box.querySelector('.dd-edit-note').value.trim(),
+      fee: parseFee(box.querySelector('.dd-edit-fee').value)
     }) : null);
     box.querySelectorAll('select, input').forEach(el=> el.addEventListener('change', save));
     box.querySelector('.dd-edit-done').addEventListener('click', ()=>{
@@ -4356,8 +4620,11 @@ function addStep(id){
   if(!procSel) return;
   const dt = document.getElementById('ddNewStepDT').value;
   const note = document.getElementById('ddNewStepNote').value.trim();
+  const fee = parseFee(document.getElementById('ddNewStepFee').value);
   const steps = stepsArray(allRecords[idx]);
-  steps.push({ id: genStepId(), name: procSel, datetime: dt ? formatDateDisplay(dt) : '', note });
+  const newStep = { id: genStepId(), name: procSel, datetime: dt ? formatDateDisplay(dt) : '', note };
+  if(fee) newStep.fee = fee;
+  steps.push(newStep);
   allRecords[idx].steps = JSON.stringify(steps);
   allRecords[idx].doing = steps[0].name;
   allRecords[idx].doingDateTime = steps[0].datetime;
@@ -5417,7 +5684,7 @@ function saveSettings(){
 
 function renderAll(){ 
   renderPatientDemographics(); 
-  renderTodayYesterdayStats();
+  renderTodayYesterdayStats(); renderTrend14();
   renderYesterdayStats();
   renderThisMonthStats();
   renderLastMonthStats();
@@ -6463,7 +6730,7 @@ function showPage(name){
 
   if (name === 'dashboard') {
       renderDashHero();
-      renderTodayYesterdayStats();
+      renderTodayYesterdayStats(); renderTrend14();
       renderCardTypeStats();
       renderTreatmentStats();
   }
@@ -8482,6 +8749,7 @@ const ORG_PLACEHOLDER_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d
 function orgPhotoFallback(imgEl){ if(imgEl && imgEl.parentElement) imgEl.parentElement.innerHTML = ORG_PLACEHOLDER_SVG; }
 
 function renderOrgChart(){
+  try{ renderCertCounts(); }catch(e){}   // certificates module may not be initialised yet
   ORG_IDS.forEach(id=>{
     const it = orgData[id];
     const photoEl = document.getElementById('orgPhoto-' + id);
@@ -8527,6 +8795,7 @@ async function fetchOrgChart(silent){
       if(!ORG_IDS.includes(r.id) || pendingIds.has(r.id)) return;
       orgData[r.id] = { name: cleanStr(r.name), photo: cleanStr(r.photo), description: String(r.description || '').trim(), role: cleanStr(r.role), updated: cleanStr(r.updated) };
     });
+    certMergeFromSheet(json.data);
     orgFetchedAt = Date.now();
     orgSave(); renderOrgChart();
     orgSetStatus('✓ Sync ជោគជ័យ', 'ok', true);
@@ -8635,6 +8904,274 @@ function saveOrgForm(){
   });
 
   document.querySelector('.sb-item[data-page="org"]').addEventListener('click', ()=>{ renderOrgChart(); orgMaybeFetch(); });
+})();
+
+/* ==========================================================
+   CERTIFICATES & CPD per org member — the button opens the image big straight away;
+   changing / adding / removing images needs the PIN.
+   Stored as extra rows in the existing "OrgChart" tab (id "cert:<member>:<uid>",
+   photo = image, role = "cert:degree|cpd", description = JSON meta), so the current
+   Apps Script already syncs them — no new columns needed.
+   ========================================================== */
+let orgCerts = [];
+let certCtx = { member: null, type: null, idx: 0, unlocked: false, editing: false, addMode: false };
+function certLoad(){ try{ const a = JSON.parse(localStorage.getItem('kep_dental_org_certs_v1')); if(Array.isArray(a)) orgCerts = a; }catch(e){} }
+function certSave(){ try{ localStorage.setItem('kep_dental_org_certs_v1', JSON.stringify(orgCerts)); }catch(e){ alert('⚠️ ទំហំផ្ទុកក្នុងឧបករណ៍ពេញ — សូមប្រើតំណ Drive'); } }
+function certList(member, type){
+  return orgCerts.filter(c => c.member === member && c.type === type)
+    .sort((a, b) => String(a.id).localeCompare(String(b.id)));
+}
+/* Drive links: ask Drive for a large rendition (the default thumbnail is only 400px) */
+function certImgSrc(v){
+  if(!v) return '';
+  if(/^data:/i.test(v)) return v;
+  const m = String(v).match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?id=|thumbnail\?id=)([-\w]{20,})/i);
+  return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w2400` : colNormalizeUrl(v);
+}
+/* full-size images live in IndexedDB (localStorage is far too small for sharp photos) */
+const CERT_DB = { db: null };
+function certDb(){
+  if(CERT_DB.db) return Promise.resolve(CERT_DB.db);
+  return new Promise((res, rej) => {
+    const rq = indexedDB.open('kep_dental_certs', 1);
+    rq.onupgradeneeded = () => rq.result.createObjectStore('img');
+    rq.onsuccess = () => { CERT_DB.db = rq.result; res(rq.result); };
+    rq.onerror = () => rej(rq.error);
+  });
+}
+async function certImgPut(id, data){ const db = await certDb(); return new Promise((r, j) => { const t = db.transaction('img', 'readwrite'); t.objectStore('img').put(data, id); t.oncomplete = r; t.onerror = () => j(t.error); }); }
+async function certImgGet(id){ const db = await certDb(); return new Promise(r => { const q = db.transaction('img').objectStore('img').get(id); q.onsuccess = () => r(q.result || ''); q.onerror = () => r(''); }); }
+async function certImgDel(id){ try{ const db = await certDb(); db.transaction('img', 'readwrite').objectStore('img').delete(id); }catch(e){} }
+async function certResolve(c){
+  if(!c) return '';
+  if(c.image === 'idb') return await certImgGet(c.id);
+  return certImgSrc(c.image);
+}
+const CERT_CHUNK = 44000;
+function renderCertCounts(){
+  document.querySelectorAll('[data-cert-count]').forEach(el => {
+    const [m, t] = el.dataset.certCount.split('-');
+    el.textContent = certList(m, t).length;
+  });
+}
+function certMsg(t){ document.getElementById('certMsg').textContent = t || ''; }
+
+function openCertViewer(member, type){
+  certCtx = { member, type, idx: 0, unlocked: certCtx.unlocked && certCtx.member === member, editing: false, addMode: false };
+  certCtx.unlocked = false;
+  document.getElementById('certEditBar').classList.add('hidden');
+  document.getElementById('certEditToggle').classList.remove('on');
+  certMsg('');
+  renderCertViewer();
+  document.getElementById('certViewer').classList.remove('hidden');
+}
+function closeCertViewer(){ document.getElementById('certViewer').classList.add('hidden'); certCtx.unlocked = false; }
+let certRenderSeq = 0;
+function renderCertViewer(){
+  const list = certList(certCtx.member, certCtx.type);
+  if(certCtx.idx >= list.length) certCtx.idx = Math.max(0, list.length - 1);
+  const c = list[certCtx.idx];
+  const img = document.getElementById('certViewerImg');
+  const sc = document.getElementById('certScroll');
+  sc.classList.remove('zoomed'); sc.scrollTop = sc.scrollLeft = 0;
+  sc.style.display = c ? '' : 'none';
+  document.getElementById('certHint').style.display = c ? '' : 'none';
+  document.getElementById('certEmpty').style.display = c ? 'none' : '';
+  document.getElementById('certCount').textContent = list.length > 1 ? `${certCtx.idx + 1} / ${list.length}` : '';
+  const multi = list.length > 1;
+  document.getElementById('certPrev').style.display = multi ? '' : 'none';
+  document.getElementById('certNext').style.display = multi ? '' : 'none';
+  document.getElementById('certReplace').style.display = c ? '' : 'none';
+  document.getElementById('certDelete').style.display = c ? '' : 'none';
+  document.getElementById('cert_url').value = c && c.image && c.image !== 'idb' && !/^data:/i.test(c.image) ? c.image : '';
+  img.removeAttribute('src');
+  if(!c) return;
+  const seq = ++certRenderSeq;
+  const loading = document.getElementById('certLoading');
+  loading.style.display = '';
+  certResolve(c).then(src => {
+    if(seq !== certRenderSeq) return;
+    loading.style.display = 'none';
+    if(src) img.src = src;
+    else { loading.textContent = 'រូបមិនទាន់ Sync មកដល់ឧបករណ៍នេះ'; loading.style.display = ''; }
+  });
+}
+function certStep(d){
+  const n = certList(certCtx.member, certCtx.type).length;
+  if(n < 2) return;
+  certCtx.idx = (certCtx.idx + d + n) % n;
+  renderCertViewer();
+}
+function certPush(c, data){
+  const isData = /^data:/i.test(data || '');
+  const parts = isData ? Math.ceil(data.length / CERT_CHUNK) : 0;
+  for(let i = 0; i < parts; i++){
+    pushToSheet('collectionUpsert', { sheet: 'OrgChart', id: `${c.id}~${i}`, role: 'certpart', name: String(i),
+      photo: data.slice(i * CERT_CHUNK, (i + 1) * CERT_CHUNK), description: '', updated: c.updated });
+  }
+  for(let i = parts; i < (c.parts || 0); i++) pushToSheet('collectionDelete', { sheet: 'OrgChart', id: `${c.id}~${i}` });
+  c.parts = parts;
+  pushToSheet('collectionUpsert', {
+    sheet: 'OrgChart', id: c.id, role: 'cert:' + c.type, name: '', photo: isData ? '' : (data || ''),
+    description: JSON.stringify({ member: c.member, type: c.type, parts }), updated: c.updated
+  });
+}
+/* put an image into the current slot (replace) or as a new one (add) */
+async function certApplyImage(image){
+  const list = certList(certCtx.member, certCtx.type);
+  const cur = list[certCtx.idx];
+  const now = new Date().toISOString();
+  const isData = /^data:/i.test(image);
+  let c;
+  if(certCtx.addMode || !cur){
+    c = { id: `cert:${certCtx.member}:${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`, member: certCtx.member, type: certCtx.type, parts: 0 };
+    orgCerts.push(c);
+  }else c = cur;
+  c.updated = now;
+  c.image = isData ? 'idb' : image;
+  if(isData){ try{ await certImgPut(c.id, image); }catch(e){ certMsg('⚠️ មិនអាចរក្សាទុករូបក្នុងឧបករណ៍'); } }
+  else certImgDel(c.id);
+  certPush(c, image);
+  certSave();
+  certCtx.addMode = false;
+  certCtx.idx = certList(certCtx.member, certCtx.type).findIndex(x => x.id === c.id);
+  renderCertViewer(); renderCertCounts();
+  certMsg(isData ? `✓ បានរក្សាទុក (កំពុង Sync ${c.parts} ផ្នែក)` : '✓ បានរក្សាទុក');
+}
+function certDeleteCurrent(){
+  const c = certList(certCtx.member, certCtx.type)[certCtx.idx];
+  if(!c) return;
+  showConfirm('លុបរូបនេះមែនទេ?', () => {
+    orgCerts = orgCerts.filter(x => x.id !== c.id);
+    certSave(); certImgDel(c.id);
+    pushToSheet('collectionDelete', { sheet: 'OrgChart', id: c.id });
+    for(let i = 0; i < (c.parts || 0); i++) pushToSheet('collectionDelete', { sheet: 'OrgChart', id: `${c.id}~${i}` });
+    renderCertViewer(); renderCertCounts();
+    certMsg('✓ បានលុប');
+  });
+}
+/* compress a photo so it fits one Sheet cell, keeping it as readable as possible */
+function certCompress(file){
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('read')); };
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let side = 2200, q = 0.88, out = '';
+      for(let i = 0; i < 12; i++){
+        const r = Math.min(side / img.width, side / img.height, 1);
+        const c = document.createElement('canvas');
+        c.width = Math.max(60, Math.round(img.width * r)); c.height = Math.max(60, Math.round(img.height * r));
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingQuality = 'high';
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height);
+        out = c.toDataURL('image/jpeg', q);
+        if(out.length <= 900000) return resolve(out);   // ≈ 650 KB, ~20 Sheet cells
+        if(q > 0.72) q -= 0.06; else side = Math.round(side * 0.85);
+      }
+      resolve(out);
+    };
+    img.src = url;
+  });
+}
+/* rows from the OrgChart sheet → certificates (called from fetchOrgChart) */
+function certMergeFromSheet(rows){
+  const queue = getPendingQueue().filter(q => q && q.data && q.data.sheet === 'OrgChart' && String(q.data.id || '').startsWith('cert:'));
+  const pendingUp = new Set(queue.filter(q => q.action === 'collectionUpsert').map(q => String(q.data.id).split('~')[0]));
+  const pendingDel = new Set(queue.filter(q => q.action === 'collectionDelete' && !String(q.data.id).includes('~')).map(q => q.data.id));
+  const chunks = new Map();
+  rows.forEach(r => {
+    const id = String(r.id || '');
+    if(id.startsWith('cert:') && id.includes('~')){
+      const [base, i] = id.split('~');
+      if(!chunks.has(base)) chunks.set(base, []);
+      chunks.get(base)[+i] = String(r.photo || '');
+    }
+  });
+  const fromSheet = [];
+  rows.forEach(r => {
+    const id = String(r.id || '');
+    if(!id.startsWith('cert:') || id.includes('~') || pendingUp.has(id) || pendingDel.has(id)) return;
+    let meta = {}; try{ meta = JSON.parse(r.description || '{}'); }catch(e){}
+    const parts = parseInt(meta.parts, 10) || 0;
+    const c = { id, member: meta.member || id.split(':')[1], type: meta.type || String(r.role || '').replace('cert:', '') || 'degree',
+      image: cleanStr(r.photo), parts, updated: cleanStr(r.updated) };
+    if(parts){
+      c.image = 'idb';
+      const arr = chunks.get(id) || [];
+      let ok = arr.length >= parts;
+      for(let i = 0; i < parts && ok; i++) if(!arr[i]) ok = false;
+      const local = orgCerts.find(x => x.id === id);
+      if(ok && (!local || local.updated !== c.updated || local.image !== 'idb')) certImgPut(id, arr.slice(0, parts).join('')).catch(()=>{});
+    }
+    fromSheet.push(c);
+  });
+  orgCerts = [...fromSheet, ...orgCerts.filter(c => pendingUp.has(c.id) && !fromSheet.some(f => f.id === c.id))];
+  certSave(); renderCertCounts();
+  if(!document.getElementById('certViewer').classList.contains('hidden')) setTimeout(renderCertViewer, 150);
+}
+
+(function initCerts(){
+  certLoad(); renderCertCounts();
+  const $ = id => document.getElementById(id);
+  $('page-org').addEventListener('click', e => {
+    const b = e.target.closest('[data-cert-member]'); if(!b) return;
+    openCertViewer(b.dataset.certMember, b.dataset.certType);
+  });
+  $('closeCertViewer').addEventListener('click', closeCertViewer);
+  $('certPrev').addEventListener('click', () => certStep(-1));
+  $('certNext').addEventListener('click', () => certStep(1));
+  $('certStage').addEventListener('click', e => { if(e.target.id === 'certStage' || e.target.id === 'certScroll' && !$('certScroll').classList.contains('zoomed')) closeCertViewer(); });
+  $('certViewerImg').addEventListener('click', e => {
+    const sc = $('certScroll'), img = e.currentTarget;
+    const rx = e.offsetX / img.clientWidth, ry = e.offsetY / img.clientHeight;
+    sc.classList.toggle('zoomed');
+    if(sc.classList.contains('zoomed')) requestAnimationFrame(() => {
+      sc.scrollLeft = rx * sc.scrollWidth - sc.clientWidth / 2;
+      sc.scrollTop = ry * sc.scrollHeight - sc.clientHeight / 2;
+    });
+  });
+  // swipe left / right on phones
+  let sx = null;
+  $('certStage').addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
+  $('certStage').addEventListener('touchend', e => {
+    if(sx === null) return;
+    const dx = e.changedTouches[0].clientX - sx; sx = null;
+    if(Math.abs(dx) > 50 && !$('certScroll').classList.contains('zoomed')) certStep(dx < 0 ? 1 : -1);
+  });
+  $('certEditToggle').addEventListener('click', () => {
+    const show = () => {
+      const bar = $('certEditBar'); const open = bar.classList.contains('hidden');
+      bar.classList.toggle('hidden', !open);
+      $('certEditToggle').classList.toggle('on', open);
+      certMsg('');
+    };
+    if(certCtx.unlocked) return show();
+    promptForPin('សូមបញ្ចូល PIN ដើម្បីកែរូប', () => { certCtx.unlocked = true; show(); });
+  });
+  $('certReplace').addEventListener('click', () => { certCtx.addMode = false; $('cert_file').click(); });
+  $('certAdd').addEventListener('click', () => { certCtx.addMode = true; $('cert_file').click(); });
+  $('certDelete').addEventListener('click', certDeleteCurrent);
+  $('cert_file').addEventListener('change', async e => {
+    const f = e.target.files[0]; e.target.value = '';
+    if(!f) return;
+    certMsg('កំពុងបង្រួមរូប...');
+    try{ certApplyImage(await certCompress(f)); }
+    catch(x){ certMsg('⚠️ រូបធំពេក — សូមប្រើតំណ Google Drive ជំនួស'); }
+  });
+  $('certUrlApply').addEventListener('click', () => {
+    const v = colNormalizeUrl($('cert_url').value);
+    if(!v){ certMsg('⚠️ សូមបិទភ្ជាប់តំណ'); return; }
+    certApplyImage(v);
+  });
+  document.addEventListener('keydown', e => {
+    if($('certViewer').classList.contains('hidden')) return;
+    if(e.key === 'Escape') closeCertViewer();
+    if(e.key === 'ArrowLeft') certStep(-1);
+    if(e.key === 'ArrowRight') certStep(1);
+  });
 })();
 
 
